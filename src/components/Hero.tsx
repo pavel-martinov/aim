@@ -4,6 +4,7 @@ import { useState } from "react";
 import HeroStats from "@/components/HeroStats";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import { openDownloadStore } from "@/lib/download";
 
 const HERO_VIDEO_LOCAL = "/HeroVideoBG.mp4";
 const HERO_VIDEO_FALLBACK =
@@ -44,11 +45,11 @@ export default function Hero() {
           <div className="flex max-w-[696px] flex-col gap-6 uppercase">
             <RevealOnScroll>
               <h1
-                className="bg-gradient-to-r from-white to-[#c4c4c4] bg-clip-text text-[42px] leading-[1.1] text-transparent lg:text-[62px]"
+                className="flex flex-col bg-gradient-to-r from-white to-[#c4c4c4] bg-clip-text text-[42px] leading-[1.1] text-transparent lg:text-[62px]"
                 style={{ fontFamily: "var(--font-anton), sans-serif" }}
               >
-                <span className="block">IT&apos;S TIME. TO RISE.</span>
-                <span className="block">From Streets To Stadiums.</span>
+                <span>IT&apos;S TIME. TO RISE.</span>
+                <span>From Streets To Stadiums.</span>
               </h1>
             </RevealOnScroll>
             <RevealOnScroll delay={0.1}>
@@ -64,7 +65,7 @@ export default function Hero() {
           <RevealOnScroll delay={0.2}>
             <OpaqueButton
               variant="card"
-              href="/download"
+              onClick={openDownloadStore}
               className="w-full shrink-0 md:w-[240px]"
             >
               DOWNLOAD NOW

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import Image from "next/image";
 import { DRAMATIC_EASE } from "@/lib/animations";
 import OpaqueButton from "@/components/ui/OpaqueButton";
+import { openDownloadStore } from "@/lib/download";
 
 /**
  * UnlockYourPotential section: Large green headline with phone mockup overlaying it,
@@ -85,7 +86,7 @@ export default function UnlockYourPotential() {
             transition={{ duration: 0.65, ease: DRAMATIC_EASE, delay: 0.3 }}
             className="w-full md:w-[240px]"
           >
-            <OpaqueButton variant="card" href="/download" className="w-full">
+            <OpaqueButton variant="card" onClick={openDownloadStore} className="w-full">
               DOWNLOAD NOW
             </OpaqueButton>
           </motion.div>

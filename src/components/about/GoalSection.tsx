@@ -45,12 +45,12 @@ export default function GoalSection() {
             Our Goal
           </span>
           <h2
-            className="max-w-4xl text-center text-4xl uppercase leading-[1.05] text-black sm:text-5xl lg:text-[64px]"
+            className="flex max-w-4xl flex-wrap justify-center gap-x-[0.3em] text-center text-4xl uppercase leading-[1.05] text-black sm:text-5xl lg:text-[64px]"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
-            To make{" "}
-            <span className="text-[var(--color-brand)]">professional-grade training</span>{" "}
-            accessible to everyone
+            <span>To make</span>
+            <span className="text-[var(--color-brand)]">professional-grade training</span>
+            <span>accessible to everyone</span>
           </h2>
         </motion.div>
 

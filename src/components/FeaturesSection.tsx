@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import { openDownloadStore } from "@/lib/download";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -156,8 +157,7 @@ export default function FeaturesSection() {
               className="text-4xl font-medium leading-[1.25] text-black lg:text-[52px]"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
-              AIM is building the world&apos;s most intelligent training system
-              merging human ambition with AI precision.
+              AIM is building the world's most intelligent training system merging human ambition with AI precision.
             </h2>
           </RevealOnScroll>
 
@@ -176,7 +176,7 @@ export default function FeaturesSection() {
 
         {/* CTA Button */}
         <RevealOnScroll className="mt-6 lg:mt-10" delay={0.2}>
-          <OpaqueButton variant="solid" href="/download">
+          <OpaqueButton variant="solid" onClick={openDownloadStore}>
             DOWNLOAD NOW
           </OpaqueButton>
         </RevealOnScroll>

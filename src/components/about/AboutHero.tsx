@@ -45,17 +45,15 @@ export default function AboutHero() {
 
         {/* Main headline */}
         <motion.h1
-          className="text-5xl uppercase leading-[0.95] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-[120px]"
+          className="flex flex-col text-5xl uppercase leading-[0.95] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-[120px]"
           style={{ fontFamily: "var(--font-anton), sans-serif" }}
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: DRAMATIC_EASE, delay: 0.4 }}
         >
-          Redefining
-          <br />
+          <span>Redefining</span>
           <span className="text-[var(--color-brand)]">Athletic</span>
-          <br />
-          Training
+          <span>Training</span>
         </motion.h1>
 
         {/* Decorative divider */}

@@ -53,12 +53,12 @@ export default function FaqSection() {
       <div className="w-full px-6 lg:px-12">
         <div className="w-full lg:w-1/2">
           <h2
-            className="mb-12 text-4xl uppercase leading-none tracking-tight text-white md:text-5xl"
+            className="mb-12 flex flex-col text-4xl uppercase leading-none tracking-tight text-white md:text-5xl"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
-            <span className="block">FREQUENTLY</span>
-            <span className="block">ASKED</span>
-            <span className="block">QUESTIONS</span>
+            <span>FREQUENTLY</span>
+            <span>ASKED</span>
+            <span>QUESTIONS</span>
           </h2>
         </div>
       </div>

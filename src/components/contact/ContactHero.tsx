@@ -14,11 +14,11 @@ export default function ContactHero() {
         <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6 lg:mx-0">
           {/* Headline */}
           <h1
-            className="text-5xl uppercase leading-[1.1] md:text-6xl lg:text-7xl"
+            className="flex flex-wrap text-5xl uppercase leading-[1.1] md:text-6xl lg:text-7xl"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             <span className="text-[var(--color-brand)]">REACH OUT</span>
-            <span className="text-white">{" TO US TO LEARN MORE ABOUT AIM"}</span>
+            <span className="text-white">&nbsp;TO US TO LEARN MORE ABOUT AIM</span>
           </h1>
 
           {/* Decorative divider */}

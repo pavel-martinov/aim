@@ -31,12 +31,12 @@ export default function Footer() {
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <DownloadButton
               platform="ios"
-              href="https://apps.apple.com"
+              href="https://apps.apple.com/in/app/aim-football/id6757197350"
               label="Download for iOS"
             />
             <DownloadButton
               platform="android"
-              href="https://play.google.com"
+              href="https://play.google.com/store/apps/details?id=com.aimreltechnology.aim&pcampaignid=web_share"
               label="Download for Android"
             />
           </div>

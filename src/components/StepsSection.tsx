@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { DRAMATIC_EASE } from "@/lib/animations";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import { openDownloadStore } from "@/lib/download";
 
 /** Breakpoint card widths matching Tailwind classes */
 const CARD_WIDTHS = {
@@ -204,7 +205,7 @@ export default function StepsSection() {
 
           {/* Download button */}
           <RevealOnScroll delay={0.2}>
-            <OpaqueButton variant="card" href="/download" className="w-full md:w-[240px]">
+            <OpaqueButton variant="card" onClick={openDownloadStore} className="w-full md:w-[240px]">
               DOWNLOAD NOW
             </OpaqueButton>
           </RevealOnScroll>

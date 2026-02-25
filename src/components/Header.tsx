@@ -10,6 +10,7 @@ import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import MusicToggle from "@/components/ui/MusicToggle";
 import { EnterIcon } from "@/components/ui/icons/EnterIcon";
 import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
+import { openDownloadStore } from "@/lib/download";
 
 /** Minimum scroll delta before direction change triggers hide/show */
 const SCROLL_THRESHOLD = 10;
@@ -19,7 +20,6 @@ const NAV_LINKS = [
   { href: "/home", label: "Home" },
   { href: "/about", label: "Mission" },
   { href: "/contact", label: "Contact" },
-  { href: "/download", label: "Download" },
 ];
 
 type HeaderProps = {
@@ -280,14 +280,14 @@ function HeaderContent({
             />
 
             {/* Download button - Desktop/Tablet only */}
-            <Link
-              href="/download"
+            <button
+              onClick={openDownloadStore}
               className={`hidden items-center gap-3 rounded-xl px-3 py-2 text-base uppercase tracking-wider transition-all duration-300 md:flex ${isLightText ? "bg-white/10 text-white hover:bg-white hover:text-black" : "bg-zinc-900/10 text-zinc-900 hover:bg-zinc-900 hover:text-white"}`}
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
             >
               Download
               <EnterIcon className="size-6" />
-            </Link>
+            </button>
 
             {/* Mobile: MENU pill button */}
             <button

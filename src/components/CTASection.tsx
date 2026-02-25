@@ -1,6 +1,7 @@
 "use client";
 
 import OpaqueButton from "@/components/ui/OpaqueButton";
+import { openDownloadStore } from "@/lib/download";
 
 const MARQUEE_TEXT = "Enquire Today. Redefine Tomorrow.";
 
@@ -36,7 +37,7 @@ export default function CTASection() {
       </div>
 
       {/* Download button */}
-      <OpaqueButton variant="card" href="/download" className="w-full md:w-[240px]">
+      <OpaqueButton variant="card" onClick={openDownloadStore} className="w-full md:w-[240px]">
         DOWNLOAD NOW
       </OpaqueButton>
     </section>
