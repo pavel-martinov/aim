@@ -1,6 +1,5 @@
 ---
 description: Frontend coding guidelines for AIM — Next.js, Tailwind, Framer Motion, accessibility
-globs: ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js", "**/components/**"]
 alwaysApply: true
 ---
 

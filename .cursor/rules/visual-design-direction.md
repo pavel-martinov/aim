@@ -1,6 +1,5 @@
 ---
 description: UI visual direction and inspiration — Premium Health Tech aesthetic, hybrid theme
-globs: ["**/*.tsx", "**/*.jsx", "**/components/**", "**/app/**"]
 alwaysApply: true
 ---
 

@@ -2,10 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-
-/** Premium easing curves */
-const PREMIUM_EASE = [0.16, 1, 0.3, 1] as const;
-const SMOOTH_EASE = [0.4, 0, 0.2, 1] as const;
+import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
 
 /**
  * Goal/Mission section with white background and staggered text reveal.
@@ -39,7 +36,7 @@ export default function GoalSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: PREMIUM_EASE }}
+          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
         >
           <span
             className="text-xs uppercase tracking-[0.3em] text-black/50"
@@ -52,7 +49,7 @@ export default function GoalSection() {
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             To make{" "}
-            <span className="text-[#24ff00]">professional-grade training</span>{" "}
+            <span className="text-[var(--color-brand)]">professional-grade training</span>{" "}
             accessible to everyone
           </h2>
         </motion.div>

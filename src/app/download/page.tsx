@@ -3,9 +3,7 @@
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-/** Dramatic easing for fluid animations */
-const DRAMATIC_EASE = [0.16, 1, 0.3, 1] as const;
+import { DRAMATIC_EASE } from "@/lib/animations";
 
 /**
  * Download page with iOS and Android app store buttons.
@@ -23,7 +21,7 @@ export default function DownloadPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
-            className="mb-8 inline-block rounded-full border border-[#24ff00]/30 bg-[#24ff00]/10 px-4 py-2 text-xs uppercase tracking-widest text-[#24ff00]"
+            className="mb-8 inline-block rounded-full border border-[var(--color-brand)]/30 bg-[var(--color-brand)]/10 px-4 py-2 text-xs uppercase tracking-widest text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             Available Now
@@ -37,7 +35,7 @@ export default function DownloadPage() {
             className="mb-6 text-4xl uppercase leading-[1.1] text-white md:text-6xl lg:text-7xl"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
-            <span className="text-[#24ff00]">Download</span> AIM
+            <span className="text-[var(--color-brand)]">Download</span> AIM
             <br />
             Start Training
           </motion.h1>
@@ -120,7 +118,7 @@ function AppStoreButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn-fill-hover flex items-center gap-4 border border-white/30 bg-transparent px-6 py-4 transition-all hover:border-[#24ff00]"
+      className="btn-fill-hover flex items-center gap-4 border border-white/30 bg-transparent px-6 py-4 transition-all hover:border-[var(--color-brand)]"
     >
       {platform === "ios" ? <AppleIcon /> : <PlayStoreIcon />}
       <div className="flex flex-col items-start">
@@ -152,7 +150,7 @@ function Feature({
   return (
     <div className="flex flex-col gap-3 border-l border-white/20 pl-6">
       <h3
-        className="text-sm uppercase tracking-widest text-[#24ff00]"
+        className="text-sm uppercase tracking-widest text-[var(--color-brand)]"
         style={{ fontFamily: "var(--font-geist-mono), monospace" }}
       >
         {title}

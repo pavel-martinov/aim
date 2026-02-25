@@ -2,9 +2,7 @@
 
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-
-/** Premium easing curves */
-const PREMIUM_EASE = [0.16, 1, 0.3, 1] as const;
+import { DRAMATIC_EASE } from "@/lib/animations";
 
 /** Stats data with designer-style numbers */
 const STATS = [
@@ -73,19 +71,19 @@ function StatCard({
   return (
     <motion.div
       ref={cardRef}
-      className="group relative flex flex-col items-center justify-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-colors hover:border-[#24ff00]/30 lg:p-12"
+      className="group relative flex flex-col items-center justify-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-colors hover:border-[var(--color-brand)]/30 lg:p-12"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{
         duration: 0.8,
-        ease: PREMIUM_EASE,
+        ease: DRAMATIC_EASE,
         delay: index * 0.1,
       }}
     >
       {/* Stat value */}
       <span
-        className="text-5xl text-white transition-colors group-hover:text-[#24ff00] sm:text-6xl lg:text-[80px]"
+        className="text-5xl text-white transition-colors group-hover:text-[var(--color-brand)] sm:text-6xl lg:text-[80px]"
         style={{ fontFamily: "var(--font-anton), sans-serif" }}
       >
         {prefix}
@@ -102,7 +100,7 @@ function StatCard({
       </span>
 
       {/* Hover accent line */}
-      <div className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-[#24ff00] transition-all duration-500 group-hover:w-1/2" />
+      <div className="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 bg-[var(--color-brand)] transition-all duration-500 group-hover:w-1/2" />
     </motion.div>
   );
 }
@@ -131,7 +129,7 @@ export default function StatsSection() {
         style={{
           y: bgY,
           backgroundImage:
-            "radial-gradient(circle at 50% 50%, #24ff00 1px, transparent 1px)",
+            "radial-gradient(circle at 50% 50%, var(--color-brand) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -143,10 +141,10 @@ export default function StatsSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: PREMIUM_EASE }}
+          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
         >
           <span
-            className="text-xs uppercase tracking-[0.3em] text-[#24ff00]"
+            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             In Numbers

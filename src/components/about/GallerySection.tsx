@@ -2,9 +2,7 @@
 
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
-
-/** Premium easing curves */
-const PREMIUM_EASE = [0.16, 1, 0.3, 1] as const;
+import { DRAMATIC_EASE } from "@/lib/animations";
 
 /** Gallery images placeholder data */
 const GALLERY_IMAGES = [
@@ -51,7 +49,7 @@ function GalleryImage({
       viewport={{ once: true, margin: "-50px" }}
       transition={{
         duration: 0.8,
-        ease: PREMIUM_EASE,
+        ease: DRAMATIC_EASE,
         delay: index * 0.1,
       }}
       style={{ y: parallaxY }}
@@ -63,13 +61,13 @@ function GalleryImage({
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 50% 50%, #24ff00 1px, transparent 1px)",
+              "radial-gradient(circle at 50% 50%, var(--color-brand) 1px, transparent 1px)",
             backgroundSize: "20px 20px",
           }}
         />
 
         {/* Center glow */}
-        <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#24ff00]/5 blur-3xl transition-all duration-700 group-hover:bg-[#24ff00]/15" />
+        <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-brand)]/5 blur-3xl transition-all duration-700 group-hover:bg-[var(--color-brand)]/15" />
       </div>
 
       {/* Placeholder text */}
@@ -83,13 +81,13 @@ function GalleryImage({
       </div>
 
       {/* Hover overlay */}
-      <div className="absolute inset-0 bg-[#24ff00]/0 transition-all duration-500 group-hover:bg-[#24ff00]/10" />
+      <div className="absolute inset-0 bg-[var(--color-brand)]/0 transition-all duration-500 group-hover:bg-[var(--color-brand)]/10" />
 
       {/* Border */}
-      <div className="absolute inset-0 rounded-xl border border-white/5 transition-colors duration-500 group-hover:border-[#24ff00]/30" />
+      <div className="absolute inset-0 rounded-xl border border-white/5 transition-colors duration-500 group-hover:border-[var(--color-brand)]/30" />
 
       {/* Corner accent on hover */}
-      <div className="absolute bottom-0 left-0 h-0 w-0 border-b-[3px] border-l-[3px] border-transparent transition-all duration-500 group-hover:h-8 group-hover:w-8 group-hover:border-[#24ff00]" />
+      <div className="absolute bottom-0 left-0 h-0 w-0 border-b-[3px] border-l-[3px] border-transparent transition-all duration-500 group-hover:h-8 group-hover:w-8 group-hover:border-[var(--color-brand)]" />
     </motion.div>
   );
 }
@@ -124,10 +122,10 @@ export default function GallerySection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: PREMIUM_EASE }}
+          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
         >
           <span
-            className="text-xs uppercase tracking-[0.3em] text-[#24ff00]"
+            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             Gallery
@@ -162,11 +160,11 @@ export default function GallerySection() {
 
         {/* Bottom accent line */}
         <motion.div
-          className="h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-[#24ff00]/30 to-transparent"
+          className="h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-[var(--color-brand)]/30 to-transparent"
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: PREMIUM_EASE }}
+          transition={{ duration: 1.2, ease: DRAMATIC_EASE }}
         />
       </div>
     </section>

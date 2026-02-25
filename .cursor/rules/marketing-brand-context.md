@@ -1,6 +1,5 @@
 ---
 description: Brand context for AIM marketing website copy, tone, positioning, and messaging
-globs: ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js", "**/page.tsx", "**/layout.tsx"]
 alwaysApply: false
 ---
 

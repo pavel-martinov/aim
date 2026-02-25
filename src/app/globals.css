@@ -2,8 +2,9 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --color-brand: #24ff00;
 }
 
 @theme inline {
@@ -12,13 +13,6 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-anton: var(--font-anton);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
@@ -71,7 +65,7 @@ html.lenis body {
   inset: 0;
   left: 0;
   width: 0;
-  background: #24ff00;
+  background: var(--color-brand);
   z-index: -1;
   transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -79,10 +73,20 @@ html.lenis body {
   width: 100%;
 }
 .btn-fill-hover:hover {
-  border-color: #24ff00;
+  border-color: var(--color-brand);
   color: black;
   transition: border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     color 0.3s 0.25s ease,
     box-shadow 0.4s 0.5s ease;
-  box-shadow: 0 0 24px rgba(36, 255, 0, 0.35);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-brand) 35%, transparent);
+}
+
+/* CTA marquee animation */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }

@@ -110,16 +110,10 @@ export default function ContactForm() {
     e.preventDefault();
 
     // Bot protection: honeypot check
-    if (honeypot) {
-      console.warn("Bot detected via honeypot");
-      return;
-    }
+    if (honeypot) return;
 
     // Bot protection: time check
-    if (Date.now() - formOpenTime.current < MIN_FORM_TIME) {
-      console.warn("Form submitted too quickly");
-      return;
-    }
+    if (Date.now() - formOpenTime.current < MIN_FORM_TIME) return;
 
     // Cooldown check
     if (isInCooldown) return;
@@ -134,11 +128,8 @@ export default function ContactForm() {
     setFormState("submitting");
 
     try {
-      // Simulate API call
+      // Simulate API call (replace with actual endpoint in production)
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // In production, send to API endpoint
-      // await fetch('/api/contact', { method: 'POST', body: JSON.stringify({ name, email, subject, message }) });
 
       setFormState("success");
       setCooldownEnd(Date.now() + SUBMIT_COOLDOWN);
@@ -354,7 +345,7 @@ function SubmitButton({
     "relative w-full border py-4 text-sm uppercase tracking-widest transition-all duration-500",
     isDisabled
       ? "cursor-not-allowed border-[#0a5200] text-white/50"
-      : "btn-fill-hover border-[#24ff00] text-white"
+      : "btn-fill-hover border-[var(--color-brand)] text-white"
   );
 
   return (
@@ -382,7 +373,7 @@ function SubmitButton({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="text-[#24ff00]"
+            className="text-[var(--color-brand)]"
           >
             Message Sent!
           </motion.span>

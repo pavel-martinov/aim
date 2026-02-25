@@ -1,10 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-
-/** Fluid animation easing per workspace animation principles */
-const DRAMATIC_EASE = [0.16, 1, 0.3, 1] as const;
-const ANIMATION_DURATION = 0.7;
+import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
 
 type FaqItemProps = {
   question: string;
@@ -35,19 +32,18 @@ export default function FaqItem({
           {question}
         </span>
 
-        {/* Animated plus/minus icon */}
-        <motion.span
-          className="relative flex h-6 w-6 shrink-0 items-center justify-center"
-          animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ duration: ANIMATION_DURATION, ease: DRAMATIC_EASE }}
-        >
+        {/* Animated plus/minus icon - vertical line scales to 0 to form minus */}
+        <span className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+          {/* Horizontal line (always visible) */}
           <span className="absolute h-[2px] w-4 bg-white" />
+          {/* Vertical line (scales to 0 when open) */}
           <motion.span
             className="absolute h-4 w-[2px] bg-white"
+            initial={false}
             animate={{ scaleY: isOpen ? 0 : 1 }}
-            transition={{ duration: 0.3, ease: DRAMATIC_EASE }}
+            transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
           />
-        </motion.span>
+        </span>
       </button>
 
       {/* Answer content with fluid height animation */}
@@ -58,7 +54,7 @@ export default function FaqItem({
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{
-              height: { duration: ANIMATION_DURATION, ease: DRAMATIC_EASE },
+              height: { duration: DURATION.standard, ease: DRAMATIC_EASE },
               opacity: { duration: 0.4, ease: DRAMATIC_EASE },
             }}
             className="overflow-hidden"
@@ -67,7 +63,7 @@ export default function FaqItem({
               initial={{ y: -10 }}
               animate={{ y: 0 }}
               exit={{ y: -10 }}
-              transition={{ duration: 0.5, ease: DRAMATIC_EASE }}
+              transition={{ duration: DURATION.exit, ease: DRAMATIC_EASE }}
               className="px-6 pb-8"
             >
               <p

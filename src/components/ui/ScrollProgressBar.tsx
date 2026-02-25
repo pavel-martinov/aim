@@ -34,7 +34,7 @@ export default function ScrollProgressBar() {
     >
       <div className="h-full w-full bg-white/20" />
       <motion.div
-        className="absolute left-0 top-0 h-full bg-[#24ff00]"
+        className="absolute left-0 top-0 h-full bg-[var(--color-brand)]"
         style={{ width }}
       />
     </div>

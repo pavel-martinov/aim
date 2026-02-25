@@ -4,7 +4,10 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MissionSection from "@/components/MissionSection";
 import UnlockYourPotential from "@/components/UnlockYourPotential";
-import StorytellingSection from "@/components/StorytellingSection";
+import StepsSection from "@/components/StepsSection";
+import VisionSection from "@/components/VisionSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import { useAudio } from "@/contexts/AudioContext";
 import { useEffect } from "react";
@@ -23,12 +26,15 @@ export default function HomePage() {
       <Header visible />
       <div className="relative">
         <div className="sticky top-0 z-0 h-screen">
-          <Hero visible />
+          <Hero />
         </div>
         <div className="relative z-10">
           <MissionSection />
           <UnlockYourPotential />
-          <StorytellingSection />
+          <StepsSection />
+          <VisionSection />
+          <FeaturesSection />
+          <CTASection />
           <Footer />
         </div>
       </div>

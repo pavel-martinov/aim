@@ -17,12 +17,12 @@ export default function ContactHero() {
             className="text-5xl uppercase leading-[1.1] md:text-6xl lg:text-7xl"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
-            <span className="text-[#24ff00]">REACH OUT</span>
+            <span className="text-[var(--color-brand)]">REACH OUT</span>
             <span className="text-white">{" TO US TO LEARN MORE ABOUT AIM"}</span>
           </h1>
 
           {/* Decorative divider */}
-          <div className="my-2 h-px w-full bg-gradient-to-r from-[#24ff00] via-white/20 to-transparent" />
+          <div className="my-2 h-px w-full bg-gradient-to-r from-[var(--color-brand)] via-white/20 to-transparent" />
 
           {/* Contact details */}
           <div className="flex flex-col gap-4">
@@ -33,7 +33,7 @@ export default function ContactHero() {
             <ContactDetail label="EMAIL">
               <a
                 href="mailto:support@aim.io"
-                className="transition-colors hover:text-[#24ff00]"
+                className="transition-colors hover:text-[var(--color-brand)]"
               >
                 support@aim.io
               </a>

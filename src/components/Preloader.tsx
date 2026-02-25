@@ -4,16 +4,13 @@ import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import CtaButton from "@/components/CtaButton";
+import { DRAMATIC_EASE, EXIT_EASE } from "@/lib/animations";
 
 // Timing constants for animation sequence
 const TEXT_APPEAR_MS = 3000;         // Epic text appears after 3s
 const LOADER_APPEAR_MS = 5000;       // Loader appears at 5s
 const LOADER_START_DELAY_MS = 1000;  // 1s delay before loader starts filling
 const LOAD_DURATION_MS = 5000;       // Loading animation duration
-
-// Easing curves for fluid, dramatic animations
-const DRAMATIC_EASE = [0.16, 1, 0.3, 1] as const;
-const EXIT_EASE = [0.4, 0, 1, 1] as const;
 
 const EPIC_PHRASE =
   "Every legend was once unknown. This is where they begin.";
@@ -148,7 +145,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                   </span>
                   <div className="h-px flex-1 overflow-hidden bg-white/30">
                     <motion.div
-                      className="h-full bg-[#24ff00]"
+                      className="h-full bg-[var(--color-brand)]"
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
                       transition={{ duration: 0.15, ease: "linear" }}

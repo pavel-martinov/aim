@@ -2,9 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-
-/** Premium easing curves */
-const DRAMATIC_EASE = [0.16, 1, 0.3, 1] as const;
+import { DRAMATIC_EASE } from "@/lib/animations";
 
 /**
  * About page hero section with large headline and scroll-based parallax.
@@ -36,7 +34,7 @@ export default function AboutHero() {
       >
         {/* Eyebrow */}
         <motion.span
-          className="text-xs uppercase tracking-[0.3em] text-[#24ff00]"
+          className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
           style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -55,14 +53,14 @@ export default function AboutHero() {
         >
           Redefining
           <br />
-          <span className="text-[#24ff00]">Athletic</span>
+          <span className="text-[var(--color-brand)]">Athletic</span>
           <br />
           Training
         </motion.h1>
 
         {/* Decorative divider */}
         <motion.div
-          className="h-px w-32 bg-gradient-to-r from-transparent via-[#24ff00] to-transparent"
+          className="h-px w-32 bg-gradient-to-r from-transparent via-[var(--color-brand)] to-transparent"
           initial={{ scaleX: 0, opacity: 0 }}
           animate={{ scaleX: 1, opacity: 1 }}
           transition={{ duration: 0.8, ease: DRAMATIC_EASE, delay: 0.8 }}

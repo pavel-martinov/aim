@@ -23,9 +23,9 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: "AIM — Premium Marketing Studio",
+  title: "AIM — Sports Training App",
   description:
-    "Elegant, premium marketing experiences with motion that captivates.",
+    "Track your progress, analyze performance, and achieve your athletic goals.",
 };
 
 // Root layout shell for global styles and motion wrappers.

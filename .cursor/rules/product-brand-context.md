@@ -1,6 +1,5 @@
 ---
 description: Brand context for AIM product development, compliance, architecture, and technical priorities
-globs: ["**/*.tsx", "**/*.ts", "**/*.jsx", "**/*.js", "**/api/**", "**/services/**", "**/components/**"]
 alwaysApply: false
 ---
 

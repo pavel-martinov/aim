@@ -52,14 +52,14 @@ export default function Footer() {
           </span>
           <a
             href="mailto:support@aim.io"
-            className="text-sm text-white/80 transition-colors hover:text-[#24ff00]"
+            className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             support@aim.io
           </a>
           <a
             href="mailto:partnerships@aim.io"
-            className="text-sm text-white/80 transition-colors hover:text-[#24ff00]"
+            className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             partnerships@aim.io
@@ -117,7 +117,7 @@ function DownloadButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn-fill-hover flex items-center gap-3 border border-white/30 bg-transparent px-5 py-3 text-xs uppercase tracking-wider text-white transition-all hover:border-[#24ff00]"
+      className="btn-fill-hover flex items-center gap-3 border border-white/30 bg-transparent px-5 py-3 text-xs uppercase tracking-wider text-white transition-all hover:border-[var(--color-brand)]"
       style={{ fontFamily: "var(--font-geist-mono), monospace" }}
     >
       {platform === "ios" ? <AppleIcon /> : <AndroidIcon />}

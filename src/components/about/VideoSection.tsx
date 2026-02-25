@@ -2,9 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-
-/** Premium easing curves */
-const PREMIUM_EASE = [0.16, 1, 0.3, 1] as const;
+import { DRAMATIC_EASE } from "@/lib/animations";
 
 /**
  * Play button icon component.
@@ -55,10 +53,10 @@ export default function VideoSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: PREMIUM_EASE }}
+          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
         >
           <span
-            className="text-xs uppercase tracking-[0.3em] text-[#24ff00]"
+            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             Watch
@@ -85,13 +83,13 @@ export default function VideoSection() {
                   className="absolute inset-0 opacity-20"
                   style={{
                     backgroundImage:
-                      "linear-gradient(to right, #24ff00 1px, transparent 1px), linear-gradient(to bottom, #24ff00 1px, transparent 1px)",
+                      "linear-gradient(to right, var(--color-brand) 1px, transparent 1px), linear-gradient(to bottom, var(--color-brand) 1px, transparent 1px)",
                     backgroundSize: "40px 40px",
                   }}
                 />
 
                 {/* Center accent */}
-                <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#24ff00]/10 blur-3xl" />
+                <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-brand)]/10 blur-3xl" />
               </div>
 
               {/* Play button */}
@@ -101,15 +99,15 @@ export default function VideoSection() {
                 initial={{ scale: 0.8, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: PREMIUM_EASE, delay: 0.3 }}
+                transition={{ duration: 0.6, ease: DRAMATIC_EASE, delay: 0.3 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {/* Outer ring */}
-                <div className="absolute h-32 w-32 rounded-full border border-white/20 transition-all duration-500 group-hover:scale-110 group-hover:border-[#24ff00]/50" />
+                <div className="absolute h-32 w-32 rounded-full border border-white/20 transition-all duration-500 group-hover:scale-110 group-hover:border-[var(--color-brand)]/50" />
 
                 {/* Inner circle */}
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#24ff00] text-black transition-transform duration-300">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-brand)] text-black transition-transform duration-300">
                   <PlayIcon />
                 </div>
               </motion.button>
