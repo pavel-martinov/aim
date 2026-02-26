@@ -12,41 +12,35 @@ type RevealOnScrollProps = {
   direction?: Direction;
   as?: keyof typeof motion;
   dramatic?: boolean;
+  /** Fraction of element visible to trigger reveal (default 0.2, use lower for tall elements) */
+  viewportAmount?: number;
 };
 
-/** Returns initial 3D transform values with blur, depth, and rotation */
+/** Returns initial transform offset based on direction */
 function getInitialTransform(direction: Direction, dramatic: boolean) {
-  const offset = dramatic ? 60 : 30;
-  const blur = dramatic ? 12 : 8;
-  const z = dramatic ? -100 : -50;
-  const rotateX = dramatic ? 8 : 4;
-
-  const base = { filter: `blur(${blur}px)`, z, rotateX };
+  const offset = dramatic ? 40 : 24;
 
   switch (direction) {
     case "up":
-      return { ...base, y: offset };
+      return { y: offset };
     case "down":
-      return { ...base, y: -offset };
+      return { y: -offset };
     case "left":
-      return { ...base, x: offset };
+      return { x: offset };
     case "right":
-      return { ...base, x: -offset };
+      return { x: -offset };
   }
 }
 
-/** Returns final transform values (origin position, no blur/rotation) */
+/** Returns final transform values (origin position) */
 function getAnimateTransform(direction: Direction) {
-  const base = { filter: "blur(0px)", z: 0, rotateX: 0 };
-  return direction === "left" || direction === "right"
-    ? { ...base, x: 0 }
-    : { ...base, y: 0 };
+  return direction === "left" || direction === "right" ? { x: 0 } : { y: 0 };
 }
 
 /**
- * Premium 3D blur reveal animation on scroll.
- * Text emerges from depth with blur clearing for cinematic effect.
- * Set dramatic=true for hero elements (1.2s duration, larger effects).
+ * Clean fade + translate reveal animation on scroll.
+ * Industry-standard approach used by Apple, Stripe, Linear, Vercel.
+ * Set dramatic=true for hero elements (1s duration, larger offset).
  */
 export default function RevealOnScroll({
   children,
@@ -55,22 +49,21 @@ export default function RevealOnScroll({
   direction = "up",
   as = "div",
   dramatic = false,
+  viewportAmount = 0.2,
 }: RevealOnScrollProps) {
   const MotionComponent = motion[as] as typeof motion.div;
-  const duration = dramatic ? DURATION.hero : DURATION.standard;
+  const duration = dramatic ? 1.0 : DURATION.standard;
 
   return (
-    <div style={{ perspective: "1000px" }}>
-      <MotionComponent
-        className={className}
-        style={{ transformStyle: "preserve-3d", willChange: "transform, opacity, filter" }}
-        initial={{ opacity: 0, ...getInitialTransform(direction, dramatic) }}
-        whileInView={{ opacity: 1, ...getAnimateTransform(direction) }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration, ease: DRAMATIC_EASE, delay }}
-      >
-        {children}
-      </MotionComponent>
-    </div>
+    <MotionComponent
+      className={className}
+      style={{ willChange: "transform, opacity" }}
+      initial={{ opacity: 0, ...getInitialTransform(direction, dramatic) }}
+      whileInView={{ opacity: 1, ...getAnimateTransform(direction) }}
+      viewport={{ once: true, amount: viewportAmount }}
+      transition={{ duration, ease: DRAMATIC_EASE, delay }}
+    >
+      {children}
+    </MotionComponent>
   );
 }

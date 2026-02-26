@@ -17,24 +17,26 @@ export default function CTASection() {
       className="flex flex-col items-center justify-center gap-10 bg-black px-4 py-36 md:px-6 lg:py-60"
       data-header-theme="dark"
     >
-      {/* Marquee container */}
-      <RevealOnScroll className="w-full overflow-hidden" dramatic>
-        <div
-          className="flex whitespace-nowrap"
-          style={{
-            animation: "marquee 24s linear infinite",
-          }}
-        >
-          {/* Render 4 copies for seamless loop */}
-          {[...Array(4)].map((_, i) => (
-            <span
-              key={i}
-              className="mx-8 text-[42px] font-medium leading-[1.15] tracking-[-0.02em] text-white md:mx-16 md:text-[82px] lg:text-[110px]"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
-              {MARQUEE_TEXT}
-            </span>
-          ))}
+      {/* Marquee with scroll reveal */}
+      <RevealOnScroll dramatic viewportAmount={0.3}>
+        <div className="w-full overflow-hidden">
+          <div
+            className="flex whitespace-nowrap"
+            style={{
+              animation: "marquee 24s linear infinite",
+            }}
+          >
+            {/* Render 4 copies for seamless loop */}
+            {[...Array(4)].map((_, i) => (
+              <span
+                key={i}
+                className="mx-8 text-[42px] font-medium leading-[1.15] tracking-[-0.02em] text-white md:mx-16 md:text-[82px] lg:text-[110px]"
+                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+              >
+                {MARQUEE_TEXT}
+              </span>
+            ))}
+          </div>
         </div>
       </RevealOnScroll>
 

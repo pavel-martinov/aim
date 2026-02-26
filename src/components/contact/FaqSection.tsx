@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import FaqItem from "./FaqItem";
+import RevealOnScroll from "@/components/ui/RevealOnScroll";
 
 /** FAQ data - questions and answers */
 const FAQ_DATA = [
@@ -37,6 +38,9 @@ const FAQ_DATA = [
   },
 ];
 
+/** Stagger delay between FAQ items */
+const STAGGER_DELAY = 0.08;
+
 /**
  * FAQ section with expandable accordion items.
  */
@@ -52,27 +56,30 @@ export default function FaqSection() {
       {/* Header aligned to the same left column rhythm as ContactHero */}
       <div className="w-full px-6 lg:px-12">
         <div className="w-full lg:w-1/2">
-          <h2
-            className="mb-12 flex flex-col text-4xl uppercase leading-none tracking-tight text-white md:text-5xl"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            <span>FREQUENTLY</span>
-            <span>ASKED</span>
-            <span>QUESTIONS</span>
-          </h2>
+          <RevealOnScroll dramatic>
+            <h2
+              className="mb-12 flex flex-col text-4xl uppercase leading-none tracking-tight text-white md:text-5xl"
+              style={{ fontFamily: "var(--font-anton), sans-serif" }}
+            >
+              <span>FREQUENTLY</span>
+              <span>ASKED</span>
+              <span>QUESTIONS</span>
+            </h2>
+          </RevealOnScroll>
         </div>
       </div>
 
-      {/* FAQ Items - full width lines */}
+      {/* FAQ Items - full width lines with staggered reveal */}
       <div className="w-full">
         {FAQ_DATA.map((item, index) => (
-          <FaqItem
-            key={index}
-            question={item.question}
-            answer={item.answer}
-            isOpen={openIndex === index}
-            onToggle={() => handleToggle(index)}
-          />
+          <RevealOnScroll key={index} delay={index * STAGGER_DELAY}>
+            <FaqItem
+              question={item.question}
+              answer={item.answer}
+              isOpen={openIndex === index}
+              onToggle={() => handleToggle(index)}
+            />
+          </RevealOnScroll>
         ))}
       </div>
     </section>

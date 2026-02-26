@@ -263,8 +263,10 @@ export default function StepsSection() {
 
       {/* Mobile: Vertically stacked cards (hidden on md+) */}
       <div className="mt-[60px] flex flex-col gap-6 px-4 pb-12 md:hidden">
-        {STEPS.map((step) => (
-          <MobileStepCard key={step.id} {...step} />
+        {STEPS.map((step, index) => (
+          <RevealOnScroll key={step.id} delay={index * 0.08}>
+            <MobileStepCard {...step} />
+          </RevealOnScroll>
         ))}
       </div>
 

@@ -118,63 +118,67 @@ export default function MissionSection() {
       </div>
 
       {/* Mobile: Touch-swipeable horizontal scroll with snap */}
-      <div
-        className="mission-carousel mt-[60px] flex gap-3 overflow-x-auto px-4 md:hidden"
-        style={{
-          scrollSnapType: "x mandatory",
-          scrollBehavior: "smooth",
-          WebkitOverflowScrolling: "touch",
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        {PRODUCTS.map((product) => (
-          <div
-            key={product.title}
-            className="flex-shrink-0"
-            style={{ scrollSnapAlign: "start" }}
-          >
-            <ProductCard
-              title={product.title}
-              description={product.description}
-              image={product.image}
-              overlayOpacity={product.overlayOpacity}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Desktop: Auto-scrolling infinite carousel */}
-      <div className="relative left-1/2 mt-[60px] hidden w-screen -translate-x-1/2 overflow-hidden md:block">
+      <RevealOnScroll delay={0.3} viewportAmount={0.1}>
         <div
-          className="flex gap-3 motion-reduce:animate-none"
+          className="mission-carousel mt-[60px] flex gap-3 overflow-x-auto px-4 md:hidden"
           style={{
-            animation: "marquee 41.67s linear infinite",
-            willChange: "transform",
+            scrollSnapType: "x mandatory",
+            scrollBehavior: "smooth",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
-          {/* First set of cards */}
           {PRODUCTS.map((product) => (
-            <ProductCard
-              key={`first-${product.title}`}
-              title={product.title}
-              description={product.description}
-              image={product.image}
-              overlayOpacity={product.overlayOpacity}
-            />
-          ))}
-          {/* Duplicate set for seamless loop */}
-          {PRODUCTS.map((product) => (
-            <ProductCard
-              key={`second-${product.title}`}
-              title={product.title}
-              description={product.description}
-              image={product.image}
-              overlayOpacity={product.overlayOpacity}
-            />
+            <div
+              key={product.title}
+              className="flex-shrink-0"
+              style={{ scrollSnapAlign: "start" }}
+            >
+              <ProductCard
+                title={product.title}
+                description={product.description}
+                image={product.image}
+                overlayOpacity={product.overlayOpacity}
+              />
+            </div>
           ))}
         </div>
-      </div>
+      </RevealOnScroll>
+
+      {/* Desktop: Auto-scrolling infinite carousel */}
+      <RevealOnScroll delay={0.3} viewportAmount={0.1}>
+        <div className="relative left-1/2 mt-[60px] hidden w-screen -translate-x-1/2 overflow-hidden md:block">
+          <div
+            className="flex gap-3 motion-reduce:animate-none"
+            style={{
+              animation: "marquee 41.67s linear infinite",
+              willChange: "transform",
+            }}
+          >
+            {/* First set of cards */}
+            {PRODUCTS.map((product) => (
+              <ProductCard
+                key={`first-${product.title}`}
+                title={product.title}
+                description={product.description}
+                image={product.image}
+                overlayOpacity={product.overlayOpacity}
+              />
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {PRODUCTS.map((product) => (
+              <ProductCard
+                key={`second-${product.title}`}
+                title={product.title}
+                description={product.description}
+                image={product.image}
+                overlayOpacity={product.overlayOpacity}
+              />
+            ))}
+          </div>
+        </div>
+      </RevealOnScroll>
     </section>
   );
 }

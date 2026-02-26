@@ -1,6 +1,8 @@
 "use client";
 
 import ContactForm from "./ContactForm";
+import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import StaggerContainer from "@/components/ui/StaggerContainer";
 
 /**
  * Contact hero section with headline on left, form on right.
@@ -13,38 +15,48 @@ export default function ContactHero() {
       <div className="flex w-full flex-col justify-center px-6 py-24 pt-32 lg:w-1/2 lg:px-12 lg:py-0">
         <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6 lg:mx-0">
           {/* Headline */}
-          <h1
-            className="flex flex-wrap text-5xl uppercase leading-[1.1] md:text-6xl lg:text-7xl"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            <span className="text-[var(--color-brand)]">REACH OUT</span>
-            <span className="text-white">&nbsp;TO US TO LEARN MORE ABOUT AIM</span>
-          </h1>
+          <RevealOnScroll dramatic>
+            <h1
+              className="flex flex-wrap text-5xl uppercase leading-[1.1] md:text-6xl lg:text-7xl"
+              style={{ fontFamily: "var(--font-anton), sans-serif" }}
+            >
+              <span className="text-[var(--color-brand)]">REACH OUT</span>
+              <span className="text-white">&nbsp;TO US TO LEARN MORE ABOUT AIM</span>
+            </h1>
+          </RevealOnScroll>
 
           {/* Decorative divider */}
-          <div className="my-2 h-px w-full bg-gradient-to-r from-[var(--color-brand)] via-white/20 to-transparent" />
+          <RevealOnScroll delay={0.3}>
+            <div className="my-2 h-px w-full bg-gradient-to-r from-[var(--color-brand)] via-white/20 to-transparent" />
+          </RevealOnScroll>
 
           {/* Contact details */}
-          <div className="flex flex-col gap-4">
-            <ContactDetail label="ADDRESS">
-              <p>101 College Street,</p>
-              <p>Dripping Springs, TX 78620</p>
-            </ContactDetail>
-            <ContactDetail label="EMAIL">
-              <a
-                href="mailto:support@aim.io"
-                className="transition-colors hover:text-[var(--color-brand)]"
-              >
-                support@aim.io
-              </a>
-            </ContactDetail>
-          </div>
+          <StaggerContainer baseDelay={0.4} staggerDelay={0.1} className="flex flex-col gap-4">
+            <RevealOnScroll>
+              <ContactDetail label="ADDRESS">
+                <p>101 College Street,</p>
+                <p>Dripping Springs, TX 78620</p>
+              </ContactDetail>
+            </RevealOnScroll>
+            <RevealOnScroll>
+              <ContactDetail label="EMAIL">
+                <a
+                  href="mailto:support@aim.io"
+                  className="transition-colors hover:text-[var(--color-brand)]"
+                >
+                  support@aim.io
+                </a>
+              </ContactDetail>
+            </RevealOnScroll>
+          </StaggerContainer>
         </div>
       </div>
 
       {/* Right side - Form */}
       <div className="flex w-full items-center justify-center bg-white/10 px-6 py-16 lg:w-1/2 lg:py-0">
-        <ContactForm />
+        <RevealOnScroll delay={0.2} direction="right">
+          <ContactForm />
+        </RevealOnScroll>
       </div>
     </section>
   );

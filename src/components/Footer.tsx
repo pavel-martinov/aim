@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import RevealOnScroll from "./ui/RevealOnScroll";
+import StaggerContainer from "./ui/StaggerContainer";
 
 /**
  * Minimalistic footer inspired by AVATR design.
@@ -17,86 +19,104 @@ export default function Footer() {
       <div className="flex w-full flex-col gap-12 px-4 py-16 md:px-6 lg:flex-row lg:items-start lg:justify-between lg:px-12 lg:py-20">
         {/* Left - Logo and download buttons */}
         <div className="flex flex-col gap-8">
-          <Link href="/" className="transition-opacity hover:opacity-80">
-            <Image
-              src="/Logotype.svg"
-              alt="AIM"
-              width={32}
-              height={36}
-              className="h-9 w-auto"
-            />
-          </Link>
+          <RevealOnScroll>
+            <Link href="/" className="transition-opacity hover:opacity-80">
+              <Image
+                src="/Logotype.svg"
+                alt="AIM"
+                width={32}
+                height={36}
+                className="h-9 w-auto"
+              />
+            </Link>
+          </RevealOnScroll>
 
           {/* Download buttons */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <DownloadButton
-              platform="ios"
-              href="https://apps.apple.com/in/app/aim-football/id6757197350"
-              label="Download for iOS"
-            />
-            <DownloadButton
-              platform="android"
-              href="https://play.google.com/store/apps/details?id=com.aimreltechnology.aim&pcampaignid=web_share"
-              label="Download for Android"
-            />
-          </div>
+          <StaggerContainer
+            baseDelay={0.1}
+            staggerDelay={0.1}
+            className="flex flex-col gap-3 sm:flex-row sm:gap-4"
+          >
+            <RevealOnScroll>
+              <DownloadButton
+                platform="ios"
+                href="https://apps.apple.com/in/app/aim-football/id6757197350"
+                label="Download for iOS"
+              />
+            </RevealOnScroll>
+            <RevealOnScroll>
+              <DownloadButton
+                platform="android"
+                href="https://play.google.com/store/apps/details?id=com.aimreltechnology.aim&pcampaignid=web_share"
+                label="Download for Android"
+              />
+            </RevealOnScroll>
+          </StaggerContainer>
         </div>
 
         {/* Right - Contact info */}
-        <div className="flex flex-col gap-2">
-          <span
-            className="mb-2 text-sm uppercase tracking-wide text-white/50"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            Contact
-          </span>
-          <a
-            href="mailto:support@aim.io"
-            className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            support@aim.io
-          </a>
-          <a
-            href="mailto:partnerships@aim.io"
-            className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            partnerships@aim.io
-          </a>
-        </div>
+        <RevealOnScroll delay={0.2}>
+          <div className="flex flex-col gap-2">
+            <span
+              className="mb-2 text-sm uppercase tracking-wide text-white/50"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              Contact
+            </span>
+            <a
+              href="mailto:support@aim.io"
+              className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              support@aim.io
+            </a>
+            <a
+              href="mailto:partnerships@aim.io"
+              className="text-sm text-white/80 transition-colors hover:text-[var(--color-brand)]"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              partnerships@aim.io
+            </a>
+          </div>
+        </RevealOnScroll>
       </div>
 
       {/* Bottom bar */}
       <div className="h-px w-full bg-white/10" />
       <div className="flex w-full flex-col items-center justify-between gap-6 px-4 py-6 md:flex-row md:px-6 lg:px-12">
         {/* Copyright */}
-        <p
-          className="text-xs text-white/40"
-          style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-        >
-          © 2025 AIM Ltd.
-        </p>
+        <RevealOnScroll>
+          <p
+            className="text-xs text-white/40"
+            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          >
+            © 2025 AIM Ltd.
+          </p>
+        </RevealOnScroll>
 
         {/* Legal links */}
-        <nav className="flex flex-wrap items-center justify-center gap-6">
-          <FooterLink href="/partnerships">Partnerships</FooterLink>
-          <FooterLink href="/terms">Legal Terms</FooterLink>
-          <FooterLink href="/privacy">Privacy Policy</FooterLink>
-        </nav>
+        <RevealOnScroll delay={0.1}>
+          <nav className="flex flex-wrap items-center justify-center gap-6">
+            <FooterLink href="/partnerships">Partnerships</FooterLink>
+            <FooterLink href="/terms">Legal Terms</FooterLink>
+            <FooterLink href="/privacy">Privacy Policy</FooterLink>
+          </nav>
+        </RevealOnScroll>
 
         {/* Social icons */}
-        <div className="flex items-center gap-4">
-          <SocialIcon href="https://instagram.com" label="Instagram">
-            <InstagramIcon />
-          </SocialIcon>
-          <SocialIcon href="https://youtube.com" label="YouTube">
-            <YouTubeIcon />
-          </SocialIcon>
-          <SocialIcon href="https://linkedin.com" label="LinkedIn">
-            <LinkedInIcon />
-          </SocialIcon>
-        </div>
+        <RevealOnScroll delay={0.2}>
+          <div className="flex items-center gap-4">
+            <SocialIcon href="https://instagram.com" label="Instagram">
+              <InstagramIcon />
+            </SocialIcon>
+            <SocialIcon href="https://youtube.com" label="YouTube">
+              <YouTubeIcon />
+            </SocialIcon>
+            <SocialIcon href="https://linkedin.com" label="LinkedIn">
+              <LinkedInIcon />
+            </SocialIcon>
+          </div>
+        </RevealOnScroll>
       </div>
     </footer>
   );
