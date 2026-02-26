@@ -77,7 +77,7 @@ export default function GoalSection() {
               className="text-lg leading-relaxed text-black/70"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
-              Our mission is simple: democratize athletic training through
+              Our mission is simple: democratise athletic training through
               intelligent technology that adapts to you, learns from your
               performance, and helps you achieve your full potential.
             </p>
@@ -96,9 +96,9 @@ export default function GoalSection() {
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
               From professional athletes refining their craft to beginners
-              taking their first steps, AIM provides personalized,
+              taking their first steps, AIM provides personalised,
               data-driven insights that were once only available to elite
-              training centers.
+              training centres.
             </p>
             <p
               className="text-lg leading-relaxed text-black/70"

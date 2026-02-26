@@ -3,7 +3,7 @@
 import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import CtaButton from "@/components/CtaButton";
+import OpaqueButton from "@/components/ui/OpaqueButton";
 import { DRAMATIC_EASE, EXIT_EASE } from "@/lib/animations";
 
 // Timing constants for animation sequence
@@ -166,7 +166,9 @@ export default function Preloader({ onComplete }: PreloaderProps) {
                 exit={{ opacity: 0 }}
                 transition={{ layout: layoutTransition, ...pushTransition }}
               >
-                <CtaButton onClick={handleEnter}>Enter the Experience</CtaButton>
+                <OpaqueButton variant="inline" onClick={handleEnter}>
+                  Enter the Experience
+                </OpaqueButton>
               </motion.div>
             )}
           </AnimatePresence>

@@ -35,11 +35,11 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/[0.52]" aria-hidden />
 
       {/* Content Container */}
-      <div className="relative flex h-full flex-col justify-end gap-10 px-4 pb-6 pt-[100px] md:px-6 lg:px-6 lg:pb-[42px] lg:pt-[124px]">
-        {/* Stats - Absolutely positioned at top right on tablet+ */}
+      <div className="relative flex h-full flex-col justify-between px-4 pb-6 pt-[84px] md:justify-end md:gap-10 md:px-6 md:pt-[100px] lg:px-6 lg:pb-[42px] lg:pt-[124px]">
+        {/* Stats - Top on mobile (below header), top-right on tablet+ */}
         <HeroStats className="md:absolute md:right-6 md:top-[100px] lg:right-6 lg:top-[124px]" />
 
-        {/* Bottom Content - Headline left, CTA right */}
+        {/* Bottom Content - Headline + CTA */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           {/* Headline + Subtext */}
           <div className="flex max-w-[696px] flex-col gap-6 uppercase">
@@ -53,7 +53,7 @@ export default function Hero() {
               </h1>
             </RevealOnScroll>
             <RevealOnScroll delay={0.1}>
-              <p className="max-w-[400px] text-base normal-case leading-[1.5] text-white">
+              <p className="text-base font-medium uppercase leading-[1.5] text-white md:normal-case">
                 Where talent meets opportunity.
                 <br />
                 Train smarter, perform better, and rise to the next level.
@@ -62,12 +62,8 @@ export default function Hero() {
           </div>
 
           {/* CTA Button - Full width on mobile, fixed 240px on tablet+ */}
-          <RevealOnScroll delay={0.2}>
-            <OpaqueButton
-              variant="card"
-              onClick={openDownloadStore}
-              className="w-full shrink-0 md:w-[240px]"
-            >
+          <RevealOnScroll delay={0.2} className="w-full md:w-auto">
+            <OpaqueButton onClick={openDownloadStore} className="shrink-0">
               DOWNLOAD NOW
             </OpaqueButton>
           </RevealOnScroll>

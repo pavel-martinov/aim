@@ -16,9 +16,23 @@ const ENTRANCE_DURATION = 1.0;
 const STAGGER_DELAY = 0.35;
 const DOT_CYCLE_INTERVAL = 1000;
 const MOBILE_STAT_CYCLE_INTERVAL = 5000;
+const RANDOM_CYCLE_INTERVAL = 5000;
+const RANDOM_VALUE_MIN = 60;
+const RANDOM_VALUE_MAX = 99;
 
 /** Easing function: easeOutCubic for smooth deceleration */
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+/** Generates a random value different from current */
+const generateRandomValue = (current: number) => {
+  let newValue;
+  do {
+    newValue =
+      Math.floor(Math.random() * (RANDOM_VALUE_MAX - RANDOM_VALUE_MIN + 1)) +
+      RANDOM_VALUE_MIN;
+  } while (newValue === current);
+  return newValue;
+};
 
 /** Cycling dots indicator that auto-switches active state */
 function AnimatedDots() {
@@ -47,7 +61,7 @@ function AnimatedDots() {
   );
 }
 
-/** Single stat item with animated entrance and number counting */
+/** Single stat item with animated entrance, number counting, and auto-cycling */
 function StatItem({
   label,
   value,
@@ -63,6 +77,9 @@ function StatItem({
 }) {
   const [displayValue, setDisplayValue] = useState(0);
   const [startCount, setStartCount] = useState(false);
+  const [targetValue, setTargetValue] = useState(value);
+  const [startValue, setStartValue] = useState(0);
+  const [isCycling, setIsCycling] = useState(false);
   const animationRef = useRef<number | null>(null);
 
   const entranceDelay = index * STAGGER_DELAY;
@@ -78,10 +95,15 @@ function StatItem({
       const progress = Math.min(elapsed / COUNT_DURATION, 1);
       const easedProgress = easeOutCubic(progress);
 
-      setDisplayValue(Math.round(value * easedProgress));
+      const newValue = Math.round(
+        startValue + (targetValue - startValue) * easedProgress
+      );
+      setDisplayValue(newValue);
 
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
+      } else if (!isCycling) {
+        setIsCycling(true);
       }
     };
 
@@ -92,7 +114,18 @@ function StatItem({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [startCount, value]);
+  }, [startCount, targetValue, startValue, isCycling]);
+
+  useEffect(() => {
+    if (!isCycling) return;
+
+    const interval = setInterval(() => {
+      setStartValue(displayValue);
+      setTargetValue(generateRandomValue(displayValue));
+    }, RANDOM_CYCLE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [isCycling, displayValue]);
 
   return (
     <motion.div
@@ -130,7 +163,7 @@ function StatItem({
   );
 }
 
-/** Mobile stat item with count-up animation */
+/** Mobile stat item with count-up animation triggered when becoming active */
 function MobileStatItem({
   label,
   value,
@@ -144,28 +177,31 @@ function MobileStatItem({
 }) {
   const [displayValue, setDisplayValue] = useState(0);
   const animationRef = useRef<number | null>(null);
-  const hasAnimatedRef = useRef(false);
+  const prevActiveRef = useRef(false);
 
   useEffect(() => {
-    if (!isActive || hasAnimatedRef.current) return;
+    // Reset and start animation when becoming active
+    if (isActive && !prevActiveRef.current) {
+      setDisplayValue(0);
+      let startTime: number | null = null;
 
-    hasAnimatedRef.current = true;
-    let startTime: number | null = null;
+      const animate = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = Math.min(elapsed / COUNT_DURATION, 1);
+        const easedProgress = easeOutCubic(progress);
+        const newValue = Math.round(value * easedProgress);
+        setDisplayValue(newValue);
 
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / COUNT_DURATION, 1);
-      const easedProgress = easeOutCubic(progress);
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+      };
 
-      setDisplayValue(Math.round(value * easedProgress));
+      animationRef.current = requestAnimationFrame(animate);
+    }
 
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
+    prevActiveRef.current = isActive;
 
     return () => {
       if (animationRef.current) {
@@ -180,10 +216,13 @@ function MobileStatItem({
         className="h-px w-full"
         style={{ background: "linear-gradient(to right, transparent, white)" }}
       />
-      <div className="flex items-center justify-between pt-6">
+      <div className="flex items-center justify-between pt-3">
         <div className="flex flex-col">
           <span className="text-sm uppercase text-white/60">{label}</span>
-          <span className="text-4xl font-medium text-white">{displayValue}{suffix}</span>
+          <span className="text-4xl font-medium text-white">
+            {displayValue}
+            {suffix}
+          </span>
         </div>
         <AnimatedDots />
       </div>
@@ -194,22 +233,31 @@ function MobileStatItem({
 /**
  * Hero stats component with epic dramatic animations.
  * Desktop/Tablet: Staggered entrance with count-up after each appears.
- * Mobile: Cycles through stats one at a time with fade transition.
+ * Mobile: Cycles through stats one at a time (5s each) with smooth fade transition.
  */
 export default function HeroStats({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
 
+  // Start cycling when component comes into view
   useEffect(() => {
-    if (!isInView) return;
+    if (isInView && !hasStarted) {
+      setHasStarted(true);
+    }
+  }, [isInView, hasStarted]);
+
+  // Cycle through stats every 5 seconds
+  useEffect(() => {
+    if (!hasStarted) return;
 
     const interval = setInterval(() => {
       setMobileActiveIndex((prev) => (prev + 1) % STATS_DATA.length);
     }, MOBILE_STAT_CYCLE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [isInView]);
+  }, [hasStarted]);
 
   return (
     <div ref={containerRef} className={cn("flex flex-col gap-2.5", className)}>
@@ -227,21 +275,24 @@ export default function HeroStats({ className }: { className?: string }) {
         ))}
       </div>
 
-      {/* Mobile: Cycling stats with fade transition */}
-      <div className="relative h-[80px] w-full max-w-[336px] md:hidden">
+      {/* Mobile: Cycling stats with dramatic fade transition */}
+      <div className="relative h-[72px] w-full md:hidden">
         {STATS_DATA.map((stat, index) => (
           <motion.div
             key={stat.label}
             className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: mobileActiveIndex === index ? 1 : 0 }}
-            transition={{ duration: 0.5, ease: DRAMATIC_EASE }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{
+              opacity: mobileActiveIndex === index ? 1 : 0,
+              y: mobileActiveIndex === index ? 0 : 10,
+            }}
+            transition={{ duration: 0.65, ease: DRAMATIC_EASE }}
           >
             <MobileStatItem
               label={stat.label}
               value={stat.value}
               suffix={stat.suffix}
-              isActive={isInView && mobileActiveIndex === index}
+              isActive={hasStarted && mobileActiveIndex === index}
             />
           </motion.div>
         ))}

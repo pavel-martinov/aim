@@ -25,7 +25,7 @@ const anton = Anton({
 export const metadata: Metadata = {
   title: "AIM — Sports Training App",
   description:
-    "Track your progress, analyze performance, and achieve your athletic goals.",
+    "Track your progress, analyse performance, and achieve your athletic goals.",
 };
 
 // Root layout shell for global styles and motion wrappers.

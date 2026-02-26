@@ -328,7 +328,7 @@ function FormInput({
 }
 
 /**
- * Submit button with disabled, loading, success, and error states.
+ * Submit button with disabled, loading, success, and error states - green main CTA style.
  */
 function SubmitButton({
   isValid,
@@ -342,10 +342,12 @@ function SubmitButton({
   const isDisabled = !isValid || formState === "submitting" || isInCooldown;
 
   const buttonClasses = cn(
-    "relative w-full border py-4 text-sm uppercase tracking-widest transition-all duration-500",
+    "relative w-full rounded-xl py-4 text-sm uppercase tracking-widest",
+    "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     isDisabled
-      ? "cursor-not-allowed border-[#0a5200] text-white/50"
-      : "btn-fill-hover border-[var(--color-brand)] text-white"
+      ? "cursor-not-allowed bg-[#0a5200] text-white/50"
+      : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98] active:brightness-95 active:duration-100 focus-visible:ring-[var(--color-brand)]"
   );
 
   return (
@@ -373,7 +375,6 @@ function SubmitButton({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="text-[var(--color-brand)]"
           >
             Message Sent!
           </motion.span>

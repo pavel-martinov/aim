@@ -10,25 +10,17 @@ import { openDownloadStore } from "@/lib/download";
 
 /** Breakpoint card widths matching Tailwind classes */
 const CARD_WIDTHS = {
-  mobile: 314,
   tablet: 762,
   desktop: 1160,
 };
 
 const GAP = 24;
-const PADDING = 16; // px-4 on mobile
-const PADDING_LG = 24; // px-6 on lg
+const PADDING_LG = 24;
 
-/** Returns card width based on viewport width */
+/** Returns card width based on viewport width (tablet/desktop only) */
 function getCardWidth(viewportWidth: number): number {
   if (viewportWidth >= 1024) return CARD_WIDTHS.desktop;
-  if (viewportWidth >= 768) return CARD_WIDTHS.tablet;
-  return CARD_WIDTHS.mobile;
-}
-
-/** Returns padding based on viewport width */
-function getPadding(viewportWidth: number): number {
-  return viewportWidth >= 1024 ? PADDING_LG : PADDING;
+  return CARD_WIDTHS.tablet;
 }
 
 /** Step card data for the horizontal carousel */
@@ -38,7 +30,7 @@ const STEPS = [
     badge: "BEGIN",
     title: "Begin",
     description:
-      "Begin Your Training Journey, Master Skills That Change Your Game. Every stat tells a story, and our AI analyzes your moves, offering the data needed for real progress. This is more than tracking performance; it's about personal growth, driven by valuable feedback.",
+      "Begin Your Training Journey, Master Skills That Change Your Game. Every stat tells a story, and our AI analyses your moves, offering the data needed for real progress. This is more than tracking performance; it's about personal growth, driven by valuable feedback.",
     image: "/images/steps/begin.jpg",
     hasOverlay: false,
   },
@@ -71,8 +63,8 @@ const STEPS = [
   },
 ];
 
-/** Reusable step card component with image, badge, title, and description */
-function StepCard({
+/** Mobile step card - full-width vertical layout per Figma */
+function MobileStepCard({
   badge,
   title,
   description,
@@ -86,17 +78,76 @@ function StepCard({
   hasOverlay: boolean;
 }) {
   return (
-    <div className="flex w-[314px] flex-shrink-0 flex-col gap-[18px] md:w-[762px] lg:w-[1160px]">
-      {/* Image container with centered badge */}
-      <div className="relative h-[422px] w-full overflow-hidden rounded-xl lg:h-[646px]">
+    <div className="flex w-full flex-col gap-[18px]">
+      {/* Image container with centered badge - square aspect ratio */}
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl">
         <Image
           src={image}
           alt={title}
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 314px, (max-width: 1024px) 762px, 1160px"
+          sizes="(max-width: 768px) 100vw, 343px"
+          draggable={false}
         />
-        {hasOverlay && <div className="absolute inset-0 bg-black/25 rounded-xl" />}
+        {hasOverlay && <div className="absolute inset-0 rounded-xl bg-black/25" />}
+        {/* Centered badge */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="rounded-xl bg-white/[0.12] px-6 py-3 backdrop-blur-sm">
+            <span
+              className="text-base uppercase leading-[1.25] tracking-[0.02em] text-white"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              {badge}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Title + description below image */}
+      <div className="flex flex-col gap-4">
+        <h3
+          className="text-[22px] font-semibold leading-[1.5] text-white"
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+        >
+          {title}
+        </h3>
+        <p
+          className="text-sm uppercase leading-[1.5] text-[#d9d9d9]"
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+        >
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Desktop step card - larger version for scroll-lock animation */
+function DesktopStepCard({
+  badge,
+  title,
+  description,
+  image,
+  hasOverlay,
+}: {
+  badge: string;
+  title: string;
+  description: string;
+  image: string;
+  hasOverlay: boolean;
+}) {
+  return (
+    <div className="flex w-[762px] flex-shrink-0 flex-col gap-[18px] lg:w-[1160px]">
+      {/* Image container with centered badge */}
+      <div className="relative h-[500px] w-full overflow-hidden rounded-xl lg:h-[646px]">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 762px, 1160px"
+        />
+        {hasOverlay && <div className="absolute inset-0 rounded-xl bg-black/25" />}
         {/* Centered badge */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="rounded-xl bg-white/[0.12] px-6 py-3 backdrop-blur-sm">
@@ -130,32 +181,30 @@ function StepCard({
 }
 
 /**
- * Steps section with horizontal scroll-lock animation.
- * Cards pin when visible and scroll horizontally as user scrolls vertically.
+ * Steps section with different scroll behaviors for mobile and desktop.
+ * Mobile: Vertically stacked cards (CSS hidden on md+).
+ * Desktop/Tablet: Scroll-lock animation with horizontal scroll on vertical scroll.
  */
 export default function StepsSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollDistance, setScrollDistance] = useState(0);
 
-  // Calculate scroll distance on mount and resize
+  // Calculate scroll distance for desktop horizontal animation
   useEffect(() => {
-    function calculateScrollDistance() {
+    function handleResize() {
       const viewportWidth = window.innerWidth;
-      const cardWidth = getCardWidth(viewportWidth);
-      const padding = getPadding(viewportWidth);
-      
-      // Total width: all cards + gaps between them + left padding
-      const totalCardsWidth =
-        STEPS.length * cardWidth + (STEPS.length - 1) * GAP + padding;
-      
-      // Distance to scroll so last card is right-aligned with padding
-      const distance = totalCardsWidth - viewportWidth + padding;
-      setScrollDistance(Math.max(0, distance));
+      if (viewportWidth >= 768) {
+        const cardWidth = getCardWidth(viewportWidth);
+        const totalCardsWidth =
+          STEPS.length * cardWidth + (STEPS.length - 1) * GAP + PADDING_LG;
+        const distance = totalCardsWidth - viewportWidth + PADDING_LG;
+        setScrollDistance(Math.max(0, distance));
+      }
     }
 
-    calculateScrollDistance();
-    window.addEventListener("resize", calculateScrollDistance);
-    return () => window.removeEventListener("resize", calculateScrollDistance);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -177,11 +226,11 @@ export default function StepsSection() {
       data-header-theme="dark"
     >
       {/* Header content */}
-      <div className="px-4 pb-0 pt-12 lg:px-6 lg:pt-[60px]">
+      <div className="px-4 pb-0 pt-12 md:px-6 lg:pt-[60px]">
         <div className="flex flex-col gap-6 lg:gap-10">
           {/* Title + Description row */}
-          <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-end">
-            <RevealOnScroll className="flex-1 pr-0 lg:pr-6">
+          <div className="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:items-start lg:text-left">
+            <RevealOnScroll className="flex-1 pr-0 lg:pr-6" dramatic>
               <h2
                 className="text-4xl font-medium leading-[1.25] text-white lg:text-[52px]"
                 style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
@@ -204,30 +253,37 @@ export default function StepsSection() {
           </div>
 
           {/* Download button */}
-          <RevealOnScroll delay={0.2}>
-            <OpaqueButton variant="card" onClick={openDownloadStore} className="w-full md:w-[240px]">
+          <RevealOnScroll delay={0.2} className="w-full md:w-auto">
+            <OpaqueButton onClick={openDownloadStore}>
               DOWNLOAD NOW
             </OpaqueButton>
           </RevealOnScroll>
         </div>
       </div>
 
-      {/* Spacer between header and cards */}
-      <div className="h-[120px] lg:h-[240px]" />
+      {/* Mobile: Vertically stacked cards (hidden on md+) */}
+      <div className="mt-[60px] flex flex-col gap-6 px-4 pb-12 md:hidden">
+        {STEPS.map((step) => (
+          <MobileStepCard key={step.id} {...step} />
+        ))}
+      </div>
 
-      {/* Scroll-pinned cards section */}
-      <div ref={scrollContainerRef} className="relative">
+      {/* Spacer between header and cards - desktop only */}
+      <div className="hidden h-[120px] md:block lg:h-[240px]" />
+
+      {/* Desktop/Tablet: Scroll-pinned cards section */}
+      <div ref={scrollContainerRef} className="relative hidden md:block">
         {/* Scroll height container - 280vh for slower, more dramatic horizontal scroll */}
         <div className="h-[280vh]">
           {/* Sticky container pins cards while scrolling */}
           <div className="sticky top-0 flex h-screen w-full items-center overflow-hidden">
             <motion.div
-              className="flex gap-6 px-4 lg:px-6"
+              className="flex gap-6 px-6"
               style={{ x: cardsX }}
               transition={{ ease: DRAMATIC_EASE, duration: 0.8 }}
             >
               {STEPS.map((step) => (
-                <StepCard key={step.id} {...step} />
+                <DesktopStepCard key={step.id} {...step} />
               ))}
             </motion.div>
           </div>

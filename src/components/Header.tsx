@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { useHeaderTheme } from "@/contexts/HeaderThemeContext";
 import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import MusicToggle from "@/components/ui/MusicToggle";
-import { EnterIcon } from "@/components/ui/icons/EnterIcon";
+import OpaqueButton from "@/components/ui/OpaqueButton";
 import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
 import { openDownloadStore } from "@/lib/download";
 
@@ -200,9 +200,9 @@ function HeaderContent({
   const isLightText = isDark || showBackground;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[99999]">
+    <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden">
       <motion.header
-        className="pointer-events-auto fixed left-0 right-0 top-0 flex flex-col"
+        className="pointer-events-auto fixed left-0 right-0 top-0 flex max-w-full flex-col overflow-hidden"
         initial={false}
         animate={{
           opacity: headerVisible ? 1 : 0,
@@ -254,15 +254,14 @@ function HeaderContent({
 
           {/* Right side controls - responsive layout */}
           <div className="flex items-center gap-3">
-            {/* Desktop/Tablet: MENU text button */}
-            <button
-              onClick={() => setIsMenuOpen(true)}
+            {/* Desktop/Tablet: About link */}
+            <Link
+              href="/about"
               className={`hidden text-sm uppercase tracking-wider transition-colors duration-500 hover:text-[var(--color-brand)] md:block ${isLightText ? "text-white/90" : "text-zinc-900"}`}
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-              aria-label="Open menu"
             >
-              Menu
-            </button>
+              About
+            </Link>
 
             {/* Divider - Desktop/Tablet only */}
             <span
@@ -280,23 +279,21 @@ function HeaderContent({
             />
 
             {/* Download button - Desktop/Tablet only */}
-            <button
+            <OpaqueButton
+              variant="inline"
               onClick={openDownloadStore}
-              className={`hidden items-center gap-3 rounded-xl px-3 py-2 text-base uppercase tracking-wider transition-all duration-300 md:flex ${isLightText ? "bg-white/10 text-white hover:bg-white hover:text-black" : "bg-zinc-900/10 text-zinc-900 hover:bg-zinc-900 hover:text-white"}`}
-              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+              className="hidden md:flex"
             >
               Download
-              <EnterIcon className="size-6" />
-            </button>
+            </OpaqueButton>
 
-            {/* Mobile: MENU pill button */}
+            {/* Mobile: MENU button */}
             <button
               onClick={() => setIsMenuOpen(true)}
-              className={`flex items-center rounded-xl px-3 py-2 text-base uppercase tracking-wider transition-colors duration-500 md:hidden ${isLightText ? "bg-white/10 text-white hover:bg-white/20" : "bg-zinc-900/10 text-zinc-900 hover:bg-zinc-900/20"}`}
+              className={`flex items-center rounded-xl px-3 py-2 text-base uppercase tracking-wider transition-colors duration-500 md:hidden ${isLightText ? "bg-white/[0.12] text-white hover:bg-white/20" : "bg-zinc-900/10 text-zinc-900 hover:bg-zinc-900/20"}`}
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-              aria-label="Open menu"
             >
-              Menu
+              MENU
             </button>
           </div>
         </div>

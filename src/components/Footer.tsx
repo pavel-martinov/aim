@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="h-px w-full bg-white/10" />
 
       {/* Main content */}
-      <div className="flex w-full flex-col gap-12 px-6 py-16 lg:flex-row lg:items-start lg:justify-between lg:px-12 lg:py-20">
+      <div className="flex w-full flex-col gap-12 px-4 py-16 md:px-6 lg:flex-row lg:items-start lg:justify-between lg:px-12 lg:py-20">
         {/* Left - Logo and download buttons */}
         <div className="flex flex-col gap-8">
           <Link href="/" className="transition-opacity hover:opacity-80">
@@ -69,13 +69,13 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="h-px w-full bg-white/10" />
-      <div className="flex w-full flex-col items-center justify-between gap-6 px-6 py-6 lg:px-12 md:flex-row">
+      <div className="flex w-full flex-col items-center justify-between gap-6 px-4 py-6 md:flex-row md:px-6 lg:px-12">
         {/* Copyright */}
         <p
           className="text-xs text-white/40"
           style={{ fontFamily: "var(--font-geist-mono), monospace" }}
         >
-          © 2025 AIM, Inc.
+          © 2025 AIM Ltd.
         </p>
 
         {/* Legal links */}
@@ -102,7 +102,7 @@ export default function Footer() {
   );
 }
 
-/** Download button with platform icon */
+/** Download button with outline style and invert-on-hover effect */
 function DownloadButton({
   platform,
   href,
@@ -117,7 +117,7 @@ function DownloadButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn-fill-hover flex items-center gap-3 border border-white/30 bg-transparent px-5 py-3 text-xs uppercase tracking-wider text-white transition-all hover:border-[var(--color-brand)]"
+      className="flex items-center gap-3 rounded-xl border border-white bg-transparent px-5 py-3 text-xs uppercase tracking-wider text-white transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none hover:bg-white hover:text-black active:scale-[0.98] active:duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       style={{ fontFamily: "var(--font-geist-mono), monospace" }}
     >
       {platform === "ios" ? <AppleIcon /> : <AndroidIcon />}

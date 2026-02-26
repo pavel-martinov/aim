@@ -12,17 +12,17 @@ const SLIDES = [
   {
     id: 1,
     text: "Is to solve the worldwide issue of limited access to elite football coaching and propel the development of grassroots football.",
-    image: "/images/vision/slide-1.jpg",
+    image: "/images/steps/begin.jpg",
   },
   {
     id: 2,
-    text: "To democratize elite coaching through AI, making professional-level guidance accessible to every aspiring footballer.",
-    image: "/images/vision/slide-2.jpg",
+    text: "To democratise elite coaching through AI, making professional-level guidance accessible to every aspiring footballer.",
+    image: "/images/steps/record.jpg",
   },
   {
     id: 3,
-    text: "To transform raw talent into refined skill, one personalized insight at a time.",
-    image: "/images/vision/slide-3.jpg",
+    text: "To transform raw talent into refined skill, one personalised insight at a time.",
+    image: "/images/steps/analyse.jpg",
   },
 ];
 
@@ -49,15 +49,15 @@ export default function VisionSection() {
       const blurIn = "blur(18px)";
       const blurOut = "blur(14px)";
 
-      /** Animate text lines with 3D perspective effect */
+      /** Animate text with 3D perspective effect */
       function animateTextIn(selector: string) {
         master.fromTo(
           `${selector} .vision-line`,
           {
             opacity: 0,
-            yPercent: 50,
-            z: -200,
-            rotateX: 10,
+            yPercent: 30,
+            z: -150,
+            rotateX: 8,
             filter: blurIn,
           },
           {
@@ -67,7 +67,6 @@ export default function VisionSection() {
             rotateX: 0,
             filter: "blur(0px)",
             duration: 4,
-            stagger: 0.2,
             ease: "power3.out",
           },
           "<"
@@ -79,12 +78,11 @@ export default function VisionSection() {
           `${selector} .vision-line`,
           {
             opacity: 0,
-            yPercent: -50,
-            z: -300,
-            rotateX: -12,
+            yPercent: -30,
+            z: -200,
+            rotateX: -8,
             filter: blurOut,
             duration: 3,
-            stagger: 0.15,
             ease: "power3.in",
           },
           ">1.5"
@@ -161,37 +159,22 @@ export default function VisionSection() {
               style={{ opacity: index === 0 ? 1 : 0 }}
             >
               <p
-                className="text-center text-[36px] font-medium leading-[1.25] text-white lg:text-[52px]"
+                className="vision-line text-center text-[36px] font-medium capitalize leading-[1.25] text-white lg:text-[52px]"
                 style={{
                   fontFamily: "var(--font-geist-sans), sans-serif",
                   transformStyle: "preserve-3d",
+                  backfaceVisibility: "hidden",
+                  willChange: "transform, opacity, filter",
                 }}
               >
-                {slide.text.split(" ").reduce((acc: string[][], word, i) => {
-                  const lineIndex = Math.floor(i / 6);
-                  if (!acc[lineIndex]) acc[lineIndex] = [];
-                  acc[lineIndex].push(word);
-                  return acc;
-                }, []).map((lineWords, lineIndex) => (
-                  <span
-                    key={lineIndex}
-                    className="vision-line block"
-                    style={{
-                      transformStyle: "preserve-3d",
-                      backfaceVisibility: "hidden",
-                      willChange: "transform, opacity, filter",
-                    }}
-                  >
-                    {lineWords.join(" ")}
-                  </span>
-                ))}
+                {slide.text}
               </p>
             </div>
           ))}
         </div>
 
         {/* Progress stepper */}
-        <div className="absolute bottom-[60px] left-1/2 z-10 flex h-px w-full max-w-[720px] -translate-x-1/2 gap-[6px] px-4 lg:px-6">
+        <div className="absolute bottom-[60px] left-4 right-4 z-10 flex h-px gap-[6px] md:left-1/2 md:right-auto md:w-full md:max-w-[720px] md:-translate-x-1/2 lg:left-6 lg:right-6">
           {SLIDES.map((slide, index) => (
             <div key={slide.id} className="relative h-full flex-1">
               <div className="absolute inset-0 bg-white/50" />

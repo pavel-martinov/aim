@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
           <strong>To keep it for no longer than we need it.</strong> The retention period for your information depends on its purpose. Details are provided in the relevant sections below.
         </li>
         <li>
-          <strong>To protect your information.</strong> Security is a top priority. We have technical and organizational measures in place and continuously monitor our systems to safeguard your information.
+          <strong>To protect your information.</strong> Security is a top priority. We have technical and organisational measures in place and continuously monitor our systems to safeguard your information.
         </li>
         <li>
           <strong>To uphold your privacy rights and make it easy for you to exercise them.</strong> See the section on &apos;Your Privacy Rights and How to Exercise Them&apos; below.
@@ -55,7 +55,7 @@ export default function PrivacyPolicyPage() {
 
       <h3>Cookies</h3>
       <p>
-        Our website uses cookies to manage your preferences, ensure the website functions smoothly, and analyze usage. See our Cookie Notice for details.
+        Our website uses cookies to manage your preferences, ensure the website functions smoothly, and analyse usage. See our Cookie Notice for details.
       </p>
 
       <h3>Marketing</h3>
@@ -117,7 +117,7 @@ export default function PrivacyPolicyPage() {
 
       <h3>Mergers or Acquisitions</h3>
       <p>
-        If AIM Company is merged with or acquired by another organization, we will share your information as described in this notice.
+        If AIM Company is merged with or acquired by another organisation, we will share your information as described in this notice.
       </p>
 
       <h3>Legal Obligations</h3>

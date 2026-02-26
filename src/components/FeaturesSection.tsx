@@ -152,7 +152,7 @@ export default function FeaturesSection() {
       <div className="px-4 py-12 lg:px-6 lg:py-[60px]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-0">
           {/* Headline */}
-          <RevealOnScroll className="lg:flex-1 lg:pr-6">
+          <RevealOnScroll className="lg:flex-1 lg:pr-6" dramatic>
             <h2
               className="text-4xl font-medium leading-[1.25] text-black lg:text-[52px]"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
@@ -175,8 +175,8 @@ export default function FeaturesSection() {
         </div>
 
         {/* CTA Button */}
-        <RevealOnScroll className="mt-6 lg:mt-10" delay={0.2}>
-          <OpaqueButton variant="solid" onClick={openDownloadStore}>
+        <RevealOnScroll className="mt-6 w-full md:w-auto lg:mt-10" delay={0.2}>
+          <OpaqueButton onClick={openDownloadStore}>
             DOWNLOAD NOW
           </OpaqueButton>
         </RevealOnScroll>

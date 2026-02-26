@@ -11,31 +11,42 @@ type RevealOnScrollProps = {
   delay?: number;
   direction?: Direction;
   as?: keyof typeof motion;
+  dramatic?: boolean;
 };
 
-/** Returns initial transform values based on reveal direction */
-function getInitialTransform(direction: Direction) {
-  const offset = 24;
+/** Returns initial 3D transform values with blur, depth, and rotation */
+function getInitialTransform(direction: Direction, dramatic: boolean) {
+  const offset = dramatic ? 60 : 30;
+  const blur = dramatic ? 12 : 8;
+  const z = dramatic ? -100 : -50;
+  const rotateX = dramatic ? 8 : 4;
+
+  const base = { filter: `blur(${blur}px)`, z, rotateX };
+
   switch (direction) {
     case "up":
-      return { y: offset };
+      return { ...base, y: offset };
     case "down":
-      return { y: -offset };
+      return { ...base, y: -offset };
     case "left":
-      return { x: offset };
+      return { ...base, x: offset };
     case "right":
-      return { x: -offset };
+      return { ...base, x: -offset };
   }
 }
 
-/** Returns animate transform values (always return to origin) */
+/** Returns final transform values (origin position, no blur/rotation) */
 function getAnimateTransform(direction: Direction) {
-  return direction === "left" || direction === "right" ? { x: 0 } : { y: 0 };
+  const base = { filter: "blur(0px)", z: 0, rotateX: 0 };
+  return direction === "left" || direction === "right"
+    ? { ...base, x: 0 }
+    : { ...base, y: 0 };
 }
 
 /**
- * Wraps content with scroll-triggered reveal animation.
- * Uses GPU-accelerated transform + opacity for optimal performance.
+ * Premium 3D blur reveal animation on scroll.
+ * Text emerges from depth with blur clearing for cinematic effect.
+ * Set dramatic=true for hero elements (1.2s duration, larger effects).
  */
 export default function RevealOnScroll({
   children,
@@ -43,18 +54,23 @@ export default function RevealOnScroll({
   delay = 0,
   direction = "up",
   as = "div",
+  dramatic = false,
 }: RevealOnScrollProps) {
   const MotionComponent = motion[as] as typeof motion.div;
+  const duration = dramatic ? DURATION.hero : DURATION.standard;
 
   return (
-    <MotionComponent
-      className={className}
-      initial={{ opacity: 0, ...getInitialTransform(direction) }}
-      whileInView={{ opacity: 1, ...getAnimateTransform(direction) }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE, delay }}
-    >
-      {children}
-    </MotionComponent>
+    <div style={{ perspective: "1000px" }}>
+      <MotionComponent
+        className={className}
+        style={{ transformStyle: "preserve-3d", willChange: "transform, opacity, filter" }}
+        initial={{ opacity: 0, ...getInitialTransform(direction, dramatic) }}
+        whileInView={{ opacity: 1, ...getAnimateTransform(direction) }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration, ease: DRAMATIC_EASE, delay }}
+      >
+        {children}
+      </MotionComponent>
+    </div>
   );
 }

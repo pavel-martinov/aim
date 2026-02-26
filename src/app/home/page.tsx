@@ -31,9 +31,9 @@ export default function HomePage() {
         <div className="relative z-10">
           <MissionSection />
           <UnlockYourPotential />
-          <StepsSection />
           <VisionSection />
-          <FeaturesSection />
+          <StepsSection />
+          {/* <FeaturesSection /> */}
           <CTASection />
           <Footer />
         </div>
