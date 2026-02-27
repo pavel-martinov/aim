@@ -67,7 +67,7 @@ export default function UnlockYourPotential() {
 
         {/* Bottom content: Description + Button (z-30) */}
         <motion.div
-          className="absolute bottom-12 left-1/2 z-30 flex w-full -translate-x-1/2 flex-col items-center gap-6 px-0 md:bottom-0 md:px-0"
+          className="absolute bottom-12 left-1/2 z-30 flex w-full -translate-x-1/2 flex-col items-center gap-6 px-4 md:bottom-0 md:px-0"
           style={{ opacity: contentOpacity }}
         >
           <p

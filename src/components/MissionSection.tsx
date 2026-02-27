@@ -120,10 +120,11 @@ export default function MissionSection() {
       {/* Mobile: Touch-swipeable horizontal scroll with snap */}
       <RevealOnScroll delay={0.3} viewportAmount={0.1}>
         <div
-          className="mission-carousel mt-[60px] flex gap-3 overflow-x-auto px-4 md:hidden"
+          className="mission-carousel mt-[60px] flex gap-3 overflow-x-auto px-4 lg:hidden"
           style={{
             scrollSnapType: "x mandatory",
             scrollBehavior: "smooth",
+            scrollPaddingLeft: "16px",
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -148,7 +149,7 @@ export default function MissionSection() {
 
       {/* Desktop: Auto-scrolling infinite carousel */}
       <RevealOnScroll delay={0.3} viewportAmount={0.1}>
-        <div className="relative left-1/2 mt-[60px] hidden w-screen -translate-x-1/2 overflow-hidden md:block">
+        <div className="relative left-1/2 mt-[60px] hidden w-screen -translate-x-1/2 overflow-hidden lg:block">
           <div
             className="flex gap-3 motion-reduce:animate-none"
             style={{

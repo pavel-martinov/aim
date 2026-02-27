@@ -3,7 +3,6 @@ import { Anton, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { HeaderThemeProvider } from "@/contexts/HeaderThemeContext";
 import { AudioProvider } from "@/contexts/AudioContext";
-import PageTransition from "@/components/PageTransition";
 import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
@@ -41,9 +40,7 @@ export default function RootLayout({
       >
         <AudioProvider>
           <SmoothScroll>
-            <PageTransition>
-              <HeaderThemeProvider>{children}</HeaderThemeProvider>
-            </PageTransition>
+            <HeaderThemeProvider>{children}</HeaderThemeProvider>
           </SmoothScroll>
         </AudioProvider>
       </body>

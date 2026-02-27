@@ -9,167 +9,233 @@ import { useHeaderTheme } from "@/contexts/HeaderThemeContext";
 import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import MusicToggle from "@/components/ui/MusicToggle";
 import OpaqueButton from "@/components/ui/OpaqueButton";
-import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
+import { DRAMATIC_EASE, SMOOTH_EASE, DURATION } from "@/lib/animations";
 import { openDownloadStore } from "@/lib/download";
 
-/** Minimum scroll delta before direction change triggers hide/show */
-const SCROLL_THRESHOLD = 10;
-
-/** Navigation links for menu overlay */
-const NAV_LINKS = [
-  { href: "/home", label: "Home" },
-  { href: "/about", label: "Mission" },
-  { href: "/contact", label: "Contact" },
-];
+/** Menu links matching Figma design with mapped routes */
+const MENU_LINKS = [
+  { href: "/about", label: "About" },
+  { href: "/membership", label: "Membership" },
+  { label: "Download", action: openDownloadStore },
+] as const;
 
 type HeaderProps = {
   visible?: boolean;
 };
 
-/** Hook for tracking scroll direction and position */
-function useScrollDirection() {
-  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
+/** Hook for tracking vertical scroll position */
+function useScrollPosition() {
   const [scrollY, setScrollY] = useState(0);
-  const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
-  const updateScrollDirection = useCallback(() => {
-    const currentY = window.scrollY;
-    const delta = currentY - lastScrollY.current;
-
-    if (Math.abs(delta) > SCROLL_THRESHOLD) {
-      setScrollDirection(delta > 0 ? "down" : "up");
-      lastScrollY.current = currentY;
-    }
-
-    setScrollY(currentY);
+  const updateScrollPosition = useCallback(() => {
+    setScrollY(window.scrollY);
     ticking.current = false;
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
       if (!ticking.current) {
-        window.requestAnimationFrame(updateScrollDirection);
+        window.requestAnimationFrame(updateScrollPosition);
         ticking.current = true;
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [updateScrollDirection]);
+  }, [updateScrollPosition]);
 
-  return { scrollDirection, scrollY };
+  return { scrollY };
 }
 
-/** Full-screen menu overlay with slide-in panel */
-function MenuOverlay({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+/** Animated hamburger icon that morphs to X */
+function HamburgerIcon({ isOpen, isDark }: { isOpen: boolean; isDark: boolean }) {
+  const lineClass = `block h-[2px] rounded-full transition-all duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+    isDark ? "bg-white" : "bg-zinc-900"
+  }`;
 
   return (
+    <div className="relative flex h-[15px] w-[24px] flex-col justify-between">
+      <span
+        className={lineClass}
+        style={{
+          width: "24px",
+          transform: isOpen ? "translateY(6.5px) rotate(45deg)" : "none",
+        }}
+      />
+      <span
+        className={lineClass}
+        style={{
+          width: "18px",
+          opacity: isOpen ? 0 : 1,
+          transform: isOpen ? "translateX(-8px)" : "none",
+        }}
+      />
+      <span
+        className={lineClass}
+        style={{
+          width: isOpen ? "24px" : "12px",
+          transform: isOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
+        }}
+      />
+    </div>
+  );
+}
+
+/** Inline menu panel for mobile/tablet - expands under the header */
+function MobileTabletMenuPanel({
+  isExpanded,
+  onLinkClick,
+}: {
+  isExpanded: boolean;
+  onLinkClick: () => void;
+}) {
+  return (
     <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Dark backdrop */}
-          <motion.div
-            className="fixed inset-0 z-[100000] bg-black/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: SMOOTH_EASE }}
-            onClick={onClose}
-            aria-hidden
-          />
-
-          {/* Slide-in panel from right */}
-          <motion.div
-            className="fixed right-0 top-0 z-[100001] flex h-full w-full max-w-md flex-col bg-zinc-800/95 backdrop-blur-md"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.5, ease: DRAMATIC_EASE }}
+      {isExpanded && (
+        <motion.div
+          className="relative overflow-hidden border-t border-white/[0.17]"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
+        >
+          <nav
+            className="flex flex-col items-center justify-center gap-6 px-6 py-8"
+            aria-label="Main navigation"
           >
-            {/* Panel header with logo and close button */}
-            <div className="flex items-center justify-between px-8 py-6">
-              <Link
-                href="/home"
-                onClick={onClose}
-                className="transition-opacity hover:opacity-80"
+            {MENU_LINKS.map((link, index) => (
+              <motion.div
+                key={link.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{
+                  duration: DURATION.standard,
+                  delay: 0.05 + index * 0.06,
+                  ease: DRAMATIC_EASE,
+                }}
               >
-                <Image
-                  src="/Logotype.svg"
-                  alt="AIM"
-                  width={23}
-                  height={26}
-                  className="h-7 w-auto"
-                />
-              </Link>
-
-              <button
-                onClick={onClose}
-                className="flex h-10 w-10 items-center justify-center text-white/80 transition-colors hover:text-white"
-                aria-label="Close menu"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Navigation links */}
-            <nav className="flex flex-col gap-2 px-8 pt-8" aria-label="Main">
-              {NAV_LINKS.map((link, index) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 0.1 + index * 0.05,
-                    ease: DRAMATIC_EASE,
-                  }}
-                >
+                {"href" in link ? (
                   <Link
                     href={link.href}
-                    onClick={onClose}
-                    className="block py-3 text-lg text-white/80 transition-colors hover:text-[var(--color-brand)]"
-                    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                    onClick={onLinkClick}
+                    className="block text-3xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none"
                   >
                     {link.label}
                   </Link>
-                </motion.div>
-              ))}
-            </nav>
-          </motion.div>
-        </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      link.action();
+                      onLinkClick();
+                    }}
+                    className="block text-3xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none"
+                  >
+                    {link.label}
+                  </button>
+                )}
+              </motion.div>
+            ))}
+          </nav>
+
+          {/* Lower edge blur gradient */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/70 to-transparent backdrop-blur-[2px]"
+            style={{ maskImage: "linear-gradient(to top, black 30%, transparent)" }}
+            aria-hidden
+          />
+        </motion.div>
       )}
     </AnimatePresence>
   );
 }
 
-/** Renders progress bar + main header; fixed to viewport. Used inside portal. */
+/** Desktop expanded menu panel with image */
+function DesktopMenuPanel({
+  isExpanded,
+  isLightText,
+}: {
+  isExpanded: boolean;
+  isLightText: boolean;
+}) {
+  return (
+    <AnimatePresence>
+      {isExpanded && (
+        <motion.div
+          className="relative border-t border-white/[0.17]"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
+        >
+          {/* Two-column layout: image left, links right */}
+          <div className="flex">
+            {/* Image column */}
+            <div className="flex-1">
+              <div className="relative h-[295px] w-full overflow-hidden">
+                <Image
+                  src="/images/data-analysis.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="50vw"
+                  priority
+                />
+              </div>
+            </div>
+
+            {/* Links column */}
+            <div className="flex flex-1 flex-col justify-center gap-[18px] px-8 py-6 h-[295px]">
+              {MENU_LINKS.map((link, index) => (
+                <motion.div
+                  key={link.label}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 8 }}
+                  transition={{
+                    duration: DURATION.standard,
+                    delay: 0.05 + index * 0.06,
+                    ease: DRAMATIC_EASE,
+                  }}
+                >
+                  {"href" in link ? (
+                    <Link
+                      href={link.href}
+                      className={`block text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                        isLightText ? "text-white" : "text-zinc-900"
+                      } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={link.action}
+                      className={`block text-left text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                        isLightText ? "text-white" : "text-zinc-900"
+                      } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
+                    >
+                      {link.label}
+                    </button>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Lower edge blur gradient */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/60 to-transparent backdrop-blur-[2px]"
+            style={{ maskImage: "linear-gradient(to top, black 30%, transparent)" }}
+            aria-hidden
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/** Renders progress bar + main header; fixed to viewport. */
 function HeaderContent({
   visible,
   isDark,
@@ -177,9 +243,11 @@ function HeaderContent({
   visible: boolean;
   isDark: boolean;
 }) {
-  const { scrollDirection, scrollY } = useScrollDirection();
+  const { scrollY } = useScrollPosition();
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDesktopMenuHovered, setIsDesktopMenuHovered] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setViewportHeight(window.innerHeight);
@@ -188,34 +256,57 @@ function HeaderContent({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Header visible when: in hero section OR scrolling up (after leaving hero)
-  const isScrolledUp = scrollDirection === "up";
-  const isInHero = scrollY < viewportHeight;
-  const headerVisible = visible && (isInHero || isScrolledUp);
-
-  // Show black background when scrolled past ~80% of hero (viewport height)
+  const headerVisible = visible;
   const showBackground = scrollY > viewportHeight * 0.8;
-
-  // Determine text color based on theme
   const isLightText = isDark || showBackground;
+
+  /** Handle hover with small delay to prevent flicker (desktop only) */
+  const handleMouseEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setIsDesktopMenuHovered(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsDesktopMenuHovered(false);
+    }, 150);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
+
+  const handleMobileMenuToggle = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev);
+  }, []);
+
+  const handleMobileLinkClick = useCallback(() => {
+    setIsMobileMenuOpen(false);
+  }, []);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden">
       <motion.header
-        className="pointer-events-auto fixed left-0 right-0 top-0 flex max-w-full flex-col overflow-hidden"
+        className="pointer-events-auto fixed left-0 right-0 top-0 flex max-w-full flex-col"
         initial={false}
         animate={{
           opacity: headerVisible ? 1 : 0,
           y: headerVisible ? 0 : -24,
         }}
-        transition={{ duration: 0.5, ease: DRAMATIC_EASE }}
+        transition={{ duration: DURATION.exit, ease: DRAMATIC_EASE }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {/* Animated black background layer */}
         <motion.div
           className="absolute inset-0 bg-black/90 backdrop-blur-md"
           initial={{ opacity: 0 }}
-          animate={{ opacity: showBackground ? 1 : 0 }}
-          transition={{ duration: 0.4, ease: SMOOTH_EASE }}
+          animate={{
+            opacity: showBackground || isDesktopMenuHovered || isMobileMenuOpen ? 1 : 0,
+          }}
+          transition={{ duration: DURATION.exit, ease: SMOOTH_EASE }}
           aria-hidden
         />
 
@@ -224,6 +315,7 @@ function HeaderContent({
           <ScrollProgressBar />
         </div>
 
+        {/* Main header row */}
         <div className="relative flex h-[52px] items-center justify-between px-4 lg:px-6">
           {/* Logo (left) */}
           <Link
@@ -232,7 +324,9 @@ function HeaderContent({
             aria-label="AIM home"
           >
             <span
-              className={`inline-block transition-[filter] duration-500 ${!isLightText ? "invert" : ""}`}
+              className={`inline-block transition-[filter] duration-500 ${
+                !isLightText && !isDesktopMenuHovered && !isMobileMenuOpen ? "invert" : ""
+              }`}
             >
               <Image
                 src="/Logotype.svg"
@@ -246,66 +340,95 @@ function HeaderContent({
 
           {/* Center tagline - Desktop only */}
           <p
-            className={`absolute left-1/2 hidden -translate-x-1/2 text-sm uppercase lg:block ${isLightText ? "text-white" : "text-zinc-900"} transition-colors duration-500`}
+            className={`absolute left-1/2 hidden -translate-x-1/2 text-sm uppercase lg:block transition-colors duration-500 ${
+              isLightText || isDesktopMenuHovered ? "text-white" : "text-zinc-900"
+            }`}
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             Creating Tomorrow&apos;s Champions
           </p>
 
-          {/* Right side controls - responsive layout */}
+          {/* Right side controls */}
           <div className="flex items-center gap-3">
-            {/* Desktop/Tablet: About link */}
-            <Link
-              href="/about"
-              className={`hidden text-sm uppercase tracking-wider transition-colors duration-500 hover:text-[var(--color-brand)] md:block ${isLightText ? "text-white/90" : "text-zinc-900"}`}
+            {/* Desktop only: MENU trigger */}
+            <button
+              className={`hidden items-center text-sm uppercase tracking-wider transition-colors duration-500 lg:flex ${
+                isLightText || isDesktopMenuHovered
+                  ? "text-white/90 hover:text-[var(--color-brand)]"
+                  : "text-zinc-900 hover:text-[var(--color-brand)]"
+              }`}
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+              aria-expanded={isDesktopMenuHovered}
+              aria-haspopup="menu"
             >
-              About
-            </Link>
+              MENU
+            </button>
 
-            {/* Divider - Desktop/Tablet only */}
+            {/* Divider - Desktop only */}
             <span
-              className={`hidden h-[18px] w-px transition-colors duration-500 md:block ${isLightText ? "bg-white/30" : "bg-zinc-400"}`}
+              className={`hidden h-[18px] w-px transition-colors duration-500 lg:block ${
+                isLightText || isDesktopMenuHovered ? "bg-white/30" : "bg-zinc-400"
+              }`}
               aria-hidden
             />
 
             {/* Sound toggle with icon */}
-            <MusicToggle isDark={isLightText} />
+            <MusicToggle isDark={isLightText || isDesktopMenuHovered || isMobileMenuOpen} />
 
-            {/* Divider - Desktop/Tablet only */}
+            {/* Divider - Desktop only */}
             <span
-              className={`hidden h-[18px] w-px transition-colors duration-500 md:block ${isLightText ? "bg-white/30" : "bg-zinc-400"}`}
+              className={`hidden h-[18px] w-px transition-colors duration-500 lg:block ${
+                isLightText || isDesktopMenuHovered ? "bg-white/30" : "bg-zinc-400"
+              }`}
               aria-hidden
             />
 
-            {/* Download button - Desktop/Tablet only */}
+            {/* Download button - Desktop only */}
             <OpaqueButton
               variant="inline"
               onClick={openDownloadStore}
-              className="hidden md:flex"
+              className="hidden lg:flex"
             >
               Download
             </OpaqueButton>
 
-            {/* Mobile: MENU button */}
+            {/* Mobile/Tablet: Hamburger button */}
             <button
-              onClick={() => setIsMenuOpen(true)}
-              className={`flex items-center rounded-xl px-3 py-2 text-base uppercase tracking-wider transition-colors duration-500 md:hidden ${isLightText ? "bg-white/[0.12] text-white hover:bg-white/20" : "bg-zinc-900/10 text-zinc-900 hover:bg-zinc-900/20"}`}
-              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+              onClick={handleMobileMenuToggle}
+              className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-colors duration-500 lg:hidden ${
+                isLightText || isMobileMenuOpen
+                  ? "bg-white/[0.12] hover:bg-white/20"
+                  : "bg-zinc-900/10 hover:bg-zinc-900/20"
+              }`}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
             >
-              MENU
+              <HamburgerIcon isOpen={isMobileMenuOpen} isDark={isLightText || isMobileMenuOpen} />
             </button>
           </div>
         </div>
-      </motion.header>
 
-      {/* Menu overlay */}
-      <MenuOverlay isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+        {/* Mobile/Tablet inline menu panel */}
+        <div className="lg:hidden">
+          <MobileTabletMenuPanel
+            isExpanded={isMobileMenuOpen}
+            onLinkClick={handleMobileLinkClick}
+          />
+        </div>
+
+        {/* Desktop expanded menu panel */}
+        <div className="hidden lg:block">
+          <DesktopMenuPanel
+            isExpanded={isDesktopMenuHovered}
+            isLightText={isLightText || isDesktopMenuHovered}
+          />
+        </div>
+      </motion.header>
     </div>
   );
 }
 
-/** Header with MENU button and expandable overlay. Portals to body for proper fixed positioning. */
+/** Header with expandable menu. Portals to body for proper fixed positioning. */
 export default function Header({ visible = true }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const { isDark } = useHeaderTheme();

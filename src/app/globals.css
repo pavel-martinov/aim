@@ -100,6 +100,13 @@ html.lenis body {
   animation: cta-marquee 36s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
+/* Mobile pre-CTA marquee runs 30% faster for better pacing on small screens. */
+@media (max-width: 767px) {
+  .cta-marquee {
+    animation-duration: 27.7s;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cta-marquee {
     animation: none;
