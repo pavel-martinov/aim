@@ -86,13 +86,23 @@ html.lenis body {
   box-shadow: 0 0 24px color-mix(in srgb, var(--color-brand) 35%, transparent);
 }
 
-/* CTA marquee animation */
-@keyframes marquee {
-  from {
+/* CTA marquee animation - dramatic slow left-to-right scroll */
+@keyframes cta-marquee {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
     transform: translateX(0);
   }
-  to {
-    transform: translateX(-50%);
+}
+
+.cta-marquee {
+  animation: cta-marquee 36s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-marquee {
+    animation: none;
   }
 }
 

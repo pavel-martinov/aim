@@ -174,7 +174,7 @@ export default function VisionSection() {
         </div>
 
         {/* Progress stepper */}
-        <div className="absolute bottom-[60px] left-4 right-4 z-10 flex h-px gap-[6px] md:left-1/2 md:right-auto md:w-full md:max-w-[720px] md:-translate-x-1/2 lg:left-6 lg:right-6">
+        <div className="absolute bottom-[60px] left-4 right-4 z-10 flex h-px gap-[6px] md:bottom-[24px] md:left-1/2 md:right-auto md:w-full md:max-w-[720px] md:-translate-x-1/2">
           {SLIDES.map((slide, index) => (
             <div key={slide.id} className="relative h-full flex-1">
               <div className="absolute inset-0 bg-white/50" />
