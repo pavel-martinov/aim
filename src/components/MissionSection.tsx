@@ -88,12 +88,11 @@ function ProductCard({
 }
 
 /**
- * Desktop carousel with auto-scroll, drag support, and hover pause.
+ * Desktop carousel with auto-scroll and drag support.
  * Uses scrollLeft for seamless looping and snap-to-card on interaction end.
  */
 function DesktopCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isPaused = useRef(false);
   const isDragging = useRef(false);
   const dragStartX = useRef(0);
   const scrollStartX = useRef(0);
@@ -129,7 +128,7 @@ function DesktopCarousel() {
       const delta = (time - lastTime.current) / 1000;
       lastTime.current = time;
 
-      if (!isPaused.current && !isDragging.current) {
+      if (!isDragging.current) {
         el.scrollLeft += SCROLL_SPEED * delta;
         if (el.scrollLeft >= halfWidth) {
           el.scrollLeft -= halfWidth;
@@ -177,8 +176,6 @@ function DesktopCarousel() {
       <div
         ref={scrollRef}
         className="mission-desktop-carousel flex cursor-grab gap-3 overflow-x-scroll pl-6"
-        onMouseEnter={() => (isPaused.current = true)}
-        onMouseLeave={() => (isPaused.current = false)}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

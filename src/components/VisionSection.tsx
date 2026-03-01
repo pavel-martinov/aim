@@ -26,6 +26,8 @@ const SLIDES = [
   },
 ];
 
+const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
+
 /**
  * Full-screen vision section with GSAP ScrollTrigger pinning.
  * Cycles through 3 slides with animated text and progress stepper.
@@ -35,14 +37,19 @@ export default function VisionSection() {
   const fixedContentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
       const master = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=6000",
-          scrub: true,
+          end: () => `+=${mobile ? 3000 : 6000}`,
+          scrub: mobile ? 0.3 : true,
           pin: fixedContentRef.current,
+          anticipatePin: 1,
+          fastScrollEnd: true,
+          invalidateOnRefresh: true,
         },
       });
 

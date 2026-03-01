@@ -2,6 +2,10 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 type SmoothScrollProps = {
   children: React.ReactNode;
@@ -10,7 +14,7 @@ type SmoothScrollProps = {
 const LENIS_STOP_EVENT = "aim:lenis-stop";
 const LENIS_START_EVENT = "aim:lenis-start";
 
-// Smooth scrolling wrapper using Lenis.
+/** Smooth scrolling wrapper using Lenis, integrated with GSAP ScrollTrigger. */
 export default function SmoothScroll({ children }: SmoothScrollProps) {
   useEffect(() => {
     const lenis = new Lenis({
@@ -19,12 +23,13 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       smoothWheel: true,
     });
 
-    let rafId = 0;
+    // Sync Lenis scroll position with GSAP ScrollTrigger for proper pinning on mobile
+    lenis.on("scroll", ScrollTrigger.update);
 
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    };
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
 
     /** Stops Lenis (preloader lock). */
     const stop = () => lenis.stop();
@@ -39,12 +44,9 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       lenis.stop();
     }
 
-    rafId = requestAnimationFrame(raf);
-
     return () => {
       window.removeEventListener(LENIS_STOP_EVENT, stop);
       window.removeEventListener(LENIS_START_EVENT, start);
-      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);

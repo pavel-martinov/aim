@@ -3,23 +3,21 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AboutHero from "@/components/about/AboutHero";
+import WhoWeAreSection from "@/components/about/WhoWeAreSection";
 import GoalSection from "@/components/about/GoalSection";
-import StatsSection from "@/components/about/StatsSection";
-import VideoSection from "@/components/about/VideoSection";
-import GallerySection from "@/components/about/GallerySection";
+import DiscoverTalentSection from "@/components/about/DiscoverTalentSection";
 
 /**
- * About page with hero, goal, stats, video, and gallery sections.
+ * About page with hero, who we are, goal, and discover talent sections.
  */
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
       <Header visible />
       <AboutHero />
+      <WhoWeAreSection />
       <GoalSection />
-      <StatsSection />
-      <VideoSection />
-      <GallerySection />
+      <DiscoverTalentSection />
       <Footer />
     </main>
   );

@@ -6,6 +6,7 @@ import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import { openDownloadStore } from "@/lib/download";
+import { cn } from "@/lib/utils";
 
 type BillingCycle = "monthly" | "annual";
 
@@ -21,6 +22,7 @@ type Plan = {
   highlighted?: boolean;
   badge?: string;
   ctaText: string;
+  isDynamicPrice?: boolean;
 };
 
 /** Pricing plans data based on PRICING_AND_PLANS_V1.md */
@@ -61,8 +63,8 @@ const PLANS: Plan[] = [
     ctaText: "Start Free Trial",
   },
   {
-    id: "dugout",
-    name: "Dugout",
+    id: "academies",
+    name: "Academies",
     tagline: "For coaches & academies",
     monthlyPrice: 29.99,
     annualPrice: 24.99,
@@ -73,14 +75,14 @@ const PLANS: Plan[] = [
       "Assign drills & homework",
       "Unlimited challenge creation",
       "Team analytics dashboard",
-      "Up to 10 players included",
       "Priority support",
     ],
     ctaText: "Start Free Trial",
+    isDynamicPrice: true,
   },
 ];
 
-/** Billing toggle switch */
+/** Billing toggle switch - Redesigned to be larger and more tactile */
 function BillingToggle({
   value,
   onChange,
@@ -89,14 +91,13 @@ function BillingToggle({
   onChange: (cycle: BillingCycle) => void;
 }) {
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex items-center justify-center gap-4">
       <button
         onClick={() => onChange("monthly")}
-        className={`px-4 py-2 text-sm uppercase tracking-wider transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          value === "monthly"
-            ? "text-white"
-            : "text-white/40 hover:text-white/60"
-        }`}
+        className={cn(
+          "px-4 py-2 text-base uppercase tracking-wider transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+          value === "monthly" ? "text-white font-bold" : "text-white/40 hover:text-white/60"
+        )}
         style={{ fontFamily: "var(--font-geist-mono), monospace" }}
       >
         Monthly
@@ -104,31 +105,151 @@ function BillingToggle({
 
       <button
         onClick={() => onChange(value === "monthly" ? "annual" : "monthly")}
-        className="relative h-7 w-12 rounded-full bg-white/10 p-0.5 transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/15"
+        className="relative h-10 w-20 rounded-full bg-white/10 p-1 transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-white/15"
         aria-label="Toggle billing cycle"
       >
         <motion.div
-          className="h-6 w-6 rounded-full bg-[var(--color-brand)]"
+          className="h-8 w-8 rounded-full bg-[var(--color-brand)]"
           initial={false}
-          animate={{ x: value === "annual" ? 20 : 0 }}
+          animate={{ x: value === "annual" ? 40 : 0 }}
           transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
         />
       </button>
 
       <button
         onClick={() => onChange("annual")}
-        className={`flex items-center gap-2 px-4 py-2 text-sm uppercase tracking-wider transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          value === "annual"
-            ? "text-white"
-            : "text-white/40 hover:text-white/60"
-        }`}
+        className={cn(
+          "flex items-center gap-3 px-4 py-2 text-base uppercase tracking-wider transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+          value === "annual" ? "text-white font-bold" : "text-white/40 hover:text-white/60"
+        )}
         style={{ fontFamily: "var(--font-geist-mono), monospace" }}
       >
         Annual
-        <span className="rounded bg-[var(--color-brand)] px-1.5 py-0.5 text-[10px] font-bold uppercase text-black">
+        <span className="rounded-sm bg-[var(--color-brand)] px-2 py-1 text-xs font-bold uppercase text-black">
           -23%
         </span>
       </button>
+    </div>
+  );
+}
+
+/** Pricing tiers for per-seat pricing (above the base 10 students) */
+const SEAT_TIERS = {
+  monthly: [
+    { min: 11, max: 25, rate: 2.99 },
+    { min: 26, max: 50, rate: 2.49 },
+    { min: 51, max: 100, rate: 1.99 },
+  ],
+  annual: [
+    { min: 11, max: 25, rate: 2.49 },
+    { min: 26, max: 50, rate: 1.99 },
+    { min: 51, max: 100, rate: 1.49 },
+  ],
+};
+
+/** Calculates total price for academies plan based on student count */
+function calculateAcademiesPrice(
+  students: number,
+  cycle: BillingCycle,
+  baseMonthly: number,
+  baseAnnual: number
+): number {
+  const basePrice = cycle === "annual" ? baseAnnual : baseMonthly;
+  if (students <= 10) return basePrice;
+
+  const tiers = SEAT_TIERS[cycle];
+  let total = basePrice;
+
+  for (const tier of tiers) {
+    if (students >= tier.min) {
+      const seatsInTier = Math.min(students, tier.max) - tier.min + 1;
+      total += seatsInTier * tier.rate;
+    }
+  }
+
+  return Math.round(total * 100) / 100;
+}
+
+/** Custom slider for selecting student count */
+function StudentSlider({
+  value,
+  onChange,
+  isHighlighted,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+  isHighlighted?: boolean;
+}) {
+  const isEnterprise = value > 100;
+  const displayValue = isEnterprise ? "100+" : value;
+
+  return (
+    <div className="mb-6 mt-2 relative z-10">
+      <div className="mb-3 flex items-center justify-between">
+        <span
+          className={cn(
+            "text-xs uppercase leading-[1.5]",
+            isHighlighted ? "text-black/60" : "text-white/50"
+          )}
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+        >
+          Students
+        </span>
+        <span
+          className={cn(
+            "text-sm font-bold uppercase",
+            isHighlighted ? "text-black" : "text-white"
+          )}
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+        >
+          {displayValue}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={10}
+        max={110}
+        step={5}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="student-slider h-2 w-full cursor-pointer appearance-none rounded-full outline-none transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={
+          {
+            "--slider-progress": `${((value - 10) / 100) * 100}%`,
+            background: isHighlighted
+              ? `linear-gradient(to right, black 0%, black var(--slider-progress), rgba(0,0,0,0.15) var(--slider-progress), rgba(0,0,0,0.15) 100%)`
+              : `linear-gradient(to right, var(--color-brand) 0%, var(--color-brand) var(--slider-progress), rgba(255,255,255,0.1) var(--slider-progress), rgba(255,255,255,0.1) 100%)`,
+          } as React.CSSProperties
+        }
+      />
+      <style jsx>{`
+        .student-slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: ${isHighlighted ? "black" : "var(--color-brand)"};
+          cursor: pointer;
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .student-slider::-webkit-slider-thumb:hover {
+          transform: scale(1.15);
+        }
+        .student-slider::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border: none;
+          border-radius: 50%;
+          background: ${isHighlighted ? "black" : "var(--color-brand)"};
+          cursor: pointer;
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .student-slider::-moz-range-thumb:hover {
+          transform: scale(1.15);
+        }
+      `}</style>
     </div>
   );
 }
@@ -141,25 +262,48 @@ function PricingCard({
   plan: Plan;
   billingCycle: BillingCycle;
 }) {
-  const price =
-    billingCycle === "annual" ? plan.annualPrice : plan.monthlyPrice;
+  const [students, setStudents] = useState(10);
+
+  const isEnterprise = plan.isDynamicPrice && students > 100;
+  const dynamicPrice = plan.isDynamicPrice
+    ? calculateAcademiesPrice(
+        students,
+        billingCycle,
+        plan.monthlyPrice ?? 0,
+        plan.annualPrice ?? 0
+      )
+    : null;
+
+  const price = plan.isDynamicPrice
+    ? dynamicPrice
+    : billingCycle === "annual"
+      ? plan.annualPrice
+      : plan.monthlyPrice;
+
   const isFree = price === null;
+  const ctaText = isEnterprise ? "Contact Sales" : plan.ctaText;
 
   return (
     <motion.div
-      className={`relative flex h-full flex-col rounded-2xl border p-6 transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] lg:p-8 ${
+      className={cn(
+        "relative flex h-full flex-col overflow-hidden rounded-[32px] p-8 transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] lg:p-10",
         plan.highlighted
-          ? "border-[var(--color-brand)]/40 bg-[var(--color-brand)]/[0.06]"
-          : "border-white/10 bg-white/[0.02] hover:border-white/20"
-      }`}
-      whileHover={{ y: -2 }}
+          ? "z-10 bg-[var(--color-brand)] text-black shadow-2xl"
+          : "border border-white/10 bg-[#080808] text-white"
+      )}
+      whileHover={{ y: -4 }}
       transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
     >
+      {/* Background visual texture for non-highlighted cards */}
+      {!plan.highlighted && (
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent" />
+      )}
+
       {/* Badge */}
       {plan.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <div className="absolute left-8 top-8 lg:left-10 lg:top-10">
           <span
-            className="whitespace-nowrap rounded bg-[var(--color-brand)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-black"
+            className="whitespace-nowrap bg-black px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white"
             style={{ fontFamily: "var(--font-geist-mono), monospace" }}
           >
             {plan.badge}
@@ -167,50 +311,66 @@ function PricingCard({
         </div>
       )}
 
+      {/* Spacer for badge if needed */}
+      {plan.badge && <div className="h-8 lg:h-12" />}
+
       {/* Plan header */}
-      <div className="mb-4">
+      <div className="relative z-10 mb-6">
         <h3
-          className="text-2xl uppercase tracking-tight text-white lg:text-3xl"
-          style={{ fontFamily: "var(--font-anton), sans-serif" }}
+          className="text-[32px] font-semibold leading-[1.25] lg:text-[40px]"
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           {plan.name}
         </h3>
         <p
-          className="mt-1 text-xs uppercase tracking-wide text-white/50"
-          style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          className={cn(
+            "mt-2 text-sm uppercase leading-[1.5]",
+            plan.highlighted ? "text-black/70" : "text-white/50"
+          )}
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           {plan.tagline}
         </p>
       </div>
 
       {/* Price */}
-      <div className="mb-6">
+      <div className="relative z-10 mb-8 min-h-[100px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${plan.id}-${billingCycle}`}
+            key={`${plan.id}-${billingCycle}-${students}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
-            className="flex items-baseline gap-1"
+            className="flex items-baseline gap-2"
           >
             {isFree ? (
               <span
-                className="text-5xl uppercase tracking-tight text-white lg:text-6xl"
+                className="text-[64px] uppercase leading-[0.9] tracking-tight lg:text-[80px]"
                 style={{ fontFamily: "var(--font-anton), sans-serif" }}
               >
                 Free
               </span>
+            ) : isEnterprise ? (
+              <span
+                className="text-4xl uppercase tracking-tight lg:text-5xl"
+                style={{ fontFamily: "var(--font-anton), sans-serif" }}
+              >
+                Custom
+              </span>
             ) : (
               <>
                 <span
-                  className="text-5xl tracking-tight text-white lg:text-6xl"
+                  className="text-[64px] leading-[0.9] tracking-tight lg:text-[80px]"
                   style={{ fontFamily: "var(--font-anton), sans-serif" }}
                 >
-                  ${price}
+                  ${price?.toFixed(2)}
                 </span>
                 <span
-                  className="text-sm text-white/40"
+                  className={cn(
+                    "text-lg font-bold uppercase tracking-wider",
+                    plan.highlighted ? "text-black/50" : "text-white/40"
+                  )}
                   style={{ fontFamily: "var(--font-geist-mono), monospace" }}
                 >
                   /mo
@@ -220,40 +380,85 @@ function PricingCard({
           </motion.div>
         </AnimatePresence>
 
-        {/* Annual savings */}
-        {!isFree && billingCycle === "annual" && plan.annualSavings && (
+        {/* Annual savings or enterprise note */}
+        {isEnterprise ? (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-1 text-xs text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            className={cn(
+              "mt-3 text-sm font-bold uppercase leading-[1.5]",
+              plan.highlighted ? "text-black/60" : "text-white/50"
+            )}
+            style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
-            {plan.annualSavings}
+            Enterprise pricing for 100+ students
           </motion.p>
+        ) : (
+          !isFree &&
+          billingCycle === "annual" &&
+          plan.annualSavings && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={cn(
+                "mt-3 text-sm font-bold uppercase leading-[1.5]",
+                plan.highlighted ? "text-black" : "text-[var(--color-brand)]"
+              )}
+              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+            >
+              {plan.annualSavings}
+            </motion.p>
+          )
         )}
       </div>
 
+      {/* Student slider for dynamic pricing */}
+      {plan.isDynamicPrice && (
+        <StudentSlider 
+          value={students} 
+          onChange={setStudents} 
+          isHighlighted={plan.highlighted} 
+        />
+      )}
+
       {/* Features list */}
-      <ul className="mb-6 flex-1 space-y-2">
+      <ul className="relative z-10 flex-1 space-y-4">
         {plan.features.map((feature, i) => (
           <li
             key={i}
-            className="text-sm text-white/70"
+            className={cn(
+              "flex items-start gap-3 text-xs uppercase leading-[1.5] md:text-sm",
+              plan.highlighted ? "text-black/80" : "text-white/70"
+            )}
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
-            {feature}
+            <span
+              className={
+                plan.highlighted ? "text-black" : "text-[var(--color-brand)]"
+              }
+            >
+              •
+            </span>
+            <span>{feature}</span>
           </li>
         ))}
       </ul>
 
-      {/* CTA Button - Full width */}
-      <OpaqueButton
-        variant={plan.highlighted ? "brand" : "dark"}
-        onClick={openDownloadStore}
-        className="!w-full md:!w-full"
-      >
-        {plan.ctaText}
-      </OpaqueButton>
+      {/* CTA Button */}
+      <div className="relative z-10 mt-10">
+        <OpaqueButton
+          variant="dark"
+          onClick={openDownloadStore}
+          className={cn(
+            "!w-full md:!w-full",
+            plan.highlighted
+              ? "!bg-black !text-white hover:!bg-black/80 focus-visible:!ring-black focus-visible:!ring-offset-[var(--color-brand)]"
+              : ""
+          )}
+        >
+          {ctaText}
+        </OpaqueButton>
+      </div>
     </motion.div>
   );
 }
@@ -266,12 +471,12 @@ export default function PricingPlans() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("annual");
 
   return (
-    <section className="relative bg-black px-4 pb-16 pt-28 lg:px-6 lg:pb-24 lg:pt-32">
+    <section className="relative bg-black px-4 pb-20 pt-28 lg:px-6 lg:pb-32 lg:pt-32">
       {/* Integrated Hero Header */}
-      <div className="mx-auto mb-10 max-w-4xl text-center lg:mb-12">
+      <div className="mx-auto mb-16 max-w-4xl text-center lg:mb-20">
         <RevealOnScroll dramatic>
           <h1
-            className="mb-4 text-5xl uppercase leading-[0.95] tracking-tight text-white md:text-6xl lg:text-7xl"
+            className="mb-6 text-[58px] uppercase leading-[0.95] tracking-tight text-white md:text-[80px] lg:text-[100px]"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             Membership
@@ -280,8 +485,8 @@ export default function PricingPlans() {
 
         <RevealOnScroll delay={0.1}>
           <p
-            className="mb-6 text-sm uppercase tracking-wide text-white/50 md:text-base"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            className="mb-10 text-base uppercase leading-[1.5] text-white/50 md:text-lg"
+            style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
             Start free. Upgrade when you&apos;re ready. Cancel anytime.
           </p>
@@ -295,7 +500,7 @@ export default function PricingPlans() {
 
       {/* Pricing cards grid */}
       <RevealOnScroll delay={0.2}>
-        <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3 lg:gap-5">
+        <div className="mx-auto mt-12 grid max-w-[1280px] items-stretch gap-6 md:grid-cols-3 lg:mt-24 lg:gap-8">
           {PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} billingCycle={billingCycle} />
           ))}
@@ -305,11 +510,11 @@ export default function PricingPlans() {
       {/* Per-seat pricing note */}
       <RevealOnScroll delay={0.3}>
         <p
-          className="mx-auto mt-6 max-w-2xl text-center text-xs text-white/30"
-          style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          className="mx-auto mt-12 max-w-2xl text-center text-xs uppercase leading-[1.5] text-white/30"
+          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
-          Dugout includes up to 10 players. Additional seats available at volume
-          discounts.
+          Academies includes up to 10 students. Use the slider to calculate pricing
+          for larger teams.
         </p>
       </RevealOnScroll>
     </section>

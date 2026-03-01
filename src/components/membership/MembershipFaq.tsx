@@ -9,7 +9,7 @@ const MEMBERSHIP_FAQ = [
   {
     question: "What's included in the 14-day free trial?",
     answer:
-      "You get full access to all features of the plan you're trying—First Touch or Dugout. No limitations, no credit card required to start. At the end of the trial, add payment to continue or your account simply reverts to our free Kickoff plan.",
+      "You get full access to all features of the plan you're trying—First Touch or Academies. No limitations, no credit card required to start. At the end of the trial, add payment to continue or your account simply reverts to our free Kickoff plan.",
   },
   {
     question: "Can I switch plans anytime?",
@@ -17,9 +17,9 @@ const MEMBERSHIP_FAQ = [
       "Absolutely. You can upgrade, downgrade, or cancel your subscription at any time. If you upgrade mid-cycle, you'll be prorated. If you downgrade, the change takes effect at your next billing date. No lock-in contracts, ever.",
   },
   {
-    question: "How does the Dugout per-seat pricing work?",
+    question: "How does the Academies per-seat pricing work?",
     answer:
-      "Dugout includes up to 10 players in the base price. For larger teams: 11-25 players add $2.99/seat monthly ($2.49 annual), 26-50 players add $2.49/seat ($1.99 annual), and 51-100 players add $1.99/seat ($1.49 annual). Teams over 100 players get custom enterprise pricing.",
+      "Academies includes up to 10 students in the base price. For larger teams: 11-25 students add $2.99/seat monthly ($2.49 annual), 26-50 students add $2.49/seat ($1.99 annual), and 51-100 students add $1.99/seat ($1.49 annual). Teams over 100 students get custom enterprise pricing.",
   },
   {
     question: "What happens when my trial ends?",
@@ -29,7 +29,7 @@ const MEMBERSHIP_FAQ = [
   {
     question: "Is there a discount for teams or academies?",
     answer:
-      "Yes! The Dugout plan is specifically designed for coaches and academies with built-in volume discounts. The more players you add, the lower your per-seat cost. For academies with 100+ players, contact us for custom enterprise pricing.",
+      "Yes! The Academies plan is specifically designed for coaches and academies with built-in volume discounts. The more students you add, the lower your per-seat cost. For academies with 100+ students, contact us for custom enterprise pricing.",
   },
   {
     question: "Do you offer refunds?",

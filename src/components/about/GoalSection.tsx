@@ -1,119 +1,198 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
-import GradientDivider from "@/components/ui/GradientDivider";
+import { useRef, useLayoutEffect } from "react";
+import Image from "next/image";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+/** Goal slide data */
+const SLIDES = [
+  {
+    id: 1,
+    text: "Is to solve the worldwide issue of limited access to elite football coaching and propel the development of grassroots football.",
+    image: "/images/steps/begin.jpg",
+  },
+  {
+    id: 2,
+    text: "We aim to be pioneers in innovation, football training and bridging the gap between aspiring players in developing countries and the world's leading Football Clubs.",
+    image: "/images/steps/record.jpg",
+  },
+  {
+    id: 3,
+    text: "Making excellence accessible.",
+    image: "/images/steps/analyse.jpg",
+  },
+];
+
+const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
 
 /**
- * Goal/Mission section with white background and staggered text reveal.
+ * Full-screen goal section with GSAP ScrollTrigger pinning.
+ * Cycles through 3 slides with animated text and progress stepper.
  */
 export default function GoalSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
+  const fixedContentRef = useRef<HTMLDivElement>(null);
 
-  const contentOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [0, 1, 1, 0]
-  );
+  useLayoutEffect(() => {
+    const mobile = isMobile();
+
+    const ctx = gsap.context(() => {
+      const master = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top top",
+          end: () => `+=${mobile ? 3000 : 6000}`,
+          scrub: mobile ? 0.3 : true,
+          pin: fixedContentRef.current,
+          anticipatePin: 1,
+          fastScrollEnd: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      const blurIn = "blur(18px)";
+      const blurOut = "blur(14px)";
+
+      /** Animate text with 3D perspective effect */
+      function animateTextIn(selector: string) {
+        master.fromTo(
+          `${selector} .goal-line`,
+          {
+            opacity: 0,
+            yPercent: 30,
+            z: -150,
+            rotateX: 8,
+            filter: blurIn,
+          },
+          {
+            opacity: 1,
+            yPercent: 0,
+            z: 0,
+            rotateX: 0,
+            filter: "blur(0px)",
+            duration: 4,
+            ease: "power3.out",
+          },
+          "<"
+        );
+      }
+
+      function animateTextOut(selector: string) {
+        master.to(
+          `${selector} .goal-line`,
+          {
+            opacity: 0,
+            yPercent: -30,
+            z: -200,
+            rotateX: -8,
+            filter: blurOut,
+            duration: 3,
+            ease: "power3.in",
+          },
+          ">1.5"
+        );
+      }
+
+      // Slide 1
+      master.to(".goal-text-1", { opacity: 1, y: 0, duration: 0.3, ease: "none" });
+      animateTextIn(".goal-text-1");
+      master.fromTo(".goal-progress-1", { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
+      master.to(".goal-bg-1", { opacity: 1, duration: 0.2 }, "<");
+      animateTextOut(".goal-text-1");
+      master.to(".goal-text-1", { opacity: 0, y: -20, duration: 0.3, ease: "none" });
+
+      // Slide 2
+      master.to(".goal-text-2", { opacity: 1, y: 0, duration: 0.3, ease: "none" });
+      master.to(".goal-bg-1", { opacity: 0, duration: 0.5 }, "<");
+      master.to(".goal-bg-2", { opacity: 1, duration: 0.5 }, "<");
+      animateTextIn(".goal-text-2");
+      master.fromTo(".goal-progress-2", { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
+      animateTextOut(".goal-text-2");
+      master.to(".goal-text-2", { opacity: 0, y: -20, duration: 0.3, ease: "none" });
+
+      // Slide 3
+      master.to(".goal-text-3", { opacity: 1, y: 0, duration: 0.3, ease: "none" });
+      master.to(".goal-bg-2", { opacity: 0, duration: 0.5 }, "<");
+      master.to(".goal-bg-3", { opacity: 1, duration: 0.5 }, "<");
+      animateTextIn(".goal-text-3");
+      master.fromTo(".goal-progress-3", { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-white py-32 lg:py-40"
-      data-header-theme="light"
+      aria-label="Our Goal"
+      className="goal-section relative bg-[#0a0a0a]"
+      data-header-theme="dark"
     >
-      <motion.div
-        className="mx-auto flex w-full max-w-[1440px] flex-col items-center gap-16 px-6 lg:px-12"
-        style={{ opacity: contentOpacity }}
+      {/* Pinned content container */}
+      <div
+        ref={fixedContentRef}
+        className="relative flex h-screen w-full flex-col items-center justify-center px-4 py-[60px] lg:px-6"
       >
-        {/* Section header */}
-        <motion.div
-          className="flex flex-col items-center gap-4"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
-        >
-          <span
-            className="text-xs uppercase tracking-[0.3em] text-black/50"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            Our Goal
-          </span>
-          <h2
-            className="flex max-w-4xl flex-wrap justify-center gap-x-[0.3em] text-center text-4xl uppercase leading-[1.05] text-black sm:text-5xl lg:text-[64px]"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            <span>To make</span>
-            <span className="text-black">professional-grade training</span>
-            <span>accessible to everyone</span>
-          </h2>
-        </motion.div>
-
-        {/* Mission content */}
-        <div className="grid w-full max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
-          {/* Left column */}
-          <motion.div
-            className="flex flex-col gap-6"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: SMOOTH_EASE, delay: 0.1 }}
-          >
-            <p
-              className="text-lg leading-relaxed text-black/70"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+        {/* Background images */}
+        <div className="absolute inset-0 overflow-hidden">
+          {SLIDES.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`goal-bg-${index + 1} absolute inset-0`}
+              style={{ opacity: index === 0 ? 1 : 0 }}
             >
-              We believe that exceptional athletic performance shouldn&apos;t be
-              limited by geography, wealth, or access. AIM brings cutting-edge
-              AI technology directly to your home, transforming any space into a
-              professional training facility.
-            </p>
-            <p
-              className="text-lg leading-relaxed text-black/70"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
-              Our mission is simple: democratise athletic training through
-              intelligent technology that adapts to you, learns from your
-              performance, and helps you achieve your full potential.
-            </p>
-          </motion.div>
-
-          {/* Right column */}
-          <motion.div
-            className="flex flex-col gap-6"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, ease: SMOOTH_EASE, delay: 0.2 }}
-          >
-            <p
-              className="text-lg leading-relaxed text-black/70"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
-              From professional athletes refining their craft to beginners
-              taking their first steps, AIM provides personalised,
-              data-driven insights that were once only available to elite
-              training centres.
-            </p>
-            <p
-              className="text-lg leading-relaxed text-black/70"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
-              Every session becomes an opportunity for growth. Every stat tells
-              a story. And every athlete, regardless of their starting point,
-              deserves the tools to write their own success story.
-            </p>
-          </motion.div>
+              <Image
+                src={slide.image}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority={index === 0}
+              />
+              <div className="absolute inset-0 bg-black/30" />
+            </div>
+          ))}
         </div>
 
-        <GradientDivider variant="dark" />
-      </motion.div>
+        {/* Text slides */}
+        <div className="relative z-10 w-full max-w-[740px]" style={{ perspective: "1000px" }}>
+          {SLIDES.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`goal-text-${index + 1} absolute inset-0 flex items-center justify-center`}
+              style={{ opacity: index === 0 ? 1 : 0 }}
+            >
+              <p
+                className="goal-line text-center text-[36px] font-medium capitalize leading-[1.25] text-white lg:text-[52px]"
+                style={{
+                  fontFamily: "var(--font-geist-sans), sans-serif",
+                  transformStyle: "preserve-3d",
+                  backfaceVisibility: "hidden",
+                  willChange: "transform, opacity, filter",
+                }}
+              >
+                {slide.text}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress stepper */}
+        <div className="absolute bottom-[60px] left-4 right-4 z-10 flex h-px gap-[6px] md:bottom-[24px] md:left-1/2 md:right-auto md:w-full md:max-w-[720px] md:-translate-x-1/2">
+          {SLIDES.map((slide, index) => (
+            <div key={slide.id} className="relative h-full flex-1">
+              <div className="absolute inset-0 bg-white/50" />
+              <div
+                className={`goal-progress-${index + 1} absolute left-0 top-0 h-full bg-white`}
+                style={{ width: "0%", transformOrigin: "left center" }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

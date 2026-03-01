@@ -82,7 +82,7 @@ function HamburgerIcon({ isOpen, isDark }: { isOpen: boolean; isDark: boolean })
   );
 }
 
-/** Inline menu panel for mobile/tablet - expands under the header */
+/** Full-screen mobile/tablet menu overlay with centered links */
 function MobileTabletMenuPanel({
   isExpanded,
   onLinkClick,
@@ -94,14 +94,15 @@ function MobileTabletMenuPanel({
     <AnimatePresence>
       {isExpanded && (
         <motion.div
-          className="relative overflow-hidden border-t border-white/[0.17]"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
+          className="fixed inset-0 z-[99998] overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
         >
+          <div className="absolute inset-0 bg-black/95 backdrop-blur-md" aria-hidden />
           <nav
-            className="flex flex-col items-center justify-center gap-6 px-6 py-8"
+            className="relative flex h-dvh flex-col items-center justify-center gap-7 px-6 text-center"
             aria-label="Main navigation"
           >
             {MENU_LINKS.map((link, index) => (
@@ -120,7 +121,7 @@ function MobileTabletMenuPanel({
                   <Link
                     href={link.href}
                     onClick={onLinkClick}
-                    className="block text-3xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none"
+                    className="block text-4xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none md:text-5xl"
                   >
                     {link.label}
                   </Link>
@@ -130,7 +131,7 @@ function MobileTabletMenuPanel({
                       link.action();
                       onLinkClick();
                     }}
-                    className="block text-3xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none"
+                    className="block text-4xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none md:text-5xl"
                   >
                     {link.label}
                   </button>
@@ -138,13 +139,6 @@ function MobileTabletMenuPanel({
               </motion.div>
             ))}
           </nav>
-
-          {/* Lower edge blur gradient */}
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/70 to-transparent backdrop-blur-[2px]"
-            style={{ maskImage: "linear-gradient(to top, black 30%, transparent)" }}
-            aria-hidden
-          />
         </motion.div>
       )}
     </AnimatePresence>
@@ -285,6 +279,16 @@ function HeaderContent({
   const handleMobileLinkClick = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isMobileMenuOpen]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden">
