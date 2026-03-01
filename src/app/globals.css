@@ -86,7 +86,7 @@ html.lenis body {
   box-shadow: 0 0 24px color-mix(in srgb, var(--color-brand) 35%, transparent);
 }
 
-/* CTA marquee animation - dramatic slow left-to-right scroll */
+/* CTA marquee animation - constant speed endless scroll */
 @keyframes cta-marquee {
   0% {
     transform: translateX(-50%);
@@ -97,14 +97,7 @@ html.lenis body {
 }
 
 .cta-marquee {
-  animation: cta-marquee 36s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Mobile pre-CTA marquee runs 30% faster for better pacing on small screens. */
-@media (max-width: 767px) {
-  .cta-marquee {
-    animation-duration: 27.7s;
-  }
+  animation: cta-marquee 36s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -115,6 +108,27 @@ html.lenis body {
 
 /* Hide scrollbar for swipeable carousels */
 .mission-carousel::-webkit-scrollbar,
-.steps-carousel::-webkit-scrollbar {
+.steps-carousel::-webkit-scrollbar,
+.mission-desktop-carousel::-webkit-scrollbar {
   display: none;
+}
+
+/* Mission mobile carousel: touch-swipeable with snap */
+.mission-carousel {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scroll-padding-left: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mission-carousel > * {
+  scroll-snap-align: start;
+}
+
+/* Mission desktop carousel */
+.mission-desktop-carousel {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }

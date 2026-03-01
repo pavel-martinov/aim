@@ -7,10 +7,10 @@ import OpaqueButton from "@/components/ui/OpaqueButton";
 import { DRAMATIC_EASE, EXIT_EASE } from "@/lib/animations";
 
 // Timing constants for animation sequence
-const TEXT_APPEAR_MS = 3000;         // Epic text appears after 3s
-const LOADER_APPEAR_MS = 5000;       // Loader appears at 5s
-const LOADER_START_DELAY_MS = 1000;  // 1s delay before loader starts filling
-const LOAD_DURATION_MS = 5000;       // Loading animation duration
+const TEXT_APPEAR_MS = 0;            // Text visible immediately with logo
+const LOADER_APPEAR_MS = 2000;       // Loader appears at 2s
+const LOADER_START_DELAY_MS = 500;   // Shorter delay before filling
+const LOAD_DURATION_MS = 3500;       // 30% faster loading
 
 const EPIC_PHRASE =
   "Every legend was once unknown. This is where they begin.";
