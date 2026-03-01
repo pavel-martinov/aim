@@ -103,16 +103,16 @@ export default function Footer() {
           </nav>
         </RevealOnScroll>
 
-        {/* Social icons */}
+        {/* Social icons - TODO: Replace with actual AIM profile URLs */}
         <RevealOnScroll delay={0.2}>
           <div className="flex items-center gap-4">
-            <SocialIcon href="https://instagram.com" label="Instagram">
+            <SocialIcon href="https://www.instagram.com/aim_football" label="Instagram">
               <InstagramIcon />
             </SocialIcon>
-            <SocialIcon href="https://youtube.com" label="YouTube">
+            <SocialIcon href="https://www.youtube.com/@aimfootball" label="YouTube">
               <YouTubeIcon />
             </SocialIcon>
-            <SocialIcon href="https://linkedin.com" label="LinkedIn">
+            <SocialIcon href="https://www.linkedin.com/company/aim-football" label="LinkedIn">
               <LinkedInIcon />
             </SocialIcon>
           </div>

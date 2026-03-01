@@ -6,7 +6,6 @@ import MissionSection from "@/components/MissionSection";
 import UnlockYourPotential from "@/components/UnlockYourPotential";
 import StepsSection from "@/components/StepsSection";
 import VisionSection from "@/components/VisionSection";
-import FeaturesSection from "@/components/FeaturesSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import { useAudio } from "@/contexts/AudioContext";
@@ -33,7 +32,6 @@ export default function HomePage() {
           <UnlockYourPotential />
           <VisionSection />
           <StepsSection />
-          {/* <FeaturesSection /> */}
           <CTASection />
           <Footer />
         </div>

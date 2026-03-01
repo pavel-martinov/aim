@@ -3,6 +3,8 @@
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import { DRAMATIC_EASE } from "@/lib/animations";
+import SectionHeader from "@/components/ui/SectionHeader";
+import GradientDivider from "@/components/ui/GradientDivider";
 
 /** Gallery images placeholder data */
 const GALLERY_IMAGES = [
@@ -116,27 +118,7 @@ export default function GallerySection() {
       data-header-theme="dark"
     >
       <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center gap-16 px-6">
-        {/* Section header */}
-        <motion.div
-          className="flex flex-col items-center gap-4 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
-        >
-          <span
-            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            Gallery
-          </span>
-          <h2
-            className="max-w-2xl text-4xl uppercase leading-[1.05] text-white sm:text-5xl lg:text-[52px]"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            See AIM in the wild
-          </h2>
-        </motion.div>
+        <SectionHeader eyebrow="Gallery" headline="See AIM in the wild" />
 
         {/* Masonry grid */}
         <div className="grid w-full grid-cols-2 gap-4 lg:grid-cols-3 lg:gap-6">
@@ -158,14 +140,7 @@ export default function GallerySection() {
           <GalleryImage index={5} span="medium" parallaxY={parallaxValues[5]} />
         </div>
 
-        {/* Bottom accent line */}
-        <motion.div
-          className="h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-[var(--color-brand)]/30 to-transparent"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: DRAMATIC_EASE }}
-        />
+        <GradientDivider />
       </div>
     </section>
   );

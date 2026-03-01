@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { DRAMATIC_EASE } from "@/lib/animations";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 /**
  * Play button icon component.
@@ -47,27 +48,7 @@ export default function VideoSection() {
       data-header-theme="dark"
     >
       <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center gap-12 px-6">
-        {/* Section header */}
-        <motion.div
-          className="flex flex-col items-center gap-4 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
-        >
-          <span
-            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            Watch
-          </span>
-          <h2
-            className="max-w-2xl text-4xl uppercase leading-[1.05] text-white sm:text-5xl lg:text-[52px]"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            Experience AIM in action
-          </h2>
-        </motion.div>
+        <SectionHeader eyebrow="Watch" headline="Experience AIM in action" />
 
         {/* Video container */}
         <motion.div

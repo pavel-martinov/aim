@@ -61,7 +61,7 @@ export default function OpaqueButton(props: OpaqueButtonProps) {
   const variantStyles: Record<string, string> = {
     inline: "flex items-center gap-3 px-3 py-2 text-base",
     brand: "flex flex-col justify-between p-3 w-full md:w-[240px] h-[100px] text-base",
-    dark: "flex flex-col justify-between p-3 w-full md:w-[240px] h-[82px] text-base",
+    dark: "flex flex-col justify-between p-3 w-full md:w-[240px] h-[100px] text-base",
   };
 
   const combinedClassName = cn(baseStyles, colorStyles, variantStyles[variant], className);
@@ -84,8 +84,14 @@ export default function OpaqueButton(props: OpaqueButtonProps) {
 
   if ("href" in rest && rest.href) {
     const { href, ...anchorRest } = rest as OpaqueButtonAsLinkProps;
+    const isExternal = href.startsWith("http");
     return (
-      <a href={href} className={combinedClassName} {...anchorRest}>
+      <a
+        href={href}
+        className={combinedClassName}
+        {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
+        {...anchorRest}
+      >
         {content}
       </a>
     );

@@ -250,7 +250,7 @@ function PricingCard({
       <OpaqueButton
         variant={plan.highlighted ? "brand" : "dark"}
         onClick={openDownloadStore}
-        className="!h-14 !w-full md:!w-full"
+        className="!w-full md:!w-full"
       >
         {plan.ctaText}
       </OpaqueButton>
@@ -271,7 +271,7 @@ export default function PricingPlans() {
       <div className="mx-auto mb-10 max-w-4xl text-center lg:mb-12">
         <RevealOnScroll dramatic>
           <h1
-            className="mb-4 text-5xl uppercase leading-[0.95] tracking-tight text-[var(--color-brand)] md:text-6xl lg:text-7xl"
+            className="mb-4 text-5xl uppercase leading-[0.95] tracking-tight text-white md:text-6xl lg:text-7xl"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             Membership

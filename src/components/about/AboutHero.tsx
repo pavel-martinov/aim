@@ -52,7 +52,7 @@ export default function AboutHero() {
           transition={{ duration: 1, ease: DRAMATIC_EASE, delay: 0.4 }}
         >
           <span>Redefining</span>
-          <span className="text-[var(--color-brand)]">Athletic</span>
+          <span className="text-white">Athletic</span>
           <span>Training</span>
         </motion.h1>
 

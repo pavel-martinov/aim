@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { DRAMATIC_EASE } from "@/lib/animations";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 /** Stats data with designer-style numbers */
 const STATS = [
@@ -135,27 +136,7 @@ export default function StatsSection() {
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-center gap-16 px-6">
-        {/* Section header */}
-        <motion.div
-          className="flex flex-col items-center gap-4 text-center"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: DRAMATIC_EASE }}
-        >
-          <span
-            className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          >
-            In Numbers
-          </span>
-          <h2
-            className="max-w-2xl text-4xl uppercase leading-[1.05] text-white sm:text-5xl lg:text-[52px]"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            The impact we&apos;ve made
-          </h2>
-        </motion.div>
+        <SectionHeader eyebrow="In Numbers" headline="The impact we've made" />
 
         {/* Stats grid */}
         <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-4">

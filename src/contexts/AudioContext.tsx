@@ -30,6 +30,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const interactionListenerRef = useRef<(() => void) | null>(null);
 
   // Initialize audio element on mount
   useEffect(() => {
@@ -39,7 +40,6 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     audio.preload = "auto";
     audioRef.current = audio;
 
-    // Track play/pause state
     const handlePlay = () => setIsPlaying(true);
     const handlePause = () => setIsPlaying(false);
 
@@ -51,6 +51,12 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audio.removeEventListener("pause", handlePause);
       audio.pause();
       audio.src = "";
+      // Clean up interaction listeners if they exist
+      if (interactionListenerRef.current) {
+        document.removeEventListener("click", interactionListenerRef.current);
+        document.removeEventListener("touchstart", interactionListenerRef.current);
+        interactionListenerRef.current = null;
+      }
     };
   }, []);
 
@@ -62,14 +68,14 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Attempt autoplay - browsers may block this without user interaction
     audio.play().catch(() => {
-      // Autoplay blocked - will play on first user interaction
       const playOnInteraction = () => {
         audio.play().catch(() => {});
         document.removeEventListener("click", playOnInteraction);
         document.removeEventListener("touchstart", playOnInteraction);
+        interactionListenerRef.current = null;
       };
+      interactionListenerRef.current = playOnInteraction;
       document.addEventListener("click", playOnInteraction);
       document.addEventListener("touchstart", playOnInteraction);
     });

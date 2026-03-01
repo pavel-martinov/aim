@@ -296,8 +296,6 @@ function HeaderContent({
           y: headerVisible ? 0 : -24,
         }}
         transition={{ duration: DURATION.exit, ease: DRAMATIC_EASE }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         {/* Animated black background layer */}
         <motion.div
@@ -360,6 +358,8 @@ function HeaderContent({
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
               aria-expanded={isDesktopMenuHovered}
               aria-haspopup="menu"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               MENU
             </button>
@@ -417,7 +417,11 @@ function HeaderContent({
         </div>
 
         {/* Desktop expanded menu panel */}
-        <div className="hidden lg:block">
+        <div
+          className="hidden lg:block"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <DesktopMenuPanel
             isExpanded={isDesktopMenuHovered}
             isLightText={isLightText || isDesktopMenuHovered}

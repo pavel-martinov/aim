@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { DRAMATIC_EASE, SMOOTH_EASE } from "@/lib/animations";
+import GradientDivider from "@/components/ui/GradientDivider";
 
 /**
  * Goal/Mission section with white background and staggered text reveal.
@@ -49,7 +50,7 @@ export default function GoalSection() {
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             <span>To make</span>
-            <span className="text-[var(--color-brand)]">professional-grade training</span>
+            <span className="text-black">professional-grade training</span>
             <span>accessible to everyone</span>
           </h2>
         </motion.div>
@@ -111,14 +112,7 @@ export default function GoalSection() {
           </motion.div>
         </div>
 
-        {/* Decorative line */}
-        <motion.div
-          className="h-px w-full max-w-3xl bg-gradient-to-r from-transparent via-black/20 to-transparent"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: SMOOTH_EASE, delay: 0.3 }}
-        />
+        <GradientDivider variant="dark" />
       </motion.div>
     </section>
   );
