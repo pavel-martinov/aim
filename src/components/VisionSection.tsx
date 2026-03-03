@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,17 +11,17 @@ const SLIDES = [
   {
     id: 1,
     text: "Is to solve the worldwide issue of limited access to elite football coaching and propel the development of grassroots football.",
-    image: "/images/steps/begin.jpg",
+    video: "/images/vision/Vision-1.mp4",
   },
   {
     id: 2,
     text: "To democratise elite coaching through AI, making professional-level guidance accessible to every aspiring footballer.",
-    image: "/images/steps/record.jpg",
+    video: "/images/vision/Vision-2.mp4",
   },
   {
     id: 3,
     text: "To transform raw talent into refined skill, one personalised insight at a time.",
-    image: "/images/steps/analyse.jpg",
+    video: "/images/vision/Vision-3.mp4",
   },
 ];
 
@@ -96,9 +95,13 @@ export default function VisionSection() {
         );
       }
 
-      // Slide 1
-      master.to(".vision-text-1", { opacity: 1, y: 0, duration: 0.3, ease: "none" });
-      animateTextIn(".vision-text-1");
+      // Slide 1 - stays sharp for full duration (fromTo with identical values for scrub compatibility)
+      master.fromTo(
+        ".vision-text-1 .vision-line",
+        { opacity: 1, yPercent: 0, z: 0, rotateX: 0, filter: "blur(0px)" },
+        { opacity: 1, yPercent: 0, z: 0, rotateX: 0, filter: "blur(0px)", duration: 4, ease: "none" },
+      );
+      master.to(".vision-text-1", { opacity: 1, y: 0, duration: 0.3, ease: "none" }, "<");
       master.fromTo(".progress-1", { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
       master.to(".vision-bg-1", { opacity: 1, duration: 0.2 }, "<");
       animateTextOut(".vision-text-1");
@@ -144,15 +147,15 @@ export default function VisionSection() {
               className={`vision-bg-${index + 1} absolute inset-0`}
               style={{ opacity: index === 0 ? 1 : 0 }}
             >
-              <Image
-                src={slide.image}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority={index === 0}
+              <video
+                src={slide.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30" />
+              <div className="absolute inset-0 bg-black/25" />
             </div>
           ))}
         </div>

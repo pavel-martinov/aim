@@ -2,10 +2,13 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import OpaqueButton from "@/components/ui/OpaqueButton";
+import { openDownloadStore } from "@/lib/download";
 import { DRAMATIC_EASE } from "@/lib/animations";
 
 /**
- * About page hero section with cinematic dark theme and fluid parallax.
+ * About page hero - full-screen with gradient headline and CTA.
+ * Layout: headline top-left, subtext + CTA bottom-right (desktop) / bottom-left (mobile).
  */
 export default function AboutHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -14,89 +17,66 @@ export default function AboutHero() {
     offset: ["start start", "end start"],
   });
 
-  // Parallax effects
-  const headlineY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const headlineY = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-[#0a0a0a]"
+      className="relative flex h-screen w-full flex-col justify-between overflow-hidden bg-black px-4 pb-6 pt-[100px] md:px-6 md:pb-6 md:pt-[124px]"
       data-header-theme="dark"
     >
-      {/* Subtle, slowly rotating radial gradient background */}
-      <motion.div
-        className="absolute inset-0 opacity-40 mix-blend-screen"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
+      {/* Gradient Headline - top left */}
+      <motion.h1
+        className="relative z-10 bg-gradient-to-r from-white to-[#c4c4c4] bg-clip-text text-[42px] uppercase leading-[1.1] text-transparent md:text-[62px]"
         style={{
-          background: "radial-gradient(circle at 50% 50%, var(--color-brand) 0%, transparent 40%)",
-          transformOrigin: "center center",
-          scale: 1.5,
+          fontFamily: "var(--font-anton), sans-serif",
+          y: headlineY,
+          opacity,
         }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/80 to-[#0a0a0a]" />
-
-      {/* Content */}
-      <motion.div
-        className="relative z-10 mx-auto flex max-w-[1440px] flex-col items-center gap-8 px-6 text-center"
-        style={{ y: headlineY, opacity }}
       >
-        {/* Eyebrow */}
         <motion.span
-          className="text-xs uppercase tracking-[0.3em] text-[var(--color-brand)]"
-          style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-          initial={{ opacity: 0, y: 20 }}
+          className="block"
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: DRAMATIC_EASE, delay: 0.2 }}
+          transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.2 }}
         >
-          About Us
+          It&apos;s time. To rise.
         </motion.span>
-
-        {/* Main headline */}
-        <motion.h1
-          className="flex flex-col text-[42px] uppercase leading-[1.1] tracking-tight text-white lg:text-[62px]"
-          style={{ fontFamily: "var(--font-anton), sans-serif" }}
+        <motion.span
+          className="block"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.35 }}
         >
-          <motion.span
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.3 }}
-          >
-            From insight to impact —
-          </motion.span>
-          <motion.span
-            className="text-white/80"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.4 }}
-          >
-            we&apos;re revolutionising
-          </motion.span>
-          <motion.span
-            className="text-[var(--color-brand)]"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.5 }}
-          >
-            the game…
-          </motion.span>
-        </motion.h1>
+          From Streets To Stadiums.
+        </motion.span>
+      </motion.h1>
 
-        {/* Scroll indicator */}
+      {/* Bottom content - subtext + CTA */}
+      <motion.div
+        className="relative z-10 flex w-full flex-col gap-6 md:items-end"
+        style={{ y: contentY, opacity }}
+      >
+        <motion.p
+          className="text-base font-medium uppercase leading-[1.5] text-white md:w-[696px] md:text-right"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: DRAMATIC_EASE, delay: 0.5 }}
+        >
+          The gap between raw talent and elite coaching has kept millions from reaching their potential.
+          <br />
+          We&apos;re closing it.
+        </motion.p>
+
         <motion.div
-          className="absolute bottom-12 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
+          className="md:w-[696px] md:flex md:justify-end"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: DRAMATIC_EASE, delay: 0.65 }}
         >
-          <motion.div
-            className="flex h-10 w-6 items-start justify-center rounded-full border border-white/30 p-2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="h-2 w-0.5 rounded-full bg-white/60" />
-          </motion.div>
+          <OpaqueButton onClick={openDownloadStore}>DOWNLOAD NOW</OpaqueButton>
         </motion.div>
       </motion.div>
     </section>

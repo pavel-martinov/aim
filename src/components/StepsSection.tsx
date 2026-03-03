@@ -13,7 +13,8 @@ const STEPS = [
     title: "Begin",
     description:
       "Begin Your Training Journey, Master Skills That Change Your Game. Every stat tells a story, and our AI analyzes your moves, offering the data needed for real progress. This is more than tracking performance; it's about personal growth, driven by valuable feedback.",
-    image: "/images/steps/begin.jpg",
+    media: "/images/steps/Begin.mp4",
+    isVideo: true,
     hasOverlay: false,
   },
   {
@@ -22,7 +23,8 @@ const STEPS = [
     title: "Record",
     description:
       "Turn raw performance data into clear visuals. Discover your strengths, weaknesses, and progress over time with sleek, interactive charts that keep you focused on growth.",
-    image: "/images/steps/record.jpg",
+    media: "/images/steps/Record.png",
+    isVideo: false,
     hasOverlay: false,
   },
   {
@@ -31,7 +33,8 @@ const STEPS = [
     title: "Analyse",
     description:
       "Review your training sessions, note key insights, and celebrate achievements. The journal helps you stay mentally sharp and emotionally engaged in your growth.",
-    image: "/images/steps/analyse.jpg",
+    media: "/images/steps/Analyse.png",
+    isVideo: false,
     hasOverlay: true,
   },
   {
@@ -40,37 +43,51 @@ const STEPS = [
     title: "Learn",
     description:
       "Review your training sessions, note key insights, and celebrate achievements. The journal helps you stay mentally sharp and emotionally engaged in your growth.",
-    image: "/images/steps/learn.jpg",
+    media: "/images/steps/Learn.png",
+    isVideo: false,
     hasOverlay: true,
   },
 ];
 
-/** Responsive step card with image, badge overlay, title and description */
+/** Responsive step card with video/image, badge overlay, title and description */
 function StepCard({
   badge,
   title,
   description,
-  image,
+  media,
+  isVideo,
   hasOverlay,
 }: {
   badge: string;
   title: string;
   description: string;
-  image: string;
+  media: string;
+  isVideo: boolean;
   hasOverlay: boolean;
 }) {
   return (
     <div className="flex flex-col gap-[18px]">
-      {/* Image container - square on mobile/tablet, taller on desktop */}
+      {/* Media container - square on mobile/tablet, taller on desktop */}
       <div className="relative aspect-square w-full overflow-hidden rounded-xl md:h-[394px] md:aspect-auto lg:h-[646px]">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 684px"
-          draggable={false}
-        />
+        {isVideo ? (
+          <video
+            src={media}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <Image
+            src={media}
+            alt={title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 684px"
+            draggable={false}
+          />
+        )}
         {hasOverlay && (
           <div className="absolute inset-0 rounded-xl bg-black/25" />
         )}
