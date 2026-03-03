@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useState } from "react";
 import { SMOOTH_EASE } from "@/lib/animations";
 
 const LAST_PATHNAME_KEY = "aim:lastPathname";
@@ -10,7 +10,7 @@ const LAST_PATHNAME_KEY = "aim:lastPathname";
 /** Page transition wrapper using Next.js template pattern for proper re-mounting on navigation. */
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isFirstRender = useRef(true);
+  const [isFirstRender, setIsFirstRender] = useState(true);
 
   useLayoutEffect(() => {
     const previous = window.sessionStorage.getItem(LAST_PATHNAME_KEY);
@@ -21,12 +21,15 @@ export default function Template({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   useLayoutEffect(() => {
-    isFirstRender.current = false;
-  }, []);
+    // Only update state if it's the first render to avoid unnecessary re-renders
+    if (isFirstRender) {
+      setTimeout(() => setIsFirstRender(false), 0);
+    }
+  }, [isFirstRender]);
 
   return (
     <motion.div
-      initial={isFirstRender.current ? false : { opacity: 0 }}
+      initial={isFirstRender ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: SMOOTH_EASE }}
     >

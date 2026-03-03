@@ -88,8 +88,10 @@ function StatItem({
     if (!startCount) return;
 
     let startTime: number | null = null;
+    let isActive = true;
 
     const animate = (timestamp: number) => {
+      if (!isActive) return;
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / COUNT_DURATION, 1);
@@ -98,18 +100,26 @@ function StatItem({
       const newValue = Math.round(
         startValue + (targetValue - startValue) * easedProgress
       );
-      setDisplayValue(newValue);
+      
+      // Batch state updates inside requestAnimationFrame
+      if (isActive) {
+        setDisplayValue(newValue);
+      }
 
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
-      } else if (!isCycling) {
-        setIsCycling(true);
+      } else if (!isCycling && isActive) {
+        // Trigger cycling state update after animation completes
+        setTimeout(() => {
+          if (isActive) setIsCycling(true);
+        }, 0);
       }
     };
 
     animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      isActive = false;
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
@@ -182,16 +192,25 @@ function MobileStatItem({
   useEffect(() => {
     // Reset and start animation when becoming active
     if (isActive && !prevActiveRef.current) {
-      setDisplayValue(0);
       let startTime: number | null = null;
+      const isMounted = true;
+
+      // Set initial value in a timeout to avoid cascading renders
+      setTimeout(() => {
+        if (isMounted) setDisplayValue(0);
+      }, 0);
 
       const animate = (timestamp: number) => {
+        if (!isMounted) return;
         if (!startTime) startTime = timestamp;
         const elapsed = timestamp - startTime;
         const progress = Math.min(elapsed / COUNT_DURATION, 1);
         const easedProgress = easeOutCubic(progress);
         const newValue = Math.round(value * easedProgress);
-        setDisplayValue(newValue);
+        
+        if (isMounted) {
+          setDisplayValue(newValue);
+        }
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
@@ -241,10 +260,13 @@ export default function HeroStats({ className }: { className?: string }) {
   const [mobileActiveIndex, setMobileActiveIndex] = useState(0);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // Start cycling when component comes into view
   useEffect(() => {
+    // Start cycling when component comes into view
     if (isInView && !hasStarted) {
-      setHasStarted(true);
+      // Defer state update to avoid cascading renders
+      setTimeout(() => {
+        setHasStarted(true);
+      }, 0);
     }
   }, [isInView, hasStarted]);
 

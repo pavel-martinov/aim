@@ -22,7 +22,7 @@ const GALLERY_IMAGES = [
 export default function AboutGallery() {
   return (
     <section
-      className="relative w-full overflow-hidden bg-white py-16 md:py-24 lg:py-[120px]"
+      className="relative flex min-h-dvh w-full flex-col justify-center overflow-hidden bg-white py-16 md:block md:min-h-0 md:py-24 lg:py-[120px]"
       data-header-theme="light"
     >
       {/* Heading */}

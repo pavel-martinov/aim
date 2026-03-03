@@ -157,7 +157,7 @@ export default function FeaturesSection() {
               className="text-4xl font-medium leading-[1.25] text-black lg:text-[52px]"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
-              AIM is building the world's most intelligent training system merging human ambition with AI precision.
+              AIM is building the world&apos;s most intelligent training system merging human ambition with AI precision.
             </h2>
           </RevealOnScroll>
 

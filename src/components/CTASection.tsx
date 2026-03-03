@@ -1,6 +1,7 @@
 "use client";
 
 import OpaqueButton from "@/components/ui/OpaqueButton";
+import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { openDownloadStore } from "@/lib/download";
 
 const MARQUEE_TEXT = "Enquire Today. Redefine Tomorrow.";
@@ -36,7 +37,9 @@ export default function CTASection() {
       </div>
 
       {/* Green main CTA button - centered */}
-      <OpaqueButton onClick={openDownloadStore}>DOWNLOAD NOW</OpaqueButton>
+      <RevealOnScroll delay={0.2} className="w-full px-4 md:w-auto md:px-0">
+        <OpaqueButton onClick={openDownloadStore}>DOWNLOAD NOW</OpaqueButton>
+      </RevealOnScroll>
     </section>
   );
 }

@@ -105,7 +105,7 @@ function MobileTabletMenuPanel({
             className="relative flex h-dvh flex-col items-center justify-center gap-7 px-6 text-center"
             aria-label="Main navigation"
           >
-            {MENU_LINKS.map((link, index) => (
+            {[{ href: "/home", label: "Home" }, ...MENU_LINKS].map((link, index) => (
               <motion.div
                 key={link.label}
                 initial={{ opacity: 0, y: 12 }}
@@ -238,16 +238,31 @@ function HeaderContent({
   isDark: boolean;
 }) {
   const { scrollY } = useScrollPosition();
-  const [viewportHeight, setViewportHeight] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(
+    typeof window !== "undefined" ? window.innerHeight : 0
+  );
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDesktopMenuHovered, setIsDesktopMenuHovered] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setViewportHeight(window.innerHeight);
-    const handleResize = () => setViewportHeight(window.innerHeight);
+    // Start tracking window resize after initial mount to avoid hydration mismatch
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setViewportHeight(window.innerHeight), 100);
+    };
+    
+    // Initial set deferred
+    setTimeout(() => {
+      setViewportHeight(window.innerHeight);
+    }, 0);
+    
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const headerVisible = visible;
@@ -291,9 +306,9 @@ function HeaderContent({
   }, [isMobileMenuOpen]);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[99999] overflow-hidden">
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-[99999] h-0 overflow-visible">
       <motion.header
-        className="pointer-events-auto fixed left-0 right-0 top-0 flex max-w-full flex-col"
+        className="pointer-events-auto absolute left-0 right-0 top-0 flex max-w-full flex-col"
         initial={false}
         animate={{
           opacity: headerVisible ? 1 : 0,
@@ -318,7 +333,7 @@ function HeaderContent({
         </div>
 
         {/* Main header row */}
-        <div className="relative flex h-[52px] items-center justify-between px-4 lg:px-6">
+        <div className="relative z-[99999] flex h-[52px] items-center justify-between px-4 lg:px-6">
           {/* Logo (left) */}
           <Link
             href="/home"
@@ -412,14 +427,6 @@ function HeaderContent({
           </div>
         </div>
 
-        {/* Mobile/Tablet inline menu panel */}
-        <div className="lg:hidden">
-          <MobileTabletMenuPanel
-            isExpanded={isMobileMenuOpen}
-            onLinkClick={handleMobileLinkClick}
-          />
-        </div>
-
         {/* Desktop expanded menu panel */}
         <div
           className="hidden lg:block"
@@ -432,6 +439,14 @@ function HeaderContent({
           />
         </div>
       </motion.header>
+
+      {/* Mobile/Tablet inline menu panel - placed outside motion.header to avoid transform containing block issues */}
+      <div className="pointer-events-auto lg:hidden">
+        <MobileTabletMenuPanel
+          isExpanded={isMobileMenuOpen}
+          onLinkClick={handleMobileLinkClick}
+        />
+      </div>
     </div>
   );
 }
@@ -442,7 +457,13 @@ export default function Header({ visible = true }: HeaderProps) {
   const { isDark } = useHeaderTheme();
 
   useEffect(() => {
-    setMounted(true);
+    // Defer setting mounted to avoid cascading renders
+    const isMounted = true;
+    setTimeout(() => {
+      if (isMounted) {
+        setMounted(true);
+      }
+    }, 0);
   }, []);
 
   if (!mounted || typeof document === "undefined") return null;

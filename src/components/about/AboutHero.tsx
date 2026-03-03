@@ -24,7 +24,7 @@ export default function AboutHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex h-screen w-full flex-col justify-between overflow-hidden bg-black px-4 pb-6 pt-[100px] md:px-6 md:pb-6 md:pt-[124px]"
+      className="relative flex h-[100dvh] w-full flex-col justify-between overflow-hidden bg-black px-4 pb-6 pt-[100px] md:px-6 md:pb-6 md:pt-[124px]"
       data-header-theme="dark"
     >
       {/* Gradient Headline - top left */}
@@ -42,7 +42,7 @@ export default function AboutHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.2 }}
         >
-          It&apos;s time. To rise.
+          Your AI Coach.
         </motion.span>
         <motion.span
           className="block"
@@ -50,7 +50,7 @@ export default function AboutHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: DRAMATIC_EASE, delay: 0.35 }}
         >
-          From Streets To Stadiums.
+          Your Path To Pro.
         </motion.span>
       </motion.h1>
 

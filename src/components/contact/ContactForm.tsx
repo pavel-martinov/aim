@@ -39,10 +39,23 @@ export default function ContactForm() {
   const [formState, setFormState] = useState<FormState>("idle");
   const [cooldownEnd, setCooldownEnd] = useState<number | null>(null);
 
-  const formOpenTime = useRef(Date.now());
+  const formOpenTimeRef = useRef(0);
+
+  // Update open time on mount (client-side only for purity)
+  useEffect(() => {
+    const timeNow = Date.now();
+    formOpenTimeRef.current = timeNow;
+  }, []);
 
   // Check if form is in cooldown
-  const isInCooldown = cooldownEnd !== null && Date.now() < cooldownEnd;
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
+  useEffect(() => {
+    // delay state change to avoid cascading renders warning
+    setTimeout(() => setCurrentTime(Date.now()), 0);
+    const interval = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+  const isInCooldown = cooldownEnd !== null && currentTime !== null && currentTime < cooldownEnd;
 
   /** Validate a single field */
   const validateField = useCallback(
@@ -113,7 +126,7 @@ export default function ContactForm() {
     if (honeypot) return;
 
     // Bot protection: time check
-    if (Date.now() - formOpenTime.current < MIN_FORM_TIME) return;
+    if (Date.now() - formOpenTimeRef.current < MIN_FORM_TIME) return;
 
     // Cooldown check
     if (isInCooldown) return;
