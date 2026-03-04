@@ -50,7 +50,7 @@ function useScrollPosition() {
 
 /** Animated hamburger icon that morphs to X */
 function HamburgerIcon({ isOpen, isDark }: { isOpen: boolean; isDark: boolean }) {
-  const lineClass = `block h-[2px] rounded-full transition-all duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+  const lineClass = `block h-[2px] rounded-full transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
     isDark ? "bg-white" : "bg-zinc-900"
   }`;
 
@@ -102,18 +102,18 @@ function MobileTabletMenuPanel({
         >
           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" aria-hidden />
           <nav
-            className="relative flex h-dvh flex-col items-center justify-center gap-7 px-6 text-center"
+            className="relative flex h-dvh flex-col items-center justify-center gap-[32px] px-6 text-center"
             aria-label="Main navigation"
           >
             {[{ href: "/home", label: "Home" }, ...MENU_LINKS].map((link, index) => (
               <motion.div
                 key={link.label}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
+                exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
                 transition={{
                   duration: DURATION.standard,
-                  delay: 0.05 + index * 0.06,
+                  delay: 0.4 + index * 0.1,
                   ease: DRAMATIC_EASE,
                 }}
               >
@@ -157,7 +157,8 @@ function DesktopMenuPanel({
     <AnimatePresence>
       {isExpanded && (
         <motion.div
-          className="relative border-t border-white/[0.17]"
+          key="desktop-menu-panel"
+          className="relative border-t border-white/[0.17] overflow-hidden"
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
@@ -166,30 +167,28 @@ function DesktopMenuPanel({
           {/* Two-column layout: image left, links right */}
           <div className="flex">
             {/* Image column */}
-            <div className="flex-1">
-              <div className="relative h-[295px] w-full overflow-hidden">
-                <Image
-                  src="/images/data-analysis.jpg"
-                  alt=""
-                  fill
-                  className="object-cover"
-                  sizes="50vw"
-                  priority
-                />
-              </div>
+            <div className="relative flex-1 overflow-hidden">
+              <Image
+                src="/images/data-analysis.jpg"
+                alt=""
+                fill
+                className="object-cover"
+                sizes="50vw"
+                priority
+              />
             </div>
 
             {/* Links column */}
-            <div className="flex flex-1 flex-col justify-center gap-[18px] px-8 py-6 h-[295px]">
+            <div className="flex flex-1 flex-col justify-center gap-[32px] px-[32px] py-[72px]">
               {MENU_LINKS.map((link, index) => (
                 <motion.div
                   key={link.label}
-                  initial={{ opacity: 0, x: 16 }}
+                  initial={{ opacity: 0, x: 24 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 8 }}
                   transition={{
                     duration: DURATION.standard,
-                    delay: 0.05 + index * 0.06,
+                    delay: 0.3 + index * 0.1,
                     ease: DRAMATIC_EASE,
                   }}
                 >
@@ -306,7 +305,7 @@ function HeaderContent({
   }, [isMobileMenuOpen]);
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-[99999] h-0 overflow-visible">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-[99999] h-0 overflow-visible">
       <motion.header
         className="pointer-events-auto absolute left-0 right-0 top-0 flex max-w-full flex-col"
         initial={false}

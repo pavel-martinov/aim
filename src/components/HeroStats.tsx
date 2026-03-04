@@ -15,7 +15,7 @@ const COUNT_DURATION = 2500;
 const ENTRANCE_DURATION = 1.0;
 const STAGGER_DELAY = 0.35;
 const DOT_CYCLE_INTERVAL = 1000;
-const MOBILE_STAT_CYCLE_INTERVAL = 5000;
+const MOBILE_STAT_CYCLE_INTERVAL = 8000;
 const RANDOM_CYCLE_INTERVAL = 5000;
 const RANDOM_VALUE_MIN = 60;
 const RANDOM_VALUE_MAX = 99;
@@ -231,20 +231,11 @@ function MobileStatItem({
 
   return (
     <div className="flex flex-col">
-      <div
-        className="h-px w-full"
-        style={{ background: "linear-gradient(to right, transparent, white)" }}
-      />
-      <div className="flex items-center justify-between pt-3">
-        <div className="flex flex-col">
-          <span className="text-sm uppercase text-white/60">{label}</span>
-          <span className="text-4xl font-medium text-white">
-            {displayValue}
-            {suffix}
-          </span>
-        </div>
-        <AnimatedDots />
-      </div>
+      <span className="text-sm uppercase text-white/60">{label}</span>
+      <span className="text-4xl font-medium text-white">
+        {displayValue}
+        {suffix}
+      </span>
     </div>
   );
 }
@@ -298,26 +289,35 @@ export default function HeroStats({ className }: { className?: string }) {
       </div>
 
       {/* Mobile: Cycling stats with dramatic fade transition */}
-      <div className="relative h-[72px] w-full md:hidden">
-        {STATS_DATA.map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            className="absolute inset-0"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{
-              opacity: mobileActiveIndex === index ? 1 : 0,
-              y: mobileActiveIndex === index ? 0 : 10,
-            }}
-            transition={{ duration: 0.65, ease: DRAMATIC_EASE }}
-          >
-            <MobileStatItem
-              label={stat.label}
-              value={stat.value}
-              suffix={stat.suffix}
-              isActive={hasStarted && mobileActiveIndex === index}
-            />
-          </motion.div>
-        ))}
+      <div className="flex w-full flex-col md:hidden">
+        <div
+          className="h-px w-full"
+          style={{ background: "linear-gradient(to right, transparent, white)" }}
+        />
+        <div className="flex items-center justify-between pt-3">
+          <div className="relative h-[60px] flex-1">
+            {STATS_DATA.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                className="absolute inset-0"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{
+                  opacity: mobileActiveIndex === index ? 1 : 0,
+                  y: mobileActiveIndex === index ? 0 : 10,
+                }}
+                transition={{ duration: 0.65, ease: DRAMATIC_EASE }}
+              >
+                <MobileStatItem
+                  label={stat.label}
+                  value={stat.value}
+                  suffix={stat.suffix}
+                  isActive={hasStarted && mobileActiveIndex === index}
+                />
+              </motion.div>
+            ))}
+          </div>
+          <AnimatedDots />
+        </div>
       </div>
     </div>
   );

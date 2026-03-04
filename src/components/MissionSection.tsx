@@ -2,9 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useEffect, useCallback } from "react";
-import OpaqueButton from "@/components/ui/OpaqueButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
-import { openDownloadStore } from "@/lib/download";
 
 /** Product card data for carousel */
 const PRODUCTS = [
@@ -13,24 +11,28 @@ const PRODUCTS = [
     description:
       "Monitor your every move with precise, frame-by-frame analysis. Our AI provides real-time insights into your speed, technique, and control.",
     image: "/images/Mission/Data Analysis.png",
+    mobileImage: "/images/Mission/mobile/Data Analysis.png",
   },
   {
     title: "Progress Tracking",
     description:
       "Turn raw performance data into clear visuals. Discover your strengths, weaknesses, and progress over time with sleek, interactive charts that keep you focused on growth.",
     image: "/images/Mission/Progress Tracking.png",
+    mobileImage: "/images/Mission/mobile/Progress Tracking.png",
   },
   {
     title: "Tailored Insights",
     description:
       "Review your training sessions, note key insights, and celebrate achievements. The journal helps you stay mentally sharp and emotionally engaged in your growth.",
     image: "/images/Mission/Tailored Insights.png",
+    mobileImage: "/images/Mission/mobile/Tailored Insights.png",
   },
   {
     title: "Goals & Milestones",
     description:
       "Set clear, personalised targets and track your journey towards them. From micro-goals to major breakthroughs, AIM helps you stay motivated and accountable with structured progress checkpoints.",
     image: "/images/Mission/Goals & Milestones.png",
+    mobileImage: "/images/Mission/mobile/Goals & Milestones.png",
   },
 ];
 
@@ -43,24 +45,34 @@ const CARD_STEP = CARD_WIDTH + GAP;
 /** Auto-scroll speed in pixels per second */
 const SCROLL_SPEED = 100;
 
-/** Simplified product card with background image, title, and description */
+/** Product card with responsive background images for mobile/desktop */
 function ProductCard({
   title,
   description,
   image,
+  mobileImage,
 }: {
   title: string;
   description: string;
   image: string;
+  mobileImage: string;
 }) {
   return (
     <div className="relative flex h-[500px] w-[320px] flex-shrink-0 select-none flex-col overflow-hidden rounded-[24px] md:h-[520px] md:w-[467px] lg:h-[646px] lg:w-[580px]">
       <Image
+        src={mobileImage}
+        alt={title}
+        fill
+        className="object-cover lg:hidden"
+        sizes="(max-width: 768px) 320px, 467px"
+        draggable={false}
+      />
+      <Image
         src={image}
         alt={title}
         fill
-        className="object-cover"
-        sizes="(max-width: 768px) 320px, (max-width: 1024px) 467px, 580px"
+        className="hidden object-cover lg:block"
+        sizes="580px"
         draggable={false}
       />
       <div className="relative z-10 flex flex-col gap-4 p-6 md:p-10 lg:p-12">
@@ -207,9 +219,6 @@ export default function MissionSection() {
           </p>
         </RevealOnScroll>
 
-        <RevealOnScroll delay={0.2} className="w-full md:w-auto">
-          <OpaqueButton onClick={openDownloadStore}>Download Now</OpaqueButton>
-        </RevealOnScroll>
       </div>
 
       {/* Mobile/Tablet: Touch-swipeable horizontal scroll with snap */}

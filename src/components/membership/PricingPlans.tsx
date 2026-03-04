@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
@@ -262,6 +263,7 @@ function PricingCard({
   plan: Plan;
   billingCycle: BillingCycle;
 }) {
+  const router = useRouter();
   const [students, setStudents] = useState(10);
 
   const isEnterprise = plan.isDynamicPrice && students > 100;
@@ -282,6 +284,16 @@ function PricingCard({
 
   const isFree = price === null;
   const ctaText = isEnterprise ? "Contact Sales" : plan.ctaText;
+
+  const handleCtaClick = () => {
+    if (plan.isDynamicPrice && !isEnterprise) {
+      router.push(
+        `/membership/academy?cycle=${billingCycle}&students=${students}`
+      );
+    } else {
+      openDownloadStore();
+    }
+  };
 
   return (
     <motion.div
@@ -448,7 +460,7 @@ function PricingCard({
       <div className="relative z-10 mt-10">
         <OpaqueButton
           variant="dark"
-          onClick={openDownloadStore}
+          onClick={handleCtaClick}
           className={cn(
             "!w-full md:!w-full",
             plan.highlighted
