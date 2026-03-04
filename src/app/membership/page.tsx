@@ -3,7 +3,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PricingPlans from "@/components/membership/PricingPlans";
-import WhyUpgrade from "@/components/membership/WhyUpgrade";
 import CTASection from "@/components/CTASection";
 
 /**
@@ -15,7 +14,6 @@ export default function MembershipPage() {
     <main className="min-h-screen bg-black" data-header-theme="dark">
       <Header />
       <PricingPlans />
-      <WhyUpgrade />
       <CTASection />
       <Footer />
     </main>

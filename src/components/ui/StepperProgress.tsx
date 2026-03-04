@@ -38,7 +38,7 @@ export default function StepperProgress({
           <div key={index} className={cn("flex items-center", index < steps.length - 1 ? "flex-1" : "flex-none")}>
             {/* Step node */}
             <button
-              onClick={() => isClickable && onStepClick(index)}
+              onClick={() => isClickable && onStepClick?.(index)}
               disabled={!isClickable}
               className={cn(
                 "relative flex items-center justify-center shrink-0",

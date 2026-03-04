@@ -14,6 +14,7 @@ type AudioContextValue = {
   isMuted: boolean;
   toggleMute: () => void;
   startPlayback: () => void;
+  pausePlayback: () => void;
 };
 
 const AudioContext = createContext<AudioContextValue | null>(null);
@@ -81,6 +82,13 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     });
   }, [isReady]);
 
+  // Pause playback without changing mute preference (used by focused flows).
+  const pausePlayback = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+  }, []);
+
   // Toggle mute state
   const toggleMute = useCallback(() => {
     const audio = audioRef.current;
@@ -99,7 +107,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AudioContext.Provider
-      value={{ isPlaying, isMuted, toggleMute, startPlayback }}
+      value={{ isPlaying, isMuted, toggleMute, startPlayback, pausePlayback }}
     >
       {children}
     </AudioContext.Provider>

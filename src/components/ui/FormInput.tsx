@@ -106,7 +106,7 @@ export default function FormInput({
           autoComplete={autoComplete}
           inputMode={type === "tel" ? "tel" : type === "url" ? "url" : type === "email" ? "email" : "text"}
           className={cn(
-            "w-full rounded-xl border bg-white/[0.03] px-4 py-4 text-sm text-white outline-none",
+            "w-full rounded-xl border bg-white/[0.03] px-4 py-4 text-base md:text-sm text-white outline-none",
             "placeholder:text-white/25",
             "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
             "hover:bg-white/[0.05]",

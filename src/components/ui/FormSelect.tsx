@@ -88,7 +88,7 @@ export default function FormSelect({
           onMouseLeave={() => setIsHovered(false)}
           disabled={disabled}
           className={cn(
-            "w-full appearance-none rounded-xl border bg-white/[0.03] px-4 py-4 text-sm outline-none",
+            "w-full appearance-none rounded-xl border bg-white/[0.03] px-4 py-4 text-base md:text-sm outline-none",
             "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
             "hover:bg-white/[0.05]",
             hasValue ? "text-white" : "text-white/25",

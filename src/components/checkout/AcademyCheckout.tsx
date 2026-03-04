@@ -20,6 +20,7 @@ import {
   AdditionalInfo,
 } from "./types";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
+import { useAudio } from "@/contexts/AudioContext";
 
 const STEPS = [
   { label: "You" },
@@ -80,6 +81,7 @@ export default function AcademyCheckout({
   students,
 }: AcademyCheckoutProps) {
   const router = useRouter();
+  const { pausePlayback } = useAudio();
   const [currentStep, setCurrentStep] = useState(0);
   const [furthestStep, setFurthestStep] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -94,6 +96,11 @@ export default function AcademyCheckout({
       scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [currentStep]);
+
+  // Stop background music while user is in the checkout input flow.
+  useEffect(() => {
+    pausePlayback();
+  }, [pausePlayback]);
 
   const goNext = () => {
     if (currentStep < STEPS.length - 1) {
