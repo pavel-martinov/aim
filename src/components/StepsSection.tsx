@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import OpaqueButton from "@/components/ui/OpaqueButton";
+import DownloadButton from "@/components/ui/DownloadButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
-import { openDownloadStore } from "@/lib/download";
 
 /** Step card data */
 const STEPS = [
@@ -77,7 +76,6 @@ function StepCard({
             muted
             playsInline
             preload="auto"
-            // @ts-expect-error - Legacy iOS Safari attribute for inline playback
             webkit-playsinline=""
             onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
             className="absolute inset-0 h-full w-full object-cover"
@@ -162,12 +160,12 @@ export default function StepsSection() {
         </RevealOnScroll>
 
         <RevealOnScroll delay={0.2} className="w-full md:w-auto">
-          <OpaqueButton onClick={openDownloadStore}>DOWNLOAD NOW</OpaqueButton>
+          <DownloadButton />
         </RevealOnScroll>
       </div>
 
       {/* Spacer */}
-      <div className="h-[60px] md:h-[60px]" />
+      <div className="h-[60px]" />
 
       {/* Cards grid - 1 col mobile, 2 cols tablet+ */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

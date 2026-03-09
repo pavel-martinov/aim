@@ -4,9 +4,8 @@ import { useRef, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import OpaqueButton from "@/components/ui/OpaqueButton";
+import DownloadButton from "@/components/ui/DownloadButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
-import { openDownloadStore } from "@/lib/download";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -176,9 +175,7 @@ export default function FeaturesSection() {
 
         {/* CTA Button */}
         <RevealOnScroll className="mt-6 w-full md:w-auto lg:mt-10" delay={0.2}>
-          <OpaqueButton onClick={openDownloadStore}>
-            DOWNLOAD NOW
-          </OpaqueButton>
+          <DownloadButton />
         </RevealOnScroll>
       </div>
 

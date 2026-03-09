@@ -2,8 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import OpaqueButton from "@/components/ui/OpaqueButton";
-import { openDownloadStore } from "@/lib/download";
+import DownloadButton from "@/components/ui/DownloadButton";
 import HeroVideoPlayer from "@/components/about/HeroVideoPlayer";
 
 const HEADLINE_LINES = ["Your AI Coach.", "Your Path To Pro."];
@@ -69,7 +68,7 @@ export default function AboutHero() {
         </p>
 
         <div className="hero-animate hero-animate-delay-4 w-full lg:w-[696px]">
-          <OpaqueButton onClick={openDownloadStore}>DOWNLOAD NOW</OpaqueButton>
+          <DownloadButton />
         </div>
       </motion.div>
     </section>

@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import HeroStats from "@/components/HeroStats";
-import OpaqueButton from "@/components/ui/OpaqueButton";
-import { openDownloadStore } from "@/lib/download";
+import DownloadButton from "@/components/ui/DownloadButton";
+import BackgroundVideo from "@/components/ui/BackgroundVideo";
 
 const HERO_VIDEO_LOCAL = "/HeroVideoBG.mp4";
 const HERO_VIDEO_FALLBACK =
@@ -13,31 +12,17 @@ const HEADLINE_LINES = ["IT'S TIME. TO RISE.", "From Streets To Stadiums."];
 
 /** Full-viewport hero with video background, animated stats, and gradient headline. */
 export default function Hero() {
-  const [src, setSrc] = useState(HERO_VIDEO_LOCAL);
-
   return (
     <section
       className="relative h-screen overflow-hidden"
       data-header-theme="dark"
     >
-      {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        // @ts-expect-error - Legacy iOS Safari attribute for inline playback
-        webkit-playsinline=""
-        className="absolute inset-0 h-full w-full object-cover"
-        src={src}
-        onError={() => setSrc(HERO_VIDEO_FALLBACK)}
-        onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
-        aria-hidden
+      <BackgroundVideo
+        src={HERO_VIDEO_LOCAL}
+        fallbackSrc={HERO_VIDEO_FALLBACK}
+        overlay
+        overlayOpacity={0.52}
       />
-
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/[0.52]" aria-hidden />
 
       {/* Content Container */}
       <div className="relative flex h-full flex-col justify-between px-4 pb-6 pt-[84px] md:justify-end md:gap-10 md:px-6 md:pt-[100px] lg:px-6 lg:pb-[42px] lg:pt-[124px]">
@@ -70,9 +55,7 @@ export default function Hero() {
 
           {/* CTA Button - Full width on mobile, fixed 240px on tablet+ */}
           <div className="hero-animate hero-animate-delay-4 w-full md:w-auto">
-            <OpaqueButton onClick={openDownloadStore} className="shrink-0">
-              DOWNLOAD NOW
-            </OpaqueButton>
+            <DownloadButton className="shrink-0" />
           </div>
         </div>
       </div>

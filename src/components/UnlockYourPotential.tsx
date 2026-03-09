@@ -4,8 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 import { DRAMATIC_EASE } from "@/lib/animations";
-import OpaqueButton from "@/components/ui/OpaqueButton";
-import { openDownloadStore } from "@/lib/download";
+import DownloadButton from "@/components/ui/DownloadButton";
 
 /**
  * UnlockYourPotential section: Large green headline with phone mockup overlaying it,
@@ -86,9 +85,7 @@ export default function UnlockYourPotential() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.65, ease: DRAMATIC_EASE, delay: 0.3 }}
           >
-            <OpaqueButton onClick={openDownloadStore}>
-              DOWNLOAD NOW
-            </OpaqueButton>
+            <DownloadButton />
           </motion.div>
         </motion.div>
       </div>

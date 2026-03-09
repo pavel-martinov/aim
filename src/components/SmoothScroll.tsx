@@ -15,9 +15,24 @@ const LENIS_STOP_EVENT = "aim:lenis-stop";
 const LENIS_START_EVENT = "aim:lenis-start";
 const SCROLL_TO_TOP_EVENT = "aim:scroll-to-top";
 
-/** Smooth scrolling wrapper using Lenis, integrated with GSAP ScrollTrigger. */
+/** Returns true if device is touch-primary (mobile/tablet). */
+function isTouchDevice(): boolean {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+
+/** Smooth scrolling wrapper using Lenis, integrated with GSAP ScrollTrigger. Disabled on touch devices for native scroll. */
 export default function SmoothScroll({ children }: SmoothScrollProps) {
   useEffect(() => {
+    // Skip Lenis on touch devices - native scroll is already smooth and performs better
+    if (isTouchDevice()) {
+      return;
+    }
+
     let lenis: Lenis;
 
     try {
@@ -31,7 +46,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       return;
     }
 
-    // Sync Lenis scroll position with GSAP ScrollTrigger for proper pinning on mobile
+    // Sync Lenis scroll position with GSAP ScrollTrigger for proper pinning
     lenis.on("scroll", ScrollTrigger.update);
 
     gsap.ticker.add((time) => {
