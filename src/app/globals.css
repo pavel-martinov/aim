@@ -244,7 +244,17 @@ html.lenis body {
 }
 
 .preloader-loader {
-  animation: preloader-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: preloader-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) 2s both;
+}
+
+@keyframes preloader-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.preloader-fill {
+  width: 0%;
+  animation: preloader-fill 3.5s linear 2.5s forwards;
 }
 
 .preloader-cta {
@@ -268,6 +278,10 @@ html.lenis body {
   .preloader-exit-flash {
     animation: none;
     opacity: 1;
+  }
+  .preloader-fill {
+    animation: none;
+    width: 100%;
   }
 }
 
