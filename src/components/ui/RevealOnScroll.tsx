@@ -7,6 +7,16 @@ import { DURATION, GSAP_EASE } from "@/lib/animations";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Returns true if device is touch-primary (mobile/tablet). */
+function isTouchDevice(): boolean {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+
 type Direction = "up" | "down" | "left" | "right";
 
 type RevealOnScrollProps = {
@@ -86,6 +96,13 @@ export default function RevealOnScroll({
     };
 
     gsap.set(element, initialState);
+
+    // Skip ScrollTrigger on touch devices to prevent sticky scroll
+    if (isTouchDevice()) {
+      hasAnimated.current = true;
+      gsap.to(element, finalState);
+      return;
+    }
 
     // Check if element is already in view on mount
     const rect = element.getBoundingClientRect();

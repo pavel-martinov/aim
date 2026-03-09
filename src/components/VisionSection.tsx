@@ -30,6 +30,7 @@ export default function VisionSection() {
       ariaLabel="Our Vision"
       scrollEnd={5000}
       scrub={0.8}
+      disablePinOnTouch={false}
     />
   );
 }

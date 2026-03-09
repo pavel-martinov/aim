@@ -9,6 +9,16 @@ import RevealOnScroll from "@/components/ui/RevealOnScroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Returns true if device is touch-primary (mobile/tablet). */
+function isTouchDevice(): boolean {
+  if (typeof window === "undefined") return false;
+  return (
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia("(pointer: coarse)").matches
+  );
+}
+
 /** Feature data for the scrolling cards section */
 const FEATURES = [
   {
@@ -113,6 +123,14 @@ export default function FeaturesSection() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useLayoutEffect(() => {
+    // Skip ScrollTrigger on touch devices to prevent sticky scroll
+    if (isTouchDevice()) {
+      cardRefs.current.forEach((card) => {
+        if (card) gsap.set(card, { opacity: 1, y: 0 });
+      });
+      return;
+    }
+
     const ctx = gsap.context(() => {
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
