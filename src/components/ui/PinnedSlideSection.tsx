@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect, useState, useEffect } from "react";
+import { useRef, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
@@ -53,12 +53,7 @@ export default function PinnedSlideSection({
   disablePinOnTouch = true,
 }: PinnedSlideSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detect touch device on mount
-  useEffect(() => {
-    setIsMobile(isTouchDevice());
-  }, []);
+  const [isMobile] = useState(isTouchDevice);
 
   useLayoutEffect(() => {
     // Skip ScrollTrigger pinning on touch devices when disablePinOnTouch is true
