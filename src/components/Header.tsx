@@ -199,25 +199,14 @@ function DesktopMenuPanel({
                     ease: DRAMATIC_EASE,
                   }}
                 >
-                  {"href" in link ? (
-                    <Link
-                      href={link.href}
-                      className={`block text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                        isLightText ? "text-white" : "text-zinc-900"
-                      } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
-                    >
-                      {link.label}
-                    </Link>
-                  ) : (
-                    <button
-                      onClick={link.action}
-                      className={`block text-left text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                        isLightText ? "text-white" : "text-zinc-900"
-                      } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
-                    >
-                      {link.label}
-                    </button>
-                  )}
+                  <Link
+                    href={link.href}
+                    className={`block text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                      isLightText ? "text-white" : "text-zinc-900"
+                    } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
+                  >
+                    {link.label}
+                  </Link>
                 </motion.div>
               ))}
             </div>

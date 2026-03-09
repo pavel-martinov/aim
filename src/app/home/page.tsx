@@ -24,7 +24,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Header visible />
       <div className="relative">
-        <div className="sticky top-0 z-0 h-screen">
+        <div className="lg:sticky lg:top-0 z-0 h-screen">
           <Hero />
         </div>
         <div className="relative z-10">
