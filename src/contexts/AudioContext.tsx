@@ -20,20 +20,59 @@ type AudioContextValue = {
 const AudioContext = createContext<AudioContextValue | null>(null);
 
 const AUDIO_SRC = "/Audio/AIMBgMusic.mp3";
-const VOLUME = 0.15; // Low background volume
+const VOLUME = 0.15;
 
 /**
  * Provides global audio state and controls for background music.
- * Audio starts only after startPlayback() is called (after preloader).
+ * Handles browser autoplay policy by setting up interaction listeners when blocked.
  */
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const interactionListenerRef = useRef<(() => void) | null>(null);
 
-  // Initialize audio element on mount
+  /** Removes any existing interaction listeners to prevent duplicates/races. */
+  const clearInteractionListeners = useCallback(() => {
+    if (interactionListenerRef.current) {
+      document.removeEventListener("click", interactionListenerRef.current);
+      document.removeEventListener("touchstart", interactionListenerRef.current);
+      interactionListenerRef.current = null;
+    }
+  }, []);
+
+  /** Sets up listeners to play audio on next user interaction (for autoplay policy). */
+  const setupInteractionListener = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    clearInteractionListeners();
+
+    const playOnInteraction = () => {
+      audio.play().catch(() => {});
+      clearInteractionListeners();
+    };
+
+    interactionListenerRef.current = playOnInteraction;
+    document.addEventListener("click", playOnInteraction);
+    document.addEventListener("touchstart", playOnInteraction);
+  }, [clearInteractionListeners]);
+
+  /** Plays audio and falls back to next interaction if autoplay is blocked. */
+  const playAudio = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.play().catch(() => {
+      setupInteractionListener();
+    });
+  }, [setupInteractionListener]);
+
+  /** Starts playback only when not muted, used for automatic start flows. */
+  const startPlayback = useCallback(() => {
+    if (isMuted) return;
+    playAudio();
+  }, [isMuted, playAudio]);
+
   useEffect(() => {
     const audio = new Audio(AUDIO_SRC);
     audio.volume = VOLUME;
@@ -46,64 +85,37 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
+    startPlayback();
 
     return () => {
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
       audio.pause();
       audio.src = "";
-      // Clean up interaction listeners if they exist
-      if (interactionListenerRef.current) {
-        document.removeEventListener("click", interactionListenerRef.current);
-        document.removeEventListener("touchstart", interactionListenerRef.current);
-        interactionListenerRef.current = null;
-      }
+      clearInteractionListeners();
     };
-  }, []);
+  }, [clearInteractionListeners, startPlayback]);
 
-  // Start playback (called after preloader completes)
-  const startPlayback = useCallback(() => {
-    if (isReady) return;
-    setIsReady(true);
-
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.play().catch(() => {
-      const playOnInteraction = () => {
-        audio.play().catch(() => {});
-        document.removeEventListener("click", playOnInteraction);
-        document.removeEventListener("touchstart", playOnInteraction);
-        interactionListenerRef.current = null;
-      };
-      interactionListenerRef.current = playOnInteraction;
-      document.addEventListener("click", playOnInteraction);
-      document.addEventListener("touchstart", playOnInteraction);
-    });
-  }, [isReady]);
-
-  // Pause playback without changing mute preference (used by focused flows).
   const pausePlayback = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.pause();
   }, []);
 
-  // Toggle mute state
   const toggleMute = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
+    clearInteractionListeners();
+
     if (isMuted) {
-      // Unmute - resume playback
-      audio.play().catch(() => {});
       setIsMuted(false);
+      playAudio();
     } else {
-      // Mute - pause playback
       audio.pause();
       setIsMuted(true);
     }
-  }, [isMuted]);
+  }, [isMuted, clearInteractionListeners, playAudio]);
 
   return (
     <AudioContext.Provider

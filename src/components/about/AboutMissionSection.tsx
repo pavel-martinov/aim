@@ -33,7 +33,6 @@ const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
  */
 export default function AboutMissionSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const fixedContentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const mobile = isMobile();
@@ -45,10 +44,17 @@ export default function AboutMissionSection() {
           start: "top top",
           end: () => `+=${mobile ? 3000 : 6000}`,
           scrub: mobile ? 0.3 : true,
-          pin: fixedContentRef.current,
+          pin: true,
+          pinSpacing: true,
+          pinReparent: true,
           anticipatePin: 1,
           fastScrollEnd: true,
           invalidateOnRefresh: true,
+          snap: {
+            snapTo: [0, 0.33, 0.66, 1],
+            duration: { min: 0.3, max: 0.6 },
+            ease: "power2.inOut",
+          },
         },
       });
 
@@ -122,6 +128,9 @@ export default function AboutMissionSection() {
       master.to(".mission-bg-3", { opacity: 1, duration: 0.5 }, "<");
       animateTextIn(".mission-text-3");
       master.fromTo(".mission-progress-3", { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
+
+      // Recalculate pin/snap metrics after timeline setup for stable section measurements.
+      ScrollTrigger.refresh();
     }, sectionRef);
 
     return () => ctx.revert();
@@ -135,10 +144,7 @@ export default function AboutMissionSection() {
       data-header-theme="dark"
     >
       {/* Pinned content container */}
-      <div
-        ref={fixedContentRef}
-        className="relative flex h-screen w-full flex-col items-center justify-center px-4 py-[60px] lg:px-6"
-      >
+      <div className="relative flex h-screen w-full flex-col items-center justify-center px-4 py-[60px] lg:px-6">
         {/* Background videos */}
         <div className="absolute inset-0 overflow-hidden">
           {SLIDES.map((slide, index) => (
@@ -153,6 +159,10 @@ export default function AboutMissionSection() {
                 loop
                 muted
                 playsInline
+                preload="auto"
+                // @ts-expect-error - Legacy iOS Safari attribute for inline playback
+                webkit-playsinline=""
+                onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
                 className="absolute inset-0 h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-black/25" />

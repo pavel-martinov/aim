@@ -1,39 +1,39 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useState } from "react";
-import { SMOOTH_EASE } from "@/lib/animations";
+import { useLayoutEffect, useRef } from "react";
 
 const LAST_PATHNAME_KEY = "aim:lastPathname";
 
-/** Page transition wrapper using Next.js template pattern for proper re-mounting on navigation. */
+/** Page transition wrapper using View Transitions API for smooth, cinematic navigation. */
 export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isFirstRender, setIsFirstRender] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    const previous = window.sessionStorage.getItem(LAST_PATHNAME_KEY);
-    if (previous && previous !== pathname) {
-      window.scrollTo({ top: 0, behavior: "instant" });
+    try {
+      const previous = window.sessionStorage.getItem(LAST_PATHNAME_KEY);
+      const isNavigation = previous && previous !== pathname;
+
+      if (isNavigation) {
+        window.scrollTo({ top: 0, behavior: "auto" });
+
+        if (contentRef.current) {
+          contentRef.current.classList.add("page-enter");
+          const cleanup = () => contentRef.current?.classList.remove("page-enter");
+          contentRef.current.addEventListener("animationend", cleanup, { once: true });
+        }
+      }
+
+      window.sessionStorage.setItem(LAST_PATHNAME_KEY, pathname);
+    } catch {
+      // sessionStorage may be unavailable in some environments (private mode)
     }
-    window.sessionStorage.setItem(LAST_PATHNAME_KEY, pathname);
   }, [pathname]);
 
-  useLayoutEffect(() => {
-    // Only update state if it's the first render to avoid unnecessary re-renders
-    if (isFirstRender) {
-      setTimeout(() => setIsFirstRender(false), 0);
-    }
-  }, [isFirstRender]);
-
   return (
-    <motion.div
-      initial={isFirstRender ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: SMOOTH_EASE }}
-    >
+    <div ref={contentRef} className="page-content">
       {children}
-    </motion.div>
+    </div>
   );
 }

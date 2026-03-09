@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
+import gsap from "gsap";
+import { DRAMATIC_EASE, DURATION, GSAP_EASE } from "@/lib/animations";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import { openDownloadStore } from "@/lib/download";
@@ -481,19 +482,53 @@ function PricingCard({
  */
 export default function PricingPlans() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("annual");
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const headline = headlineRef.current;
+    if (!headline) return;
+
+    const chars = headline.querySelectorAll<HTMLElement>(".membership-char");
+
+    gsap.set(chars, {
+      opacity: 0,
+      y: 30,
+      rotateX: -35,
+      filter: "blur(3px)",
+      transformOrigin: "center bottom",
+    });
+
+    gsap.to(chars, {
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      filter: "blur(0px)",
+      duration: DURATION.hero,
+      stagger: DURATION.charStagger,
+      ease: GSAP_EASE.dramatic,
+      delay: 0.15,
+    });
+  }, []);
 
   return (
     <section className="relative bg-black px-4 pb-12 pt-[140px] md:pt-[100px] lg:px-6 lg:pb-32 lg:pt-16 min-h-[100dvh] flex flex-col justify-start lg:justify-center overflow-x-hidden overflow-y-visible gap-8 md:gap-4 w-full">
       {/* Integrated Hero Header */}
       <div className="mx-auto text-center mt-2 sm:mt-2 md:mt-8 lg:mt-0 flex flex-col gap-3 md:gap-2 w-full relative z-20">
-        <RevealOnScroll dramatic>
-          <h1
-            className="text-[40px] uppercase leading-[0.95] tracking-tight text-white md:text-[60px] lg:text-[80px]"
-            style={{ fontFamily: "var(--font-anton), sans-serif" }}
-          >
-            Membership
-          </h1>
-        </RevealOnScroll>
+        <h1
+          ref={headlineRef}
+          className="text-[40px] uppercase leading-[0.95] tracking-tight text-white md:text-[60px] lg:text-[80px]"
+          style={{ fontFamily: "var(--font-anton), sans-serif", perspective: "1000px" }}
+        >
+          {"Membership".split("").map((char, i) => (
+            <span
+              key={i}
+              className="membership-char inline-block"
+              style={{ whiteSpace: char === " " ? "pre" : undefined }}
+            >
+              {char}
+            </span>
+          ))}
+        </h1>
 
         <RevealOnScroll delay={0.1}>
           <p

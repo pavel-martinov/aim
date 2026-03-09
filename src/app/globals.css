@@ -132,3 +132,174 @@ html.lenis body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
+/* Page Transitions - View Transitions API with CSS fallback */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+.page-content {
+  will-change: opacity, transform;
+}
+
+.page-enter {
+  animation: page-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+::view-transition-old(root) {
+  animation: page-fade-out 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+::view-transition-new(root) {
+  animation: page-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Gallery Carousel Animation */
+.gallery-carousel {
+  animation: scroll-mobile 40s linear infinite;
+}
+
+@keyframes scroll-mobile {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-200px * 7 - 12px * 7));
+  }
+}
+
+@media (min-width: 768px) {
+  .gallery-carousel {
+    animation: scroll-desktop 40s linear infinite;
+  }
+  @keyframes scroll-desktop {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-320px * 7 - 12px * 7));
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-carousel {
+    animation: none;
+  }
+}
+
+/* Preloader CSS animations - CSS-only for React Compiler / Framer Motion compatibility */
+@keyframes preloader-fade-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes preloader-exit-phrase {
+  from { opacity: 1; transform: scale(1);    filter: blur(0px); }
+  to   { opacity: 0; transform: scale(1.06); filter: blur(6px); }
+}
+
+@keyframes preloader-exit-flash {
+  0%   { opacity: 0; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+.preloader-logo {
+  animation: preloader-fade-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.preloader-text {
+  animation: preloader-fade-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.preloader-loader {
+  animation: preloader-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.preloader-cta {
+  animation: preloader-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.preloader-exit-phrase {
+  animation: preloader-exit-phrase 1s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.preloader-exit-flash {
+  animation: preloader-exit-flash 0.6s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preloader-logo,
+  .preloader-text,
+  .preloader-loader,
+  .preloader-cta,
+  .preloader-exit-phrase,
+  .preloader-exit-flash {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Hero section entrance animations - CSS-only for reliable visibility */
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: heroFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-animate-delay-1 { animation-delay: 0.1s; }
+.hero-animate-delay-2 { animation-delay: 0.3s; }
+.hero-animate-delay-3 { animation-delay: 0.5s; }
+.hero-animate-delay-4 { animation-delay: 0.8s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate {
+    opacity: 1;
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+}

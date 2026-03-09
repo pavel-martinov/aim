@@ -63,6 +63,7 @@ function ProductCard({
         src={mobileImage}
         alt={title}
         fill
+        quality={100}
         className="object-cover lg:hidden"
         sizes="(max-width: 768px) 320px, 467px"
         draggable={false}
@@ -71,6 +72,7 @@ function ProductCard({
         src={image}
         alt={title}
         fill
+        quality={100}
         className="hidden object-cover lg:block"
         sizes="580px"
         draggable={false}
@@ -222,7 +224,7 @@ export default function MissionSection() {
       </div>
 
       {/* Mobile/Tablet: Touch-swipeable horizontal scroll with snap */}
-      <RevealOnScroll delay={0.3} viewportAmount={0.1}>
+      <RevealOnScroll delay={0.3} threshold={0.1}>
         <div className="mission-carousel mt-[60px] flex gap-3 overflow-x-auto px-4 lg:hidden">
           {PRODUCTS.map((product) => (
             <ProductCard key={product.title} {...product} />
@@ -231,7 +233,7 @@ export default function MissionSection() {
       </RevealOnScroll>
 
       {/* Desktop: Auto-scrolling carousel with drag support */}
-      <RevealOnScroll delay={0.3} viewportAmount={0.1}>
+      <RevealOnScroll delay={0.3} threshold={0.1}>
         <DesktopCarousel />
       </RevealOnScroll>
     </section>

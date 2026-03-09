@@ -76,6 +76,10 @@ function StepCard({
             loop
             muted
             playsInline
+            preload="auto"
+            // @ts-expect-error - Legacy iOS Safari attribute for inline playback
+            webkit-playsinline=""
+            onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
             className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (

@@ -79,39 +79,6 @@ export default function AboutGallery() {
           ))}
         </div>
       </motion.div>
-
-      {/* CSS for infinite scroll animation */}
-      <style jsx>{`
-        .gallery-carousel {
-          animation: scroll 40s linear infinite;
-        }
-
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(calc(-200px * 7 - 12px * 7));
-          }
-        }
-
-        @media (min-width: 768px) {
-          @keyframes scroll {
-            0% {
-              transform: translateX(0);
-            }
-            100% {
-              transform: translateX(calc(-320px * 7 - 12px * 7));
-            }
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .gallery-carousel {
-            animation: none;
-          }
-        }
-      `}</style>
     </section>
   );
 }

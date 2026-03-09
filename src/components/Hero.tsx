@@ -3,12 +3,13 @@
 import { useState } from "react";
 import HeroStats from "@/components/HeroStats";
 import OpaqueButton from "@/components/ui/OpaqueButton";
-import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import { openDownloadStore } from "@/lib/download";
 
 const HERO_VIDEO_LOCAL = "/HeroVideoBG.mp4";
 const HERO_VIDEO_FALLBACK =
   "https://assets.mixkit.co/videos/preview/mixkit-man-playing-soccer-502-large.mp4";
+
+const HEADLINE_LINES = ["IT'S TIME. TO RISE.", "From Streets To Stadiums."];
 
 /** Full-viewport hero with video background, animated stats, and gradient headline. */
 export default function Hero() {
@@ -25,9 +26,13 @@ export default function Hero() {
         loop
         muted
         playsInline
+        preload="auto"
+        // @ts-expect-error - Legacy iOS Safari attribute for inline playback
+        webkit-playsinline=""
         className="absolute inset-0 h-full w-full object-cover"
         src={src}
         onError={() => setSrc(HERO_VIDEO_FALLBACK)}
+        onCanPlay={(e) => e.currentTarget.play().catch(() => {})}
         aria-hidden
       />
 
@@ -43,30 +48,32 @@ export default function Hero() {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           {/* Headline + Subtext */}
           <div className="flex max-w-[696px] flex-col gap-6 uppercase">
-            <RevealOnScroll>
-              <h1
-                className="flex flex-col bg-gradient-to-r from-white to-[#c4c4c4] bg-clip-text text-[42px] leading-[1.1] text-transparent lg:text-[62px]"
-                style={{ fontFamily: "var(--font-anton), sans-serif" }}
-              >
-                <span>IT&apos;S TIME. TO RISE.</span>
-                <span>From Streets To Stadiums.</span>
-              </h1>
-            </RevealOnScroll>
-            <RevealOnScroll delay={0.1}>
-              <p className="text-base font-medium uppercase leading-[1.5] text-white md:normal-case">
-                Where talent meets opportunity.
-                <br />
-                Train smarter, perform better, and rise to the next level.
-              </p>
-            </RevealOnScroll>
+            <h1
+              className="flex flex-col text-[42px] leading-[1.1] lg:text-[62px]"
+              style={{ fontFamily: "var(--font-anton), sans-serif" }}
+            >
+              {HEADLINE_LINES.map((line, i) => (
+                <span
+                  key={i}
+                  className={`hero-animate hero-animate-delay-${i + 1} block bg-gradient-to-r from-white to-[#c4c4c4] bg-clip-text text-transparent`}
+                >
+                  {line}
+                </span>
+              ))}
+            </h1>
+            <p className="hero-animate hero-animate-delay-3 text-base font-medium uppercase leading-[1.5] text-white md:normal-case">
+              Where talent meets opportunity.
+              <br />
+              Train smarter, perform better, and rise to the next level.
+            </p>
           </div>
 
           {/* CTA Button - Full width on mobile, fixed 240px on tablet+ */}
-          <RevealOnScroll delay={0.2} className="w-full md:w-auto">
+          <div className="hero-animate hero-animate-delay-4 w-full md:w-auto">
             <OpaqueButton onClick={openDownloadStore} className="shrink-0">
               DOWNLOAD NOW
             </OpaqueButton>
-          </RevealOnScroll>
+          </div>
         </div>
       </div>
     </section>

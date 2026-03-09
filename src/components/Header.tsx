@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useHeaderTheme } from "@/contexts/HeaderThemeContext";
@@ -237,6 +238,7 @@ function HeaderContent({
   isDark: boolean;
 }) {
   const { scrollY } = useScrollPosition();
+  const pathname = usePathname();
   const [viewportHeight, setViewportHeight] = useState(
     typeof window !== "undefined" ? window.innerHeight : 0
   );
@@ -294,6 +296,16 @@ function HeaderContent({
     setIsMobileMenuOpen(false);
   }, []);
 
+  const handleLogoClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (pathname === "/home") {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("aim:scroll-to-top"));
+      }
+    },
+    [pathname]
+  );
+
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const originalOverflow = document.body.style.overflow;
@@ -336,6 +348,7 @@ function HeaderContent({
           {/* Logo (left) */}
           <Link
             href="/home"
+            onClick={handleLogoClick}
             className="relative flex items-center transition-opacity hover:opacity-80"
             aria-label="AIM home"
           >
