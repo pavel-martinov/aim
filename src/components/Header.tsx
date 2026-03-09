@@ -17,7 +17,6 @@ import { openDownloadStore } from "@/lib/download";
 const MENU_LINKS = [
   { href: "/about", label: "About" },
   { href: "/membership", label: "Membership" },
-  { label: "Download", action: openDownloadStore },
 ] as const;
 
 type HeaderProps = {
@@ -83,7 +82,7 @@ function HamburgerIcon({ isOpen, isDark }: { isOpen: boolean; isDark: boolean })
   );
 }
 
-/** Full-screen mobile/tablet menu overlay with centered links */
+/** Full-screen mobile/tablet menu overlay with centered links and CTA buttons */
 function MobileTabletMenuPanel({
   isExpanded,
   onLinkClick,
@@ -103,22 +102,23 @@ function MobileTabletMenuPanel({
         >
           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" aria-hidden />
           <nav
-            className="relative flex h-dvh flex-col items-center justify-center gap-[32px] px-6 text-center"
+            className="relative flex h-dvh flex-col items-center justify-between px-6 pb-10 pt-32 text-center"
             aria-label="Main navigation"
           >
-            {[{ href: "/home", label: "Home" }, ...MENU_LINKS].map((link, index) => (
-              <motion.div
-                key={link.label}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
-                transition={{
-                  duration: DURATION.standard,
-                  delay: 0.4 + index * 0.1,
-                  ease: DRAMATIC_EASE,
-                }}
-              >
-                {"href" in link ? (
+            {/* Nav links */}
+            <div className="flex flex-col items-center gap-8">
+              {[{ href: "/home", label: "Home" }, ...MENU_LINKS].map((link, index) => (
+                <motion.div
+                  key={link.label}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
+                  transition={{
+                    duration: DURATION.standard,
+                    delay: 0.4 + index * 0.1,
+                    ease: DRAMATIC_EASE,
+                  }}
+                >
                   <Link
                     href={link.href}
                     onClick={onLinkClick}
@@ -126,19 +126,25 @@ function MobileTabletMenuPanel({
                   >
                     {link.label}
                   </Link>
-                ) : (
-                  <button
-                    onClick={() => {
-                      link.action();
-                      onLinkClick();
-                    }}
-                    className="block text-4xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none md:text-5xl"
-                  >
-                    {link.label}
-                  </button>
-                )}
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* CTA buttons */}
+            <motion.div
+              className="flex w-full flex-col gap-3"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
+              transition={{ duration: DURATION.standard, delay: 0.7, ease: DRAMATIC_EASE }}
+            >
+              <OpaqueButton variant="dark" onClick={() => { openDownloadStore(); onLinkClick(); }} showIcon={false}>
+                Download
+              </OpaqueButton>
+              <OpaqueButton variant="brand" href="/log-in" onClick={onLinkClick} showIcon={false}>
+                Log In
+              </OpaqueButton>
+            </motion.div>
           </nav>
         </motion.div>
       )}
@@ -419,8 +425,19 @@ function HeaderContent({
               variant="inline"
               onClick={openDownloadStore}
               className="hidden lg:flex"
+              showIcon={false}
             >
               Download
+            </OpaqueButton>
+
+            {/* Log In button - Desktop only */}
+            <OpaqueButton
+              variant="inline"
+              href="/log-in"
+              className="hidden bg-[var(--color-brand)] text-black hover:brightness-110 lg:flex"
+              showIcon={false}
+            >
+              Log In
             </OpaqueButton>
 
             {/* Mobile/Tablet: Hamburger button */}

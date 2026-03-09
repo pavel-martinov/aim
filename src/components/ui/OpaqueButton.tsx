@@ -49,7 +49,8 @@ export default function OpaqueButton(props: OpaqueButtonProps) {
           "bg-[var(--color-brand)] text-black",
           "hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)]",
           "active:brightness-95 active:shadow-none",
-          "focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-black"
+          "focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-black",
+          "disabled:opacity-50 disabled:pointer-events-none disabled:shadow-none"
         )
       : cn(
           "bg-white/[0.12] backdrop-blur-sm text-white",
@@ -60,8 +61,8 @@ export default function OpaqueButton(props: OpaqueButtonProps) {
 
   const variantStyles: Record<string, string> = {
     inline: "flex items-center gap-3 px-3 py-2 text-base",
-    brand: "flex flex-col justify-between p-3 w-full md:w-[240px] h-[100px] text-base",
-    dark: "flex flex-col justify-between p-3 w-full md:w-[240px] h-[100px] text-base",
+    brand: "flex flex-col justify-between p-3 w-full h-[100px] text-base lg:w-[240px]",
+    dark: "flex flex-col justify-between p-3 w-full h-[100px] text-base lg:w-[240px]",
   };
 
   const combinedClassName = cn(baseStyles, colorStyles, variantStyles[variant], className);
