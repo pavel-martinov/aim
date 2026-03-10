@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import FormInput from "@/components/ui/FormInput";
 import OpaqueButton from "@/components/ui/OpaqueButton";
-import { mockLogin } from "@/lib/mockAuth";
+import { mockLogin, MOCK_TEST_CREDENTIALS } from "@/lib/mockAuth";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 
 /**
@@ -20,21 +20,22 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
 
-  const validateEmail = (value: string) => {
+  const validateLogin = (value: string) => {
     if (!value) return "Email is required";
+    if (value === MOCK_TEST_CREDENTIALS.login) return "";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) return "Please enter a valid email";
     return "";
   };
 
-  const emailError = touched.email ? validateEmail(email) : "";
+  const emailError = touched.email ? validateLogin(email) : "";
   const passwordError = touched.password && !password ? "Password is required" : "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({ email: true, password: true });
 
-    const emailErr = validateEmail(email);
+    const emailErr = validateLogin(email);
     if (emailErr || !password) {
       setError(emailErr || "Password is required");
       return;
@@ -46,7 +47,7 @@ export default function LoginForm() {
     const result = await mockLogin(email, password);
 
     if (result.success) {
-      router.push("/");
+      router.push("/profile");
     } else {
       setError(result.error || "Login failed");
       setIsLoading(false);
@@ -56,17 +57,22 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <FormInput
-        label="Email"
-        type="email"
+        label="Email or Test Login"
+        type="text"
         value={email}
         onChange={setEmail}
         onBlur={() => setTouched((t) => ({ ...t, email: true }))}
         error={emailError}
-        placeholder="your@email.com"
+        placeholder='your@email.com or "test"'
         required
-        autoComplete="email"
+        autoComplete="username"
         disabled={isLoading}
       />
+
+      <p className="text-xs text-white/45 font-mono">
+        Test credentials: login <span className="text-white/70">test</span>, password{" "}
+        <span className="text-white/70">123</span>
+      </p>
 
       <FormInput
         label="Password"

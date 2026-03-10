@@ -11,14 +11,27 @@ export type AuthResult = {
 /** Simulates network delay */
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Shared mock credentials for profile testing. */
+export const MOCK_TEST_CREDENTIALS = {
+  login: "test",
+  password: "123",
+} as const;
+
 /**
- * Mock login - accepts any valid email format with password "demo123"
+ * Mock login for local testing.
+ * Accepts either:
+ * - login: "test", password: "123"
+ * - any valid email, password: "demo123" (legacy)
  */
 export async function mockLogin(email: string, password: string): Promise<AuthResult> {
   await delay(800);
 
   if (!email || !password) {
     return { success: false, error: "Email and password are required" };
+  }
+
+  if (email === MOCK_TEST_CREDENTIALS.login && password === MOCK_TEST_CREDENTIALS.password) {
+    return { success: true };
   }
 
   if (password === "demo123") {
