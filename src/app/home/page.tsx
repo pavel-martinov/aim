@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MissionSection from "@/components/MissionSection";
@@ -8,9 +10,18 @@ import StepsSection from "@/components/StepsSection";
 import VisionSection from "@/components/VisionSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import { getSession } from "@/lib/mockAuth";
 
 /** Home page: Hero with AVATR-style header and content sections. */
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (getSession()) {
+      router.push("/profile");
+    }
+  }, [router]);
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Header visible />

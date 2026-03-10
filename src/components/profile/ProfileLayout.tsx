@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
+import { clearSession } from "@/lib/mockAuth";
 import type { ProfileSection } from "@/types/user";
 
 type Theme = "light" | "dark";
@@ -87,14 +87,19 @@ const PROFILE_SECTIONS: { id: ProfileSection; label: string; icon: React.ReactNo
 
 /** Sign out link shared between sidebar and mobile menu. */
 function SignOutLink() {
+  const handleSignOut = () => {
+    clearSession();
+    window.location.href = "/";
+  };
+
   return (
-    <Link
-      href="/"
-      className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/60 font-sans transition-colors hover:bg-white/5 hover:text-white"
+    <button
+      onClick={handleSignOut}
+      className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/60 font-sans transition-colors hover:bg-white/5 hover:text-white"
     >
       {SIGN_OUT_ICON}
       Sign Out
-    </Link>
+    </button>
   );
 }
 
@@ -171,12 +176,12 @@ export default function ProfileLayout({
     <div className="flex min-h-screen w-full flex-col bg-[var(--background)]">
       {/* Header */}
       <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-white/10 bg-[var(--background)]/95 px-4 backdrop-blur-md lg:px-8">
-        <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80" aria-label="Go to homepage">
+        <div className="flex items-center gap-3">
           <Image src="/Logotype.svg" alt="AIM" width={28} height={32} priority />
           <span className="hidden text-sm uppercase tracking-widest text-white/60 font-mono sm:block">
             Account
           </span>
-        </Link>
+        </div>
 
         {/* Mobile menu toggle */}
         <button
@@ -205,13 +210,6 @@ export default function ProfileLayout({
           >
             {theme === "dark" ? <SunIcon /> : <MoonIcon />}
           </button>
-
-          <Link
-            href="/"
-            className="hidden text-sm text-white/60 font-mono transition-colors hover:text-white lg:block"
-          >
-            Sign Out
-          </Link>
         </div>
       </header>
 

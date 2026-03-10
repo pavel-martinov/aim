@@ -21,20 +21,16 @@ const SLIDES = [
   },
 ];
 
-const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
-
 /** Full-screen mission section with scroll-driven slide transitions. */
 export default function AboutMissionSection() {
-  const mobile = typeof window !== "undefined" ? isMobile() : false;
-
   return (
     <PinnedSlideSection
       slides={SLIDES}
       classPrefix="mission"
       ariaLabel="Our Mission"
-      scrollEnd={mobile ? 3000 : 6000}
-      scrub={mobile ? 0.3 : true}
-      refreshOnSetup
+      scrollEnd={5000}
+      scrub={0.8}
+      disablePinOnTouch={false}
     />
   );
 }

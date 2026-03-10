@@ -8,8 +8,32 @@ export type AuthResult = {
   error?: string;
 };
 
+const SESSION_KEY = "aim-session";
+const SESSION_DURATION_MS = 60 * 60 * 1000; // 1 hour
+
 /** Simulates network delay */
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Saves session timestamp to localStorage. */
+export function saveSession(): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(SESSION_KEY, Date.now().toString());
+}
+
+/** Returns true if a valid (non-expired) session exists. */
+export function getSession(): boolean {
+  if (typeof window === "undefined") return false;
+  const timestamp = localStorage.getItem(SESSION_KEY);
+  if (!timestamp) return false;
+  const elapsed = Date.now() - parseInt(timestamp, 10);
+  return elapsed < SESSION_DURATION_MS;
+}
+
+/** Clears the session from localStorage. */
+export function clearSession(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(SESSION_KEY);
+}
 
 /** Shared mock credentials for profile testing. */
 export const MOCK_TEST_CREDENTIALS = {
@@ -31,10 +55,12 @@ export async function mockLogin(email: string, password: string): Promise<AuthRe
   }
 
   if (email === MOCK_TEST_CREDENTIALS.login && password === MOCK_TEST_CREDENTIALS.password) {
+    saveSession();
     return { success: true };
   }
 
   if (password === "demo123") {
+    saveSession();
     return { success: true };
   }
 
