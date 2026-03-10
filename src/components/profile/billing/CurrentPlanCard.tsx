@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 import { PLAN_PRICING } from "@/lib/mockUser";
+import GhostButton from "@/components/ui/GhostButton";
 import type { Subscription, SubscriptionTier } from "@/types/user";
 
 interface CurrentPlanCardProps {
@@ -47,63 +48,37 @@ export default function CurrentPlanCard({
       className="rounded-2xl border border-white/10 bg-white/[0.02] p-6"
     >
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
-        {/* Plan info */}
         <div className="flex flex-col gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h3
-                className="text-xl text-white"
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-              >
-                {planInfo.name} Plan
-              </h3>
+              <h3 className="text-xl text-white font-sans">{planInfo.name} Plan</h3>
               <span className={cn("rounded-full px-2 py-0.5 text-xs", colors.bg, colors.accent)}>
                 {isActive ? "Active" : isCancelling ? "Cancelling" : subscription.status}
               </span>
             </div>
 
-            {/* Pricing */}
             <div className="mt-2 flex items-baseline gap-1">
-              <span
-                className={cn("text-3xl", colors.accent)}
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-              >
+              <span className={cn("text-3xl font-sans", colors.accent)}>
                 ${planInfo.price.toFixed(2)}
               </span>
               {planInfo.price > 0 && (
-                <span
-                  className="text-sm text-white/40"
-                  style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-                >
-                  /month
-                </span>
+                <span className="text-sm text-white/40 font-sans">/month</span>
               )}
             </div>
           </div>
 
-          {/* Renewal info */}
           {subscription.tier !== "free" && (
-            <p
-              className="text-sm text-white/50"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
+            <p className="text-sm text-white/50 font-sans">
               {isCancelling
                 ? `Your subscription ends on ${renewalDate}`
                 : `Next billing date: ${renewalDate}`}
             </p>
           )}
 
-          {/* Features */}
           <ul className="flex flex-col gap-1.5">
             {planInfo.features.map((feature) => (
               <li key={feature} className="flex items-center gap-2 text-sm text-white/60">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  className={colors.accent}
-                >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={colors.accent}>
                   <path
                     d="M3 8l3 3 7-7"
                     stroke="currentColor"
@@ -112,38 +87,29 @@ export default function CurrentPlanCard({
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-                  {feature}
-                </span>
+                <span className="font-sans">{feature}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col gap-2 sm:items-end">
-          <button
-            onClick={onChangePlan}
-            className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/80 transition-all duration-300 hover:border-white/40 hover:bg-white/5 hover:text-white"
-            style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-          >
+          <GhostButton size="sm" onClick={onChangePlan}>
             {subscription.tier === "free" ? "Upgrade Plan" : "Change Plan"}
-          </button>
+          </GhostButton>
 
           {subscription.tier !== "free" && (
             isCancelling ? (
               <button
                 onClick={onReactivate}
-                className="rounded-lg border border-[var(--color-brand)]/30 px-4 py-2 text-sm text-[var(--color-brand)] transition-all duration-300 hover:border-[var(--color-brand)] hover:bg-[var(--color-brand)]/10"
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                className="rounded-lg border border-[var(--color-brand)]/30 px-4 py-2 text-sm text-[var(--color-brand)] font-sans transition-all duration-300 hover:border-[var(--color-brand)] hover:bg-[var(--color-brand)]/10"
               >
                 Reactivate Subscription
               </button>
             ) : (
               <button
                 onClick={onCancelPlan}
-                className="rounded-lg px-4 py-2 text-sm text-white/40 transition-colors hover:text-red-400"
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                className="rounded-lg px-4 py-2 text-sm text-white/40 font-sans transition-colors hover:text-red-400"
               >
                 Cancel Subscription
               </button>

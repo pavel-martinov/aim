@@ -274,21 +274,16 @@ function HeaderContent({
   const handleLogoClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       // Always force the home route to start at the very top.
-      const forceScrollTop = () => {
-        window.scrollTo({ top: 0, behavior: "auto" });
-        window.dispatchEvent(new CustomEvent("aim:scroll-to-top"));
-      };
-
       e.preventDefault();
       setIsMobileMenuOpen(false);
 
       if (pathname === "/home") {
-        forceScrollTop();
+        window.scrollTo({ top: 0, behavior: "auto" });
         return;
       }
 
       router.push("/home");
-      requestAnimationFrame(forceScrollTop);
+      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
     },
     [pathname, router]
   );

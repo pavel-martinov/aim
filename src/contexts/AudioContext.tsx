@@ -85,7 +85,11 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
-    startPlayback();
+
+    // Attempt autoplay; fall back to next user interaction if blocked.
+    audio.play().catch(() => {
+      setupInteractionListener();
+    });
 
     return () => {
       audio.removeEventListener("play", handlePlay);
@@ -94,7 +98,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       audio.src = "";
       clearInteractionListeners();
     };
-  }, [clearInteractionListeners, startPlayback]);
+  }, [clearInteractionListeners, setupInteractionListener]);
 
   const pausePlayback = useCallback(() => {
     const audio = audioRef.current;

@@ -63,9 +63,6 @@ export default function ContactDetailsStep({
 
   const handleBlur = (field: keyof ContactDetails) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
-    const errs = validate(data);
-    setErrors(errs);
-    onValidChange(!Object.values(errs).some(Boolean));
   };
 
   const isFieldValid = (field: keyof ContactDetails) => {

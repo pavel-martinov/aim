@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION, DRAMATIC_EASE } from "@/lib/animations";
 import { PLAN_PRICING } from "@/lib/mockUser";
 import OpaqueButton from "@/components/ui/OpaqueButton";
+import GhostButton from "@/components/ui/GhostButton";
 import type { SubscriptionTier } from "@/types/user";
 
 interface PlanSelectorProps {
@@ -36,11 +37,7 @@ export default function PlanSelector({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirm = async () => {
-    if (selectedTier === currentTier) {
-      onClose();
-      return;
-    }
-
+    if (selectedTier === currentTier) { onClose(); return; }
     setIsLoading(true);
     try {
       await onSelectPlan(selectedTier);
@@ -52,17 +49,15 @@ export default function PlanSelector({
 
   const getActionLabel = () => {
     if (selectedTier === currentTier) return "Keep Current Plan";
-    const currentIndex = TIER_ORDER.indexOf(currentTier);
-    const selectedIndex = TIER_ORDER.indexOf(selectedTier);
-    if (selectedIndex > currentIndex) return "Upgrade Plan";
-    return "Downgrade Plan";
+    return TIER_ORDER.indexOf(selectedTier) > TIER_ORDER.indexOf(currentTier)
+      ? "Upgrade Plan"
+      : "Downgrade Plan";
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -71,8 +66,6 @@ export default function PlanSelector({
             className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm"
             onClick={onClose}
           />
-
-          {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -80,21 +73,10 @@ export default function PlanSelector({
             transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
             className="fixed inset-x-4 top-1/2 z-50 mx-auto max-h-[90vh] max-w-3xl -translate-y-1/2 overflow-y-auto rounded-2xl border border-white/10 bg-[var(--background)] p-6 sm:inset-x-auto"
           >
-            {/* Header */}
             <div className="mb-6 flex items-start justify-between">
               <div>
-                <h2
-                  className="text-2xl uppercase text-white"
-                  style={{ fontFamily: "var(--font-anton), sans-serif" }}
-                >
-                  Choose Your Plan
-                </h2>
-                <p
-                  className="mt-1 text-sm text-white/50"
-                  style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-                >
-                  Select the plan that best fits your needs
-                </p>
+                <h2 className="text-2xl uppercase text-white font-display">Choose Your Plan</h2>
+                <p className="mt-1 text-sm text-white/50 font-sans">Select the plan that best fits your needs</p>
               </div>
               <button
                 onClick={onClose}
@@ -102,17 +84,11 @@ export default function PlanSelector({
                 aria-label="Close"
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M5 5l10 10M15 5L5 15"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
+                  <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
 
-            {/* Plans grid */}
             <div className="grid gap-4 sm:grid-cols-3">
               {TIER_ORDER.map((tier) => {
                 const plan = PLAN_PRICING[tier];
@@ -130,67 +106,26 @@ export default function PlanSelector({
                       isSelected ? "bg-white/5" : "bg-transparent hover:bg-white/[0.02]"
                     )}
                   >
-                    {/* Current badge */}
                     {isCurrent && (
-                      <span
-                        className="absolute -top-2 right-3 rounded-full bg-white/20 px-2 py-0.5 text-xs text-white"
-                        style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-                      >
+                      <span className="absolute -top-2 right-3 rounded-full bg-white/20 px-2 py-0.5 text-xs text-white font-mono">
                         Current
                       </span>
                     )}
-
-                    {/* Plan name */}
-                    <h3
-                      className="text-lg text-white"
-                      style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-                    >
-                      {plan.name}
-                    </h3>
-
-                    {/* Price */}
+                    <h3 className="text-lg text-white font-sans">{plan.name}</h3>
                     <div className="mt-2 flex items-baseline gap-1">
-                      <span
-                        className="text-2xl text-white"
-                        style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-                      >
-                        ${plan.price.toFixed(2)}
-                      </span>
-                      {plan.price > 0 && (
-                        <span className="text-sm text-white/40">/mo</span>
-                      )}
+                      <span className="text-2xl text-white font-sans">${plan.price.toFixed(2)}</span>
+                      {plan.price > 0 && <span className="text-sm text-white/40">/mo</span>}
                     </div>
-
-                    {/* Features */}
                     <ul className="mt-4 flex flex-col gap-2">
                       {plan.features.map((feature) => (
-                        <li
-                          key={feature}
-                          className="flex items-start gap-2 text-xs text-white/60"
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                            className="mt-0.5 shrink-0 text-[var(--color-brand)]"
-                          >
-                            <path
-                              d="M2.5 7l3 3 6-6"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
+                        <li key={feature} className="flex items-start gap-2 text-xs text-white/60">
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0 text-[var(--color-brand)]">
+                            <path d="M2.5 7l3 3 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
-                          <span style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-                            {feature}
-                          </span>
+                          <span className="font-sans">{feature}</span>
                         </li>
                       ))}
                     </ul>
-
-                    {/* Selection indicator */}
                     {isSelected && (
                       <motion.div
                         layoutId="plan-indicator"
@@ -203,16 +138,8 @@ export default function PlanSelector({
               })}
             </div>
 
-            {/* Actions */}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-              <button
-                onClick={onClose}
-                disabled={isLoading}
-                className="rounded-xl border border-white/20 px-6 py-3 text-sm text-white/80 transition-all duration-300 hover:border-white/40 hover:bg-white/5 hover:text-white disabled:opacity-50"
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-              >
-                Cancel
-              </button>
+              <GhostButton onClick={onClose} disabled={isLoading}>Cancel</GhostButton>
               <OpaqueButton
                 variant="brand"
                 onClick={handleConfirm}

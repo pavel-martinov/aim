@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import ProfileLayout from "@/components/profile/ProfileLayout";
 import ProfileOverview from "@/components/profile/ProfileOverview";
 import AccountSettings from "@/components/profile/AccountSettings";
@@ -49,19 +49,14 @@ export default function ProfilePage() {
     async function loadData() {
       setIsLoading(true);
       try {
-        const [
-          userResult,
-          invoicesResult,
-          paymentResult,
-          activityResult,
-          sessionsResult,
-        ] = await Promise.all([
-          getMockUser(),
-          getMockInvoices(),
-          getMockPaymentMethod(),
-          getMockLoginActivity(),
-          getMockActiveSessions(),
-        ]);
+        const [userResult, invoicesResult, paymentResult, activityResult, sessionsResult] =
+          await Promise.all([
+            getMockUser(),
+            getMockInvoices(),
+            getMockPaymentMethod(),
+            getMockLoginActivity(),
+            getMockActiveSessions(),
+          ]);
 
         if (userResult.success) setUser(userResult.data);
         if (invoicesResult.success) setInvoices(invoicesResult.data);
@@ -72,82 +67,57 @@ export default function ProfilePage() {
         setIsLoading(false);
       }
     }
-
     loadData();
   }, []);
 
-  const handleAvatarChange = useCallback(async (avatarUrl: string) => {
+  const handleAvatarChange = async (avatarUrl: string) => {
     const result = await updateMockAvatar(avatarUrl);
-    if (result.success) {
-      setUser(result.data);
-    }
-  }, []);
+    if (result.success) setUser(result.data);
+  };
 
-  const handleUserUpdate = useCallback(async (updates: UpdateUserPayload) => {
+  const handleUserUpdate = async (updates: UpdateUserPayload) => {
     const result = await updateMockUser(updates);
-    if (result.success) {
-      setUser(result.data);
-    }
-  }, []);
+    if (result.success) setUser(result.data);
+  };
 
-  const handlePasswordChange = useCallback(
-    async (payload: UpdatePasswordPayload): Promise<{ success: boolean; error?: string }> => {
-      const result = await updateMockPassword(payload);
-      return { success: result.success, error: result.success ? undefined : result.error };
-    },
-    []
-  );
+  const handlePasswordChange = async (
+    payload: UpdatePasswordPayload
+  ): Promise<{ success: boolean; error?: string }> => {
+    const result = await updateMockPassword(payload);
+    return { success: result.success, error: result.success ? undefined : result.error };
+  };
 
-  const handleEndSession = useCallback(async (sessionId: string) => {
+  const handleEndSession = async (sessionId: string) => {
     const result = await endMockSession(sessionId);
-    if (result.success) {
-      setActiveSessions(result.data);
-    }
-  }, []);
+    if (result.success) setActiveSessions(result.data);
+  };
 
-  const handleEndAllSessions = useCallback(async () => {
+  const handleEndAllSessions = async () => {
     const result = await endAllMockSessions();
-    if (result.success) {
-      setActiveSessions(result.data);
-    }
-  }, []);
+    if (result.success) setActiveSessions(result.data);
+  };
 
-  const handleChangePlan = useCallback(async (tier: SubscriptionTier) => {
+  const handleChangePlan = async (tier: SubscriptionTier) => {
     const result = await updateMockSubscription(tier);
-    if (result.success) {
-      setUser(result.data);
-    }
-  }, []);
+    if (result.success) setUser(result.data);
+  };
 
-  const handleCancelPlan = useCallback(async () => {
+  const handleCancelPlan = async () => {
     const result = await cancelMockSubscription();
-    if (result.success) {
-      setUser(result.data);
-    }
-  }, []);
+    if (result.success) setUser(result.data);
+  };
 
-  const handleReactivate = useCallback(async () => {
+  const handleReactivate = async () => {
     const result = await reactivateMockSubscription();
-    if (result.success) {
-      setUser(result.data);
-    }
-  }, []);
-
-  const handleUpdatePaymentMethod = useCallback(() => {
-    console.log("Update payment method clicked");
-  }, []);
+    if (result.success) setUser(result.data);
+  };
 
   if (isLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
         <div className="flex flex-col items-center gap-4">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-[var(--color-brand)]" />
-          <p
-            className="text-sm text-white/50"
-            style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-          >
-            Loading profile...
-          </p>
+          <p className="text-sm text-white/50 font-sans">Loading profile...</p>
         </div>
       </div>
     );
@@ -185,7 +155,7 @@ export default function ProfilePage() {
             onChangePlan={handleChangePlan}
             onCancelPlan={handleCancelPlan}
             onReactivate={handleReactivate}
-            onUpdatePaymentMethod={handleUpdatePaymentMethod}
+            onUpdatePaymentMethod={() => {}}
           />
         );
       default:

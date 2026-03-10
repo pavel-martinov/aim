@@ -192,7 +192,7 @@ const mockPaymentMethod: PaymentMethod = {
   isDefault: true,
 };
 
-export type MockResult<T> = { success: true; data: T } | { success: false; error: string };
+type MockResult<T> = { success: true; data: T } | { success: false; error: string };
 
 /** Returns mock user data */
 export async function getMockUser(): Promise<MockResult<User>> {

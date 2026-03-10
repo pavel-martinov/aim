@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
-import { isDataImage } from "@/lib/utils";
+import { cn, isDataImage } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 import AvatarPickerModal from "./AvatarPickerModal";
 
@@ -20,9 +19,6 @@ const SIZE_CLASSES = {
   md: "h-24 w-24",
   lg: "h-32 w-32",
 };
-
-/** Detects uploaded or captured avatars that should bypass optimization. */
-// isDataImage is imported from @/lib/utils
 
 /**
  * Avatar display with Netflix-style picker modal.
@@ -44,10 +40,6 @@ export default function AvatarUpload({
     .toUpperCase()
     .slice(0, 2);
 
-  const handleAvatarSelect = (newAvatarUrl: string) => {
-    onAvatarChange(newAvatarUrl);
-  };
-
   return (
     <>
       <div className="relative">
@@ -63,7 +55,6 @@ export default function AvatarUpload({
           )}
           aria-label="Change avatar"
         >
-          {/* Avatar image or initials */}
           {avatarUrl ? (
             <Image
               src={avatarUrl}
@@ -74,15 +65,11 @@ export default function AvatarUpload({
               sizes="128px"
             />
           ) : (
-            <div
-              className="flex h-full w-full items-center justify-center bg-white/10 text-xl text-white"
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
+            <div className="flex h-full w-full items-center justify-center bg-white/10 text-xl text-white font-sans">
               {initials}
             </div>
           )}
 
-          {/* Hover overlay */}
           <AnimatePresence>
             {isHovered && (
               <motion.div
@@ -92,19 +79,8 @@ export default function AvatarUpload({
                 transition={{ duration: DURATION.fast, ease: SMOOTH_EASE }}
                 className="absolute inset-0 flex items-center justify-center bg-black/60"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="text-white"
-                >
-                  <path
-                    d="M12 5v14M5 12h14"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </motion.div>
             )}
@@ -112,12 +88,11 @@ export default function AvatarUpload({
         </button>
       </div>
 
-      {/* Avatar picker modal */}
       <AvatarPickerModal
         isOpen={isModalOpen}
         currentAvatar={avatarUrl}
         onClose={() => setIsModalOpen(false)}
-        onSelect={handleAvatarSelect}
+        onSelect={onAvatarChange}
       />
     </>
   );
