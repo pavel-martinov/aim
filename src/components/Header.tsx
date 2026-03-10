@@ -12,13 +12,19 @@ import { useOptionalAudio } from "@/contexts/AudioContext";
 import { DRAMATIC_EASE, SMOOTH_EASE, DURATION } from "@/lib/animations";
 import { openDownloadStore } from "@/lib/download";
 
+type NavLink = {
+  href: string;
+  label: string;
+  action?: "download";
+};
+
 /** Navigation links - Logo serves as home button */
-const NAV_LINKS = [
+const NAV_LINKS: readonly NavLink[] = [
   { href: "/about", label: "About" },
   { href: "/membership", label: "Pricing" },
   { href: "/academy", label: "Academy" },
-  { href: "#", label: "Download", action: "download" as const },
-] as const;
+  { href: "#", label: "Download", action: "download" },
+];
 
 type HeaderProps = {
   visible?: boolean;
