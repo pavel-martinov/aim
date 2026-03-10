@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import AcademiesBanner from "./AcademiesBanner";
 import gsap from "gsap";
 import { DRAMATIC_EASE, DURATION, GSAP_EASE } from "@/lib/animations";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
@@ -24,63 +24,54 @@ type Plan = {
   highlighted?: boolean;
   badge?: string;
   ctaText: string;
-  isDynamicPrice?: boolean;
 };
 
-/** Pricing plans data based on PRICING_AND_PLANS_V1.md */
+/** B2C Pricing plans - Starter, Pro (Core), Pathway (Elite) */
 const PLANS: Plan[] = [
   {
-    id: "kickoff",
-    name: "Kickoff",
-    tagline: "Start your journey",
+    id: "starter",
+    name: "Starter",
+    tagline: "Free",
     monthlyPrice: null,
     annualPrice: null,
     features: [
-      "5 AI coach sessions per week",
-      "Basic avatar selection",
-      "Basic drill analysis",
-      "Public community chat",
-      "Selected public challenges",
+      "Lvl 1 Drills Only",
+      "3 Uploads / Week",
+      "Basic AI Scoring",
+      "Community XP",
     ],
     ctaText: "Get Started Free",
   },
   {
-    id: "first-touch",
-    name: "First Touch",
-    tagline: "For serious athletes",
-    monthlyPrice: 12.99,
-    annualPrice: 9.99,
-    annualSavings: "Save $36/year",
+    id: "pro",
+    name: "Pro",
+    tagline: "Premium",
+    monthlyPrice: 100,
+    annualPrice: 80,
+    annualSavings: "Save 240 AED/year",
     features: [
-      "Unlimited AI coach feedback",
-      "Full avatar customization",
-      "Advanced AI drill analysis",
-      "Premium community channels",
-      "Priority event invitations",
-      "Create personal challenges",
-      "14-day free trial",
+      "Unlimited Uploads",
+      "Full AI Analysis",
+      "Scorecard History",
+      "Skill Progression",
+      "Scout Visibility",
     ],
-    highlighted: true,
-    badge: "Most Popular",
     ctaText: "Start Free Trial",
   },
   {
-    id: "academies",
-    name: "Academies",
-    tagline: "For coaches & academies",
-    monthlyPrice: 29.99,
-    annualPrice: 24.99,
-    annualSavings: "Save $60/year",
+    id: "pathway",
+    name: "Pathway",
+    tagline: "Elite",
+    monthlyPrice: 200,
+    annualPrice: 160,
+    annualSavings: "Save 480 AED/year",
     features: [
-      "Everything in First Touch",
-      "Coach CRM & player management",
-      "Assign drills & homework",
-      "Unlimited challenge creation",
-      "Team analytics dashboard",
-      "Priority support",
+      "Career Roadmap",
+      "Position Modules",
+      "Biomechanics Reports",
+      "Showcase Invites",
     ],
     ctaText: "Start Free Trial",
-    isDynamicPrice: true,
   },
 ];
 
@@ -128,135 +119,14 @@ function BillingToggle({
       >
         Annual
         <span className="rounded-sm bg-[var(--color-brand)] px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold uppercase text-black">
-          -23%
+          -20%
         </span>
       </button>
     </div>
   );
 }
 
-/** Pricing tiers for per-seat pricing (above the base 10 students) */
-const SEAT_TIERS = {
-  monthly: [
-    { min: 11, max: 25, rate: 2.99 },
-    { min: 26, max: 50, rate: 2.49 },
-    { min: 51, max: 100, rate: 1.99 },
-  ],
-  annual: [
-    { min: 11, max: 25, rate: 2.49 },
-    { min: 26, max: 50, rate: 1.99 },
-    { min: 51, max: 100, rate: 1.49 },
-  ],
-};
-
-/** Calculates total price for academies plan based on student count */
-function calculateAcademiesPrice(
-  students: number,
-  cycle: BillingCycle,
-  baseMonthly: number,
-  baseAnnual: number
-): number {
-  const basePrice = cycle === "annual" ? baseAnnual : baseMonthly;
-  if (students <= 10) return basePrice;
-
-  const tiers = SEAT_TIERS[cycle];
-  let total = basePrice;
-
-  for (const tier of tiers) {
-    if (students >= tier.min) {
-      const seatsInTier = Math.min(students, tier.max) - tier.min + 1;
-      total += seatsInTier * tier.rate;
-    }
-  }
-
-  return Math.round(total * 100) / 100;
-}
-
-/** Custom slider for selecting student count */
-function StudentSlider({
-  value,
-  onChange,
-  isHighlighted,
-}: {
-  value: number;
-  onChange: (val: number) => void;
-  isHighlighted?: boolean;
-}) {
-  const isEnterprise = value > 100;
-  const displayValue = isEnterprise ? "100+" : value;
-
-  return (
-    <div className="mb-6 mt-2 relative z-10">
-      <div className="mb-3 flex items-center justify-between">
-        <span
-          className={cn(
-            "text-xs uppercase leading-[1.5]",
-            isHighlighted ? "text-black/60" : "text-white/50"
-          )}
-          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-        >
-          Students
-        </span>
-        <span
-          className={cn(
-            "text-sm font-bold uppercase",
-            isHighlighted ? "text-black" : "text-white"
-          )}
-          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-        >
-          {displayValue}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={10}
-        max={110}
-        step={5}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="student-slider h-2 w-full cursor-pointer appearance-none rounded-full outline-none transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
-        style={
-          {
-            "--slider-progress": `${((value - 10) / 100) * 100}%`,
-            background: isHighlighted
-              ? `linear-gradient(to right, black 0%, black var(--slider-progress), rgba(0,0,0,0.15) var(--slider-progress), rgba(0,0,0,0.15) 100%)`
-              : `linear-gradient(to right, var(--color-brand) 0%, var(--color-brand) var(--slider-progress), rgba(255,255,255,0.1) var(--slider-progress), rgba(255,255,255,0.1) 100%)`,
-          } as React.CSSProperties
-        }
-      />
-      <style jsx>{`
-        .student-slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: ${isHighlighted ? "black" : "var(--color-brand)"};
-          cursor: pointer;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        .student-slider::-webkit-slider-thumb:hover {
-          transform: scale(1.15);
-        }
-        .student-slider::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          border: none;
-          border-radius: 50%;
-          background: ${isHighlighted ? "black" : "var(--color-brand)"};
-          cursor: pointer;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        .student-slider::-moz-range-thumb:hover {
-          transform: scale(1.15);
-        }
-      `}</style>
-    </div>
-  );
-}
-
-/** Individual pricing card */
+/** Individual pricing card for B2C plans */
 function PricingCard({
   plan,
   billingCycle,
@@ -264,42 +134,17 @@ function PricingCard({
   plan: Plan;
   billingCycle: BillingCycle;
 }) {
-  const router = useRouter();
-  const [students, setStudents] = useState(10);
-
-  const isEnterprise = plan.isDynamicPrice && students > 100;
-  const dynamicPrice = plan.isDynamicPrice
-    ? calculateAcademiesPrice(
-        students,
-        billingCycle,
-        plan.monthlyPrice ?? 0,
-        plan.annualPrice ?? 0
-      )
-    : null;
-
-  const price = plan.isDynamicPrice
-    ? dynamicPrice
-    : billingCycle === "annual"
-      ? plan.annualPrice
-      : plan.monthlyPrice;
-
+  const price = billingCycle === "annual" ? plan.annualPrice : plan.monthlyPrice;
   const isFree = price === null;
-  const ctaText = isEnterprise ? "Contact Sales" : plan.ctaText;
 
   const handleCtaClick = () => {
-    if (plan.isDynamicPrice && !isEnterprise) {
-      router.push(
-        `/membership/academy?cycle=${billingCycle}&students=${students}`
-      );
-    } else {
-      openDownloadStore();
-    }
+    openDownloadStore();
   };
 
   return (
     <motion.div
       className={cn(
-        "relative flex h-full flex-col overflow-hidden rounded-[24px] p-4 sm:p-6 transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] lg:rounded-[32px] lg:p-10",
+        "relative flex h-full flex-col overflow-hidden rounded-[24px] p-4 sm:p-6 transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] lg:rounded-[32px] lg:p-6",
         plan.highlighted
           ? "z-10 bg-[var(--color-brand)] text-black shadow-2xl"
           : "border border-white/10 bg-[#080808] text-white"
@@ -328,9 +173,9 @@ function PricingCard({
       {plan.badge && <div className="h-4 sm:h-6 lg:h-12" />}
 
       {/* Plan header */}
-      <div className="relative z-10 mb-2 sm:mb-4 lg:mb-6">
+      <div className="relative z-10 mb-2 sm:mb-3 lg:mb-4">
         <h3
-          className="text-[20px] sm:text-[24px] lg:text-[40px] font-semibold leading-[1.25]"
+          className="text-[20px] sm:text-[24px] lg:text-[32px] font-semibold leading-[1.25]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           {plan.name}
@@ -347,10 +192,10 @@ function PricingCard({
       </div>
 
       {/* Price */}
-      <div className="relative z-10 mb-4 sm:mb-6 lg:mb-8 min-h-[60px] sm:min-h-[80px] lg:min-h-[100px]">
+      <div className="relative z-10 mb-3 sm:mb-4 lg:mb-5 min-h-[50px] sm:min-h-[60px] lg:min-h-[70px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${plan.id}-${billingCycle}-${students}`}
+            key={`${plan.id}-${billingCycle}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -359,29 +204,22 @@ function PricingCard({
           >
             {isFree ? (
               <span
-                className="text-[36px] sm:text-[48px] lg:text-[80px] uppercase leading-[0.9] tracking-tight"
+                className="text-[32px] sm:text-[40px] lg:text-[56px] uppercase leading-[0.9] tracking-tight"
                 style={{ fontFamily: "var(--font-anton), sans-serif" }}
               >
                 Free
               </span>
-            ) : isEnterprise ? (
-              <span
-                className="text-2xl sm:text-3xl lg:text-5xl uppercase tracking-tight"
-                style={{ fontFamily: "var(--font-anton), sans-serif" }}
-              >
-                Custom
-              </span>
             ) : (
               <>
                 <span
-                  className="text-[36px] sm:text-[48px] lg:text-[80px] leading-[0.9] tracking-tight"
+                  className="text-[32px] sm:text-[40px] lg:text-[56px] leading-[0.9] tracking-tight"
                   style={{ fontFamily: "var(--font-anton), sans-serif" }}
                 >
-                  ${price?.toFixed(2)}
+                  {price} AED
                 </span>
                 <span
                   className={cn(
-                    "text-xs sm:text-sm lg:text-lg font-bold uppercase tracking-wider",
+                    "text-xs sm:text-sm lg:text-base font-bold uppercase tracking-wider",
                     plan.highlighted ? "text-black/50" : "text-white/40"
                   )}
                   style={{ fontFamily: "var(--font-geist-mono), monospace" }}
@@ -393,49 +231,24 @@ function PricingCard({
           </motion.div>
         </AnimatePresence>
 
-        {/* Annual savings or enterprise note */}
-        {isEnterprise ? (
+        {/* Annual savings */}
+        {!isFree && billingCycle === "annual" && plan.annualSavings && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className={cn(
               "mt-1 sm:mt-2 lg:mt-3 text-[10px] sm:text-xs lg:text-sm font-bold uppercase leading-[1.5]",
-              plan.highlighted ? "text-black/60" : "text-white/50"
+              plan.highlighted ? "text-black" : "text-[var(--color-brand)]"
             )}
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
-            Enterprise pricing for 100+ students
+            {plan.annualSavings}
           </motion.p>
-        ) : (
-          !isFree &&
-          billingCycle === "annual" &&
-          plan.annualSavings && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className={cn(
-                "mt-1 sm:mt-2 lg:mt-3 text-[10px] sm:text-xs lg:text-sm font-bold uppercase leading-[1.5]",
-                plan.highlighted ? "text-black" : "text-[var(--color-brand)]"
-              )}
-              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-            >
-              {plan.annualSavings}
-            </motion.p>
-          )
         )}
       </div>
 
-      {/* Student slider for dynamic pricing */}
-      {plan.isDynamicPrice && (
-        <StudentSlider 
-          value={students} 
-          onChange={setStudents} 
-          isHighlighted={plan.highlighted} 
-        />
-      )}
-
       {/* Features list */}
-      <ul className="relative z-10 flex-1 space-y-2 sm:space-y-3 lg:space-y-4 min-h-[140px]">
+      <ul className="relative z-10 flex-1 space-y-1.5 sm:space-y-2 lg:space-y-2.5">
         {plan.features.map((feature, i) => (
           <li
             key={i}
@@ -458,18 +271,14 @@ function PricingCard({
       </ul>
 
       {/* CTA Button */}
-      <div className="relative z-10 mt-4 sm:mt-6 lg:mt-10">
+      <div className="relative z-10 mt-4 sm:mt-5 lg:mt-6">
         <OpaqueButton
-          variant="dark"
+          variant="inline"
           onClick={handleCtaClick}
-          className={cn(
-            "!w-full md:!w-full !py-2 sm:!py-3 lg:!py-4 text-[10px] sm:text-xs lg:text-sm",
-            plan.highlighted
-              ? "!bg-black !text-white hover:!bg-black/80 focus-visible:!ring-black focus-visible:!ring-offset-[var(--color-brand)]"
-              : ""
-          )}
+          showIcon={false}
+          className="!w-full justify-center !py-2.5 sm:!py-3 text-xs sm:text-sm"
         >
-          {ctaText}
+          {plan.ctaText}
         </OpaqueButton>
       </div>
     </motion.div>
@@ -511,7 +320,7 @@ export default function PricingPlans() {
   }, []);
 
   return (
-    <section className="relative bg-black px-4 pb-12 pt-[140px] md:pt-[100px] lg:px-6 lg:pb-32 lg:pt-16 min-h-[100dvh] flex flex-col justify-start lg:justify-center overflow-x-hidden overflow-y-visible gap-8 md:gap-4 w-full">
+    <section className="relative bg-black px-4 pb-12 pt-[140px] md:pt-[140px] lg:px-6 lg:pb-32 lg:pt-32 min-h-[100dvh] flex flex-col justify-start lg:justify-center overflow-x-hidden overflow-y-visible gap-8 md:gap-4 w-full">
       {/* Integrated Hero Header */}
       <div className="mx-auto text-center mt-2 sm:mt-2 md:mt-8 lg:mt-0 flex flex-col gap-3 md:gap-2 w-full relative z-20">
         <h1
@@ -556,15 +365,11 @@ export default function PricingPlans() {
         </div>
       </RevealOnScroll>
 
-      {/* Per-seat pricing note */}
-      <RevealOnScroll delay={0.3}>
-        <p
-          className="mx-auto mt-12 max-w-2xl text-center text-xs uppercase leading-[1.5] text-white/30"
-          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-        >
-          Academies includes up to 10 students. Use the slider to calculate pricing
-          for larger teams.
-        </p>
+      {/* Academies Banner */}
+      <RevealOnScroll delay={0.3} className="w-full">
+        <div className="mx-auto max-w-[1280px] mt-8 lg:mt-12 px-1">
+          <AcademiesBanner billingCycle={billingCycle} />
+        </div>
       </RevealOnScroll>
     </section>
   );

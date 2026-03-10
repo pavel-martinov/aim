@@ -3,220 +3,243 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useHeaderTheme } from "@/contexts/HeaderThemeContext";
-import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
 import MusicToggle from "@/components/ui/MusicToggle";
-import OpaqueButton from "@/components/ui/OpaqueButton";
+import { useOptionalAudio } from "@/contexts/AudioContext";
 import { DRAMATIC_EASE, SMOOTH_EASE, DURATION } from "@/lib/animations";
 import { openDownloadStore } from "@/lib/download";
 
-/** Menu links matching Figma design with mapped routes */
-const MENU_LINKS = [
+/** Navigation links - Logo serves as home button */
+const NAV_LINKS = [
   { href: "/about", label: "About" },
-  { href: "/membership", label: "Membership" },
+  { href: "/membership", label: "Pricing" },
+  { href: "/academy", label: "Academy" },
+  { href: "#", label: "Download", action: "download" as const },
 ] as const;
 
 type HeaderProps = {
   visible?: boolean;
 };
 
-/** Hook for tracking vertical scroll position */
-function useScrollPosition() {
-  const [scrollY, setScrollY] = useState(0);
-  const ticking = useRef(false);
+/**
+ * Animated dot grid icon that morphs between 9 dots (3x3) and 4 dots (2x2 corners).
+ */
+function DotGridIcon({ isOpen }: { isOpen: boolean }) {
+  const dotColor = "#121212";
+  const dotSize = 3;
+  const gridSize = 17;
+  const spacing = (gridSize - dotSize * 3) / 2;
 
-  const updateScrollPosition = useCallback(() => {
-    setScrollY(window.scrollY);
-    ticking.current = false;
-  }, []);
+  const getDotPosition = (index: number, expanded: boolean) => {
+    const row = Math.floor(index / 3);
+    const col = index % 3;
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(updateScrollPosition);
-        ticking.current = true;
-      }
+    if (!expanded) {
+      return {
+        x: col * (dotSize + spacing),
+        y: row * (dotSize + spacing),
+        opacity: 1,
+        scale: 1,
+      };
+    }
+
+    const isCorner = (row === 0 || row === 2) && (col === 0 || col === 2);
+    if (isCorner) {
+      const cornerX = col === 0 ? 0 : gridSize - dotSize;
+      const cornerY = row === 0 ? 0 : gridSize - dotSize;
+      return { x: cornerX, y: cornerY, opacity: 1, scale: 1.2 };
+    }
+
+    return {
+      x: col * (dotSize + spacing),
+      y: row * (dotSize + spacing),
+      opacity: 0,
+      scale: 0.5,
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [updateScrollPosition]);
-
-  return { scrollY };
-}
-
-/** Animated hamburger icon that morphs to X */
-function HamburgerIcon({ isOpen, isDark }: { isOpen: boolean; isDark: boolean }) {
-  const lineClass = `block h-[2px] rounded-full transition-all duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-    isDark ? "bg-white" : "bg-zinc-900"
-  }`;
+  };
 
   return (
-    <div className="relative flex h-[15px] w-[24px] flex-col justify-between">
-      <span
-        className={lineClass}
-        style={{
-          width: "24px",
-          transform: isOpen ? "translateY(6.5px) rotate(45deg)" : "none",
-        }}
-      />
-      <span
-        className={lineClass}
-        style={{
-          width: "18px",
-          opacity: isOpen ? 0 : 1,
-          transform: isOpen ? "translateX(-8px)" : "none",
-        }}
-      />
-      <span
-        className={lineClass}
-        style={{
-          width: isOpen ? "24px" : "12px",
-          transform: isOpen ? "translateY(-6.5px) rotate(-45deg)" : "none",
-        }}
-      />
-    </div>
+    <svg
+      width={gridSize}
+      height={gridSize}
+      viewBox={`0 0 ${gridSize} ${gridSize}`}
+      className="overflow-visible"
+    >
+      {Array.from({ length: 9 }).map((_, i) => {
+        const pos = getDotPosition(i, isOpen);
+        return (
+          <motion.circle
+            key={i}
+            r={dotSize / 2}
+            fill={dotColor}
+            initial={false}
+            animate={{
+              cx: pos.x + dotSize / 2,
+              cy: pos.y + dotSize / 2,
+              opacity: pos.opacity,
+              scale: pos.scale,
+            }}
+            transition={{
+              duration: DURATION.standard,
+              ease: DRAMATIC_EASE,
+            }}
+          />
+        );
+      })}
+    </svg>
   );
 }
 
-/** Full-screen mobile/tablet menu overlay with centered links and CTA buttons */
-function MobileTabletMenuPanel({
+/**
+ * Glassmorphic navigation pill button for desktop layout.
+ * Adapts colors based on background darkness.
+ */
+function NavPill({
+  href,
+  label,
+  action,
+  onClick,
+  isDark,
+}: {
+  href: string;
+  label: string;
+  action?: "download";
+  onClick?: () => void;
+  isDark: boolean;
+}) {
+  const baseClasses = `flex flex-1 items-center justify-center h-[38px] px-[18px] py-[13px] rounded-lg backdrop-blur-[10px] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+    isDark
+      ? "bg-[rgba(237,237,237,0.2)] text-[#eee] hover:bg-[rgba(237,237,237,0.35)] hover:text-white"
+      : "bg-[rgba(0,0,0,0.08)] text-zinc-900 hover:bg-[rgba(0,0,0,0.15)] hover:text-black"
+  }`;
+
+  if (action === "download") {
+    return (
+      <button onClick={openDownloadStore} className={baseClasses}>
+        {label}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={href} onClick={onClick} className={baseClasses}>
+      {label}
+    </Link>
+  );
+}
+
+/**
+ * Mobile menu button item with glassmorphic or brand styling.
+ */
+function MobileMenuItem({
+  href,
+  label,
+  action,
+  variant = "glass",
+  onClick,
+  delay,
+}: {
+  href: string;
+  label: string;
+  action?: "download";
+  variant?: "glass" | "brand";
+  onClick?: () => void;
+  delay: number;
+}) {
+  const glassClasses =
+    "flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px] text-[#eee] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[rgba(237,237,237,0.35)]";
+  const brandClasses =
+    "flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[var(--color-brand)] text-black text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:brightness-110";
+
+  const classes = variant === "brand" ? brandClasses : glassClasses;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{
+        duration: DURATION.standard,
+        delay,
+        ease: DRAMATIC_EASE,
+      }}
+      className="w-full"
+    >
+      {action === "download" ? (
+        <button onClick={() => { openDownloadStore(); onClick?.(); }} className={classes}>
+          {label}
+        </button>
+      ) : (
+        <Link href={href} onClick={onClick} className={classes}>
+          {label}
+        </Link>
+      )}
+    </motion.div>
+  );
+}
+
+/**
+ * Mobile expandable menu panel with staggered animation.
+ * Includes MusicToggle as a menu item.
+ */
+function MobileMenuPanel({
   isExpanded,
   onLinkClick,
 }: {
   isExpanded: boolean;
   onLinkClick: () => void;
 }) {
+  const audio = useOptionalAudio();
+
   return (
     <AnimatePresence>
       {isExpanded && (
         <motion.div
-          className="fixed inset-0 z-[99998] overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
-        >
-          <div className="absolute inset-0 bg-black/95 backdrop-blur-md" aria-hidden />
-          <nav
-            className="relative flex h-dvh flex-col items-center justify-between px-6 pb-10 pt-32 text-center"
-            aria-label="Main navigation"
-          >
-            {/* Nav links */}
-            <div className="flex flex-col items-center gap-8">
-              {[{ href: "/home", label: "Home" }, ...MENU_LINKS].map((link, index) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, y: 24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
-                  transition={{
-                    duration: DURATION.standard,
-                    delay: 0.4 + index * 0.1,
-                    ease: DRAMATIC_EASE,
-                  }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={onLinkClick}
-                    className="block text-4xl font-medium text-white transition-colors duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:text-[var(--color-brand)] focus-visible:text-[var(--color-brand)] focus-visible:outline-none md:text-5xl"
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* CTA buttons */}
-            <motion.div
-              className="flex w-full flex-col gap-3"
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8, transition: { delay: 0, duration: DURATION.fast } }}
-              transition={{ duration: DURATION.standard, delay: 0.7, ease: DRAMATIC_EASE }}
-            >
-              <OpaqueButton variant="dark" onClick={() => { openDownloadStore(); onLinkClick(); }} showIcon={false}>
-                Download
-              </OpaqueButton>
-              <OpaqueButton variant="brand" href="/log-in" onClick={onLinkClick} showIcon={false}>
-                Log In
-              </OpaqueButton>
-            </motion.div>
-          </nav>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-/** Desktop expanded menu panel with image */
-function DesktopMenuPanel({
-  isExpanded,
-  isLightText,
-}: {
-  isExpanded: boolean;
-  isLightText: boolean;
-}) {
-  return (
-    <AnimatePresence>
-      {isExpanded && (
-        <motion.div
-          key="desktop-menu-panel"
-          className="relative border-t border-white/[0.17] overflow-hidden"
+          className="flex flex-col gap-1 pt-1 pb-4"
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
         >
-          {/* Two-column layout: image left, links right */}
-          <div className="flex">
-            {/* Image column */}
-            <div className="relative flex-1 overflow-hidden">
-              <Image
-                src="/images/data-analysis.jpg"
-                alt=""
-                fill
-                className="object-cover"
-                sizes="50vw"
-                priority
-              />
-            </div>
+          {NAV_LINKS.map((link, index) => (
+            <MobileMenuItem
+              key={link.label}
+              href={link.href}
+              label={link.label}
+              action={link.action}
+              onClick={onLinkClick}
+              delay={0.1 + index * 0.08}
+            />
+          ))}
 
-            {/* Links column */}
-            <div className="flex flex-1 flex-col justify-center gap-[32px] px-[32px] py-[72px]">
-              {MENU_LINKS.map((link, index) => (
-                <motion.div
-                  key={link.label}
-                  initial={{ opacity: 0, x: 24 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 8 }}
-                  transition={{
-                    duration: DURATION.standard,
-                    delay: 0.3 + index * 0.1,
-                    ease: DRAMATIC_EASE,
-                  }}
-                >
-                  <Link
-                    href={link.href}
-                    className={`block text-[52px] font-medium capitalize transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-                      isLightText ? "text-white" : "text-zinc-900"
-                    } hover:text-[var(--color-brand)] hover:translate-x-2 focus-visible:text-[var(--color-brand)] focus-visible:outline-none`}
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          {/* MusicToggle as menu item */}
+          {audio && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{
+                duration: DURATION.standard,
+                delay: 0.1 + NAV_LINKS.length * 0.08,
+                ease: DRAMATIC_EASE,
+              }}
+              className="w-full"
+            >
+              <div className="flex w-full items-center h-[38px] px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px]">
+                <MusicToggle isDark={true} />
+              </div>
+            </motion.div>
+          )}
 
-          {/* Lower edge blur gradient */}
-          <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/60 to-transparent backdrop-blur-[2px]"
-            style={{ maskImage: "linear-gradient(to top, black 30%, transparent)" }}
-            aria-hidden
+          <MobileMenuItem
+            href="/log-in"
+            label="Log In"
+            variant="brand"
+            onClick={onLinkClick}
+            delay={0.1 + (NAV_LINKS.length + (audio ? 1 : 0)) * 0.08}
           />
         </motion.div>
       )}
@@ -224,7 +247,9 @@ function DesktopMenuPanel({
   );
 }
 
-/** Renders progress bar + main header; fixed to viewport. */
+/**
+ * Main header content with responsive layouts for desktop, tablet, and mobile.
+ */
 function HeaderContent({
   visible,
   isDark,
@@ -232,80 +257,46 @@ function HeaderContent({
   visible: boolean;
   isDark: boolean;
 }) {
-  const { scrollY } = useScrollPosition();
   const pathname = usePathname();
-  const [viewportHeight, setViewportHeight] = useState(
-    typeof window !== "undefined" ? window.innerHeight : 0
-  );
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDesktopMenuHovered, setIsDesktopMenuHovered] = useState(false);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    // Start tracking window resize after initial mount to avoid hydration mismatch
-    let timeoutId: NodeJS.Timeout;
-    const handleResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => setViewportHeight(window.innerHeight), 100);
-    };
-    
-    // Initial set deferred
-    setTimeout(() => {
-      setViewportHeight(window.innerHeight);
-    }, 0);
-    
-    window.addEventListener("resize", handleResize);
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  const headerVisible = visible;
-  const showBackground = scrollY > viewportHeight * 0.8;
-  const isLightText = isDark || showBackground;
-
-  /** Handle hover with small delay to prevent flicker (desktop only) */
-  const handleMouseEnter = useCallback(() => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setIsDesktopMenuHovered(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setIsDesktopMenuHovered(false);
-    }, 150);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    };
-  }, []);
+  const audio = useOptionalAudio();
+  const logoClass = "h-[26px] w-auto brightness-0";
 
   const handleMobileMenuToggle = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);
   }, []);
 
-  const handleMobileLinkClick = useCallback(() => {
+  const handleLinkClick = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
 
   const handleLogoClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (pathname === "/home") {
-        e.preventDefault();
+      // Always force the home route to start at the very top.
+      const forceScrollTop = () => {
+        window.scrollTo({ top: 0, behavior: "auto" });
         window.dispatchEvent(new CustomEvent("aim:scroll-to-top"));
+      };
+
+      e.preventDefault();
+      setIsMobileMenuOpen(false);
+
+      if (pathname === "/home") {
+        forceScrollTop();
+        return;
       }
+
+      router.push("/home");
+      requestAnimationFrame(forceScrollTop);
     },
-    [pathname]
+    [pathname, router]
   );
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = originalOverflow;
     };
@@ -313,181 +304,178 @@ function HeaderContent({
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-[99999] h-0 overflow-visible">
+      {/* Mobile menu backdrop */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
+            className="pointer-events-auto fixed inset-0 z-0 bg-black/50 md:hidden"
+            onClick={handleLinkClick}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
       <motion.header
-        className="pointer-events-auto absolute left-0 right-0 top-0 flex max-w-full flex-col"
+        className="pointer-events-auto absolute left-0 right-0 top-0 z-10"
         initial={false}
         animate={{
-          opacity: headerVisible ? 1 : 0,
-          y: headerVisible ? 0 : -24,
+          opacity: visible ? 1 : 0,
+          y: visible ? 0 : -24,
         }}
         transition={{ duration: DURATION.exit, ease: DRAMATIC_EASE }}
       >
-        {/* Animated black background layer */}
-        <motion.div
-          className="absolute inset-0 bg-black/90 backdrop-blur-md"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: showBackground || isDesktopMenuHovered || isMobileMenuOpen ? 1 : 0,
-          }}
-          transition={{ duration: DURATION.exit, ease: SMOOTH_EASE }}
-          aria-hidden
-        />
-
-        {/* Progress bar at top */}
-        <div className="relative flex h-5 items-center px-4 lg:px-6">
-          <ScrollProgressBar />
-        </div>
-
-        {/* Main header row */}
-        <div className="relative z-[99999] flex h-[52px] items-center justify-between px-4 lg:px-6">
-          {/* Logo (left) */}
+        {/* Desktop/Tablet Layout (md+) */}
+        <nav
+          className="hidden md:flex items-center gap-1 px-5 pt-[21px]"
+          aria-label="Main navigation"
+        >
+          {/* Logo button */}
           <Link
             href="/home"
             onClick={handleLogoClick}
-            className="relative flex items-center transition-opacity hover:opacity-80"
+            className="flex h-[37px] w-[75px] items-center justify-center rounded-lg bg-[var(--color-brand)] transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:brightness-110"
             aria-label="AIM home"
           >
-            <span
-              className={`inline-block transition-[filter] duration-500 ${
-                !isLightText && !isDesktopMenuHovered && !isMobileMenuOpen ? "invert" : ""
-              }`}
-            >
-              <Image
-                src="/Logotype.svg"
-                alt="AIM"
-                width={23}
-                height={26}
-                className="h-7 w-auto"
-              />
-            </span>
+            <Image
+              src="/Logotype.svg"
+              alt="AIM"
+              width={23}
+              height={26}
+              className={logoClass}
+            />
           </Link>
 
-          {/* Center tagline - Desktop only */}
-          <p
-            className={`absolute left-1/2 hidden -translate-x-1/2 text-sm uppercase lg:block transition-colors duration-500 ${
-              isLightText || isDesktopMenuHovered ? "text-white" : "text-zinc-900"
-            }`}
-            style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          {/* Nav pills */}
+          <div className="flex flex-1 gap-1">
+            {NAV_LINKS.map((link) => (
+              <NavPill
+                key={link.label}
+                href={link.href}
+                label={link.label}
+                action={link.action}
+                onClick={handleLinkClick}
+                isDark={isDark}
+              />
+            ))}
+          </div>
+
+          {/* Sound toggle */}
+          {audio && (
+            <div className={`flex h-[38px] items-center justify-center rounded-lg backdrop-blur-[10px] px-4 ${
+              isDark ? "bg-[rgba(237,237,237,0.2)]" : "bg-[rgba(0,0,0,0.08)]"
+            }`}>
+              <MusicToggle isDark={isDark} />
+            </div>
+          )}
+
+          {/* Log In button */}
+          <Link
+            href="/log-in"
+            className="flex h-[38px] items-center justify-center rounded-lg bg-[var(--color-brand)] px-6 py-2 font-mono text-base uppercase tracking-wider text-[#121212] transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:brightness-110"
           >
-            Creating Tomorrow&apos;s Champions
-          </p>
+            Log In
+          </Link>
+        </nav>
 
-          {/* Right side controls */}
-          <div className="flex items-center gap-3">
-            {/* Desktop only: MENU trigger */}
-            <button
-              className={`hidden items-center text-sm uppercase tracking-wider transition-colors duration-500 lg:flex ${
-                isLightText || isDesktopMenuHovered
-                  ? "text-white/90 hover:text-[var(--color-brand)]"
-                  : "text-zinc-900 hover:text-[var(--color-brand)]"
-              }`}
-              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-              aria-expanded={isDesktopMenuHovered}
-              aria-haspopup="menu"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              MENU
-            </button>
+        {/* Mobile Layout (<md) */}
+        <div className="md:hidden px-4 pt-[22px]">
+          <div className="flex flex-col gap-1">
+            {/* Top row - MusicToggle left, Logo+MenuBtn right (expands to full width) */}
+            <div className="relative flex items-center justify-end h-[46px]">
+              {/* MusicToggle on left - fades out when menu opens */}
+              <AnimatePresence>
+                {!isMobileMenuOpen && audio && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3, ease: SMOOTH_EASE }}
+                    className="absolute left-0 flex h-[46px] items-center px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px]"
+                  >
+                    <MusicToggle isDark={true} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            {/* Divider - Desktop only */}
-            <span
-              className={`hidden h-[18px] w-px transition-colors duration-500 lg:block ${
-                isLightText || isDesktopMenuHovered ? "bg-white/30" : "bg-zinc-400"
-              }`}
-              aria-hidden
+              {/* Logo + Menu button container - expands from right to full width */}
+              <motion.div
+                className="flex h-[46px] overflow-hidden"
+                initial={false}
+                animate={{
+                  width: isMobileMenuOpen ? "100%" : "auto",
+                }}
+                transition={{
+                  duration: DURATION.standard,
+                  ease: DRAMATIC_EASE,
+                }}
+              >
+                {/* Logo section - rounded left only, expands to fill space */}
+                <motion.div
+                  className="flex h-[46px] flex-1 items-center pl-4 rounded-l-md"
+                  animate={{
+                    backgroundColor: isMobileMenuOpen ? "#eeeeee" : "var(--color-brand)",
+                  }}
+                  transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
+                >
+                  <Link
+                    href="/home"
+                    onClick={handleLogoClick}
+                    className="flex items-center transition-opacity hover:opacity-80"
+                    aria-label="AIM home"
+                  >
+                    <Image
+                      src="/Logotype.svg"
+                      alt="AIM"
+                      width={22}
+                      height={26}
+                      className={logoClass}
+                    />
+                  </Link>
+                </motion.div>
+
+                {/* Menu toggle button - rounded right only */}
+                <motion.button
+                  onClick={handleMobileMenuToggle}
+                  className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-r-md transition-opacity hover:opacity-80"
+                  animate={{
+                    backgroundColor: isMobileMenuOpen ? "#eeeeee" : "var(--color-brand)",
+                  }}
+                  transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
+                  aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                  aria-expanded={isMobileMenuOpen}
+                >
+                  <DotGridIcon isOpen={isMobileMenuOpen} />
+                </motion.button>
+              </motion.div>
+            </div>
+
+            {/* Expanded menu panel */}
+            <MobileMenuPanel
+              isExpanded={isMobileMenuOpen}
+              onLinkClick={handleLinkClick}
             />
-
-            {/* Sound toggle with icon */}
-            <MusicToggle isDark={isLightText || isDesktopMenuHovered || isMobileMenuOpen} />
-
-            {/* Divider - Desktop only */}
-            <span
-              className={`hidden h-[18px] w-px transition-colors duration-500 lg:block ${
-                isLightText || isDesktopMenuHovered ? "bg-white/30" : "bg-zinc-400"
-              }`}
-              aria-hidden
-            />
-
-            {/* Download button - Desktop only */}
-            <OpaqueButton
-              variant="inline"
-              onClick={openDownloadStore}
-              className="hidden lg:flex"
-              showIcon={false}
-            >
-              Download
-            </OpaqueButton>
-
-            {/* Log In button - Desktop only */}
-            <OpaqueButton
-              variant="inline"
-              href="/log-in"
-              className="hidden bg-[var(--color-brand)] text-black hover:brightness-110 lg:flex"
-              showIcon={false}
-            >
-              Log In
-            </OpaqueButton>
-
-            {/* Mobile/Tablet: Hamburger button */}
-            <button
-              onClick={handleMobileMenuToggle}
-              className={`flex items-center gap-2 rounded-xl px-3 py-2 transition-colors duration-500 lg:hidden ${
-                isLightText || isMobileMenuOpen
-                  ? "bg-white/[0.12] hover:bg-white/20"
-                  : "bg-zinc-900/10 hover:bg-zinc-900/20"
-              }`}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
-            >
-              <HamburgerIcon isOpen={isMobileMenuOpen} isDark={isLightText || isMobileMenuOpen} />
-            </button>
           </div>
         </div>
-
-        {/* Desktop expanded menu panel */}
-        <div
-          className="hidden lg:block"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <DesktopMenuPanel
-            isExpanded={isDesktopMenuHovered}
-            isLightText={isLightText || isDesktopMenuHovered}
-          />
-        </div>
       </motion.header>
-
-      {/* Mobile/Tablet inline menu panel - placed outside motion.header to avoid transform containing block issues */}
-      <div className="pointer-events-auto lg:hidden">
-        <MobileTabletMenuPanel
-          isExpanded={isMobileMenuOpen}
-          onLinkClick={handleMobileLinkClick}
-        />
-      </div>
     </div>
   );
 }
 
-/** Header with expandable menu. Portals to body for proper fixed positioning. */
+/** Header with responsive navigation. Portals to body for proper fixed positioning. */
 export default function Header({ visible = true }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const { isDark } = useHeaderTheme();
 
   useEffect(() => {
-    // Defer setting mounted to avoid cascading renders
-    const isMounted = true;
-    setTimeout(() => {
-      if (isMounted) {
-        setMounted(true);
-      }
-    }, 0);
+    const id = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(id);
   }, []);
 
   if (!mounted || typeof document === "undefined") return null;
 
-  return createPortal(
-    <HeaderContent visible={visible} isDark={isDark} />,
-    document.body
-  );
+  return createPortal(<HeaderContent visible={visible} isDark={isDark} />, document.body);
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Anton, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { HeaderThemeProvider } from "@/contexts/HeaderThemeContext";
-import { AudioProvider } from "@/contexts/AudioContext";
+import PublicAudioBoundary from "@/components/PublicAudioBoundary";
 import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
@@ -38,11 +38,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${anton.variable} antialiased`}
       >
-        <AudioProvider>
-          <SmoothScroll>
-            <HeaderThemeProvider>{children}</HeaderThemeProvider>
-          </SmoothScroll>
-        </AudioProvider>
+        <SmoothScroll>
+          <HeaderThemeProvider>
+            <PublicAudioBoundary>{children}</PublicAudioBoundary>
+          </HeaderThemeProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

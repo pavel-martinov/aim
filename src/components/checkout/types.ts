@@ -1,33 +1,18 @@
 /** Shared form data types for the Academy checkout flow */
 
-export interface PayerDetails {
+export interface ContactDetails {
   fullName: string;
   email: string;
-}
-
-export interface OrganizationDetails {
   organizationName: string;
-  contactEmail: string;
-  contactPhone: string;
-}
-
-export interface TeamDetails {
-  teamName: string;
-  accountEmail: string;
-}
-
-export interface AdditionalInfo {
+  mobileNumber: string;
   hearAboutUs: string;
   hearAboutUsOther: string;
-  anythingElse: string;
+  comment: string;
   agreedToTerms: boolean;
 }
 
 export interface CheckoutFormData {
-  payer: PayerDetails;
-  organization: OrganizationDetails;
-  team: TeamDetails;
-  additional: AdditionalInfo;
+  contact: ContactDetails;
 }
 
 export const HEAR_ABOUT_US_OPTIONS = [

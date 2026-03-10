@@ -6,61 +6,27 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import StepperProgress from "@/components/ui/StepperProgress";
-import PayerDetailsStep from "./PayerDetailsStep";
-import OrganizationStep from "./OrganizationStep";
-import TeamDetailsStep from "./TeamDetailsStep";
-import AdditionalInfoStep from "./AdditionalInfoStep";
+import ContactDetailsStep from "./ContactDetailsStep";
 import PaymentSummary from "./PaymentSummary";
 import { cn } from "@/lib/utils";
-import {
-  CheckoutFormData,
-  PayerDetails,
-  OrganizationDetails,
-  TeamDetails,
-  AdditionalInfo,
-} from "./types";
+import { CheckoutFormData, ContactDetails } from "./types";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
-import { useAudio } from "@/contexts/AudioContext";
 
-const STEPS = [
-  { label: "You" },
-  { label: "Org" },
-  { label: "Team" },
-  { label: "Info" },
-  { label: "Pay" },
-];
+const STEPS = [{ label: "Details" }, { label: "Pay" }];
 
-const STEP_TITLES = [
-  "Payer Details",
-  "Organization",
-  "Team Details",
-  "Additional Info",
-  "Review & Pay",
-];
+const STEP_TITLES = ["Contact Details", "Review & Pay"];
 
-const STEP_SUBTITLES = [
-  "Who is subscribing?",
-  "Tell us about your academy",
-  "Link your AIM team",
-  "A few more details",
-  "Almost there!",
-];
+const STEP_SUBTITLES = ["Tell us about yourself", "Almost there!"];
 
 const EMPTY_FORM: CheckoutFormData = {
-  payer: { fullName: "", email: "" },
-  organization: {
+  contact: {
+    fullName: "",
+    email: "",
     organizationName: "",
-    contactEmail: "",
-    contactPhone: "",
-  },
-  team: {
-    teamName: "",
-    accountEmail: "",
-  },
-  additional: {
+    mobileNumber: "",
     hearAboutUs: "",
     hearAboutUsOther: "",
-    anythingElse: "",
+    comment: "",
     agreedToTerms: false,
   },
 };
@@ -81,7 +47,6 @@ export default function AcademyCheckout({
   students,
 }: AcademyCheckoutProps) {
   const router = useRouter();
-  const { pausePlayback } = useAudio();
   const [currentStep, setCurrentStep] = useState(0);
   const [furthestStep, setFurthestStep] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -96,11 +61,6 @@ export default function AcademyCheckout({
       scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [currentStep]);
-
-  // Stop background music while user is in the checkout input flow.
-  useEffect(() => {
-    pausePlayback();
-  }, [pausePlayback]);
 
   const goNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -145,7 +105,7 @@ export default function AcademyCheckout({
   };
 
   if (isSubmitted) {
-    return <SuccessScreen name={formData.payer.fullName} email={formData.organization.contactEmail || formData.payer.email} />;
+    return <SuccessScreen name={formData.contact.fullName} email={formData.contact.email} />;
   }
 
   return (
@@ -253,42 +213,15 @@ export default function AcademyCheckout({
               transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
             >
               {currentStep === 0 && (
-                <PayerDetailsStep
-                  data={formData.payer}
-                  onChange={(payer: PayerDetails) =>
-                    setFormData((f) => ({ ...f, payer }))
+                <ContactDetailsStep
+                  data={formData.contact}
+                  onChange={(contact: ContactDetails) =>
+                    setFormData((f) => ({ ...f, contact }))
                   }
                   onValidChange={setStepValid}
                 />
               )}
               {currentStep === 1 && (
-                <OrganizationStep
-                  data={formData.organization}
-                  onChange={(organization: OrganizationDetails) =>
-                    setFormData((f) => ({ ...f, organization }))
-                  }
-                  onValidChange={setStepValid}
-                />
-              )}
-              {currentStep === 2 && (
-                <TeamDetailsStep
-                  data={formData.team}
-                  onChange={(team: TeamDetails) =>
-                    setFormData((f) => ({ ...f, team }))
-                  }
-                  onValidChange={setStepValid}
-                />
-              )}
-              {currentStep === 3 && (
-                <AdditionalInfoStep
-                  data={formData.additional}
-                  onChange={(additional: AdditionalInfo) =>
-                    setFormData((f) => ({ ...f, additional }))
-                  }
-                  onValidChange={setStepValid}
-                />
-              )}
-              {currentStep === 4 && (
                 <PaymentSummary
                   data={formData}
                   plan={{ name: "Academies", price, cycle, students }}

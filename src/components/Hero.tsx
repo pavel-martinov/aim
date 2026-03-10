@@ -4,7 +4,7 @@ import HeroStats from "@/components/HeroStats";
 import DownloadButton from "@/components/ui/DownloadButton";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
 
-const HERO_VIDEO_LOCAL = "/HeroVideoBG.mp4";
+const HERO_VIDEO_LOCAL = "/images/HeroSection/hero-section-video.mp4";
 const HERO_VIDEO_FALLBACK =
   "https://assets.mixkit.co/videos/preview/mixkit-man-playing-soccer-502-large.mp4";
 

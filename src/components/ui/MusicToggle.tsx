@@ -1,6 +1,6 @@
 "use client";
 
-import { useAudio } from "@/contexts/AudioContext";
+import { useOptionalAudio } from "@/contexts/AudioContext";
 
 type MusicToggleProps = {
   className?: string;
@@ -31,7 +31,13 @@ export default function MusicToggle({
   className = "",
   isDark = true,
 }: MusicToggleProps) {
-  const { isMuted, toggleMute } = useAudio();
+  const audio = useOptionalAudio();
+
+  if (!audio) {
+    return null;
+  }
+
+  const { isMuted, toggleMute } = audio;
 
   const baseColor = isDark ? "text-white/90" : "text-zinc-900";
   const activeColor = "text-[var(--color-brand)]";

@@ -97,13 +97,13 @@ export default function PaymentSummary({ data, plan }: PaymentSummaryProps) {
         </div>
       </div>
 
-      {/* Payer info */}
+      {/* Contact info */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <p
           className="mb-4 text-xs uppercase tracking-widest text-white/40"
           style={{ fontFamily: "var(--font-geist-mono), monospace" }}
         >
-          Billed To
+          Contact Info
         </p>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -117,7 +117,7 @@ export default function PaymentSummary({ data, plan }: PaymentSummaryProps) {
               className="mt-1 text-sm text-white"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
-              {data.payer.fullName}
+              {data.contact.fullName}
             </p>
           </div>
           <div>
@@ -131,7 +131,37 @@ export default function PaymentSummary({ data, plan }: PaymentSummaryProps) {
               className="mt-1 text-sm text-white break-all"
               style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
             >
-              {data.payer.email}
+              {data.contact.email}
+            </p>
+          </div>
+          {data.contact.organizationName && (
+            <div>
+              <p
+                className="text-xs uppercase text-white/30"
+                style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+              >
+                Organization
+              </p>
+              <p
+                className="mt-1 text-sm text-white"
+                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+              >
+                {data.contact.organizationName}
+              </p>
+            </div>
+          )}
+          <div>
+            <p
+              className="text-xs uppercase text-white/30"
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              Mobile
+            </p>
+            <p
+              className="mt-1 text-sm text-white"
+              style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+            >
+              {data.contact.mobileNumber}
             </p>
           </div>
         </div>
@@ -208,7 +238,7 @@ export default function PaymentSummary({ data, plan }: PaymentSummaryProps) {
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           After submitting, the AIM team will contact you at{" "}
-          <span className="text-white">{data.organization.contactEmail || data.payer.email}</span>{" "}
+          <span className="text-white">{data.contact.email}</span>{" "}
           within 1–2 business days to finalize your Academy setup.
         </p>
       </div>

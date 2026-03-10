@@ -23,7 +23,7 @@ const AUDIO_SRC = "/Audio/AIMBgMusic.mp3";
 const VOLUME = 0.15;
 
 /**
- * Provides global audio state and controls for background music.
+ * Provides shared audio state and controls for routes that support background music.
  * Handles browser autoplay policy by setting up interaction listeners when blocked.
  */
 export function AudioProvider({ children }: { children: React.ReactNode }) {
@@ -132,4 +132,9 @@ export function useAudio(): AudioContextValue {
     throw new Error("useAudio must be used within AudioProvider");
   }
   return ctx;
+}
+
+/** Returns audio controls when the current route is wrapped with audio support. */
+export function useOptionalAudio(): AudioContextValue | null {
+  return useContext(AudioContext);
 }

@@ -6,31 +6,32 @@ import Link from "next/link";
 import gsap from "gsap";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
 import { DURATION, GSAP_EASE } from "@/lib/animations";
-import { useAudio } from "@/contexts/AudioContext";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
   /** Optional headline displayed above the form */
-  headline?: string;
+  headline?: React.ReactNode;
   /** Optional subheadline/description */
-  subheadline?: string;
+  subheadline?: React.ReactNode;
+  /** Optional right-side video source */
+  videoSrc?: string;
 };
 
 /**
  * Shared 50/50 split layout for auth pages.
  * Left: logo + form content, Right: background video.
  */
-export default function AuthLayout({ children, headline, subheadline }: AuthLayoutProps) {
+export default function AuthLayout({
+  children,
+  headline,
+  subheadline,
+  videoSrc = "/HeroVideoBG.mp4",
+}: AuthLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const subheadlineRef = useRef<HTMLParagraphElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
-  const { pausePlayback } = useAudio();
-
-  useEffect(() => {
-    pausePlayback();
-  }, [pausePlayback]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -111,7 +112,8 @@ export default function AuthLayout({ children, headline, subheadline }: AuthLayo
       {/* Right side - Video */}
       <div className="relative hidden w-full lg:block lg:w-1/2">
         <BackgroundVideo
-          src="/images/vision/Vision-1.mp4"
+          src={videoSrc}
+          fallbackSrc="https://assets.mixkit.co/videos/preview/mixkit-man-playing-soccer-502-large.mp4"
           overlay
           overlayOpacity={0.4}
         />

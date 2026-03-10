@@ -8,18 +8,9 @@ import StepsSection from "@/components/StepsSection";
 import VisionSection from "@/components/VisionSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
-import { useAudio } from "@/contexts/AudioContext";
-import { useEffect } from "react";
 
 /** Home page: Hero with AVATR-style header and content sections. */
 export default function HomePage() {
-  const { startPlayback } = useAudio();
-
-  // Start audio playback when home page mounts (after preloader transition)
-  useEffect(() => {
-    startPlayback();
-  }, [startPlayback]);
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <Header visible />
