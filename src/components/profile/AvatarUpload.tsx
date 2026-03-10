@@ -22,9 +22,7 @@ const SIZE_CLASSES = {
 };
 
 /** Detects uploaded or captured avatars that should bypass optimization. */
-function isDataImage(src?: string) {
-  return Boolean(src?.startsWith("data:"));
-}
+// isDataImage is imported from @/lib/utils
 
 /**
  * Avatar display with Netflix-style picker modal.
