@@ -14,6 +14,7 @@ type SmoothScrollProps = {
 const LENIS_STOP_EVENT = "aim:lenis-stop";
 const LENIS_START_EVENT = "aim:lenis-start";
 const SCROLL_TO_TOP_EVENT = "aim:scroll-to-top";
+const SCROLL_INSTANT_TOP_EVENT = "aim:scroll-instant-top";
 
 /** Returns true if device is touch-primary (mobile/tablet). */
 function isTouchDevice(): boolean {
@@ -65,9 +66,13 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     /** Scrolls gracefully to top */
     const scrollToTop = () => lenis.scrollTo(0, { duration: 1.2 });
 
+    /** Scrolls instantly to top without animation */
+    const scrollInstantTop = () => lenis.scrollTo(0, { immediate: true });
+
     window.addEventListener(LENIS_STOP_EVENT, stop);
     window.addEventListener(LENIS_START_EVENT, start);
     window.addEventListener(SCROLL_TO_TOP_EVENT, scrollToTop);
+    window.addEventListener(SCROLL_INSTANT_TOP_EVENT, scrollInstantTop);
 
     // If something mounted before SmoothScroll and already locked, honor it.
     if (document.documentElement.classList.contains("lenis-stopped")) {
@@ -78,6 +83,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
       window.removeEventListener(LENIS_STOP_EVENT, stop);
       window.removeEventListener(LENIS_START_EVENT, start);
       window.removeEventListener(SCROLL_TO_TOP_EVENT, scrollToTop);
+      window.removeEventListener(SCROLL_INSTANT_TOP_EVENT, scrollInstantTop);
       lenis.destroy();
     };
   }, []);

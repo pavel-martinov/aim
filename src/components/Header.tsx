@@ -22,7 +22,7 @@ type NavLink = {
 const NAV_LINKS: readonly NavLink[] = [
   { href: "/about", label: "About" },
   { href: "/membership", label: "Pricing" },
-  { href: "/academy", label: "Academy" },
+  { href: "/academies", label: "Academies" },
   { href: "#", label: "Download", action: "download" },
 ];
 
@@ -122,6 +122,16 @@ function NavPill({
       : "bg-[rgba(0,0,0,0.08)] text-zinc-900 hover:bg-[rgba(0,0,0,0.15)] hover:text-black"
   }`;
 
+  const pathname = usePathname();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === href) {
+      e.preventDefault();
+      window.dispatchEvent(new Event("aim:scroll-to-top"));
+    }
+    onClick?.();
+  };
+
   if (action === "download") {
     return (
       <button onClick={openDownloadStore} className={baseClasses}>
@@ -131,7 +141,7 @@ function NavPill({
   }
 
   return (
-    <Link href={href} onClick={onClick} className={baseClasses}>
+    <Link href={href} onClick={handleClick} className={baseClasses}>
       {label}
     </Link>
   );
@@ -162,6 +172,16 @@ function MobileMenuItem({
 
   const classes = variant === "brand" ? brandClasses : glassClasses;
 
+  const pathname = usePathname();
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === href) {
+      e.preventDefault();
+      window.dispatchEvent(new Event("aim:scroll-to-top"));
+    }
+    onClick?.();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -179,7 +199,7 @@ function MobileMenuItem({
           {label}
         </button>
       ) : (
-        <Link href={href} onClick={onClick} className={classes}>
+        <Link href={href} onClick={handleClick} className={classes}>
           {label}
         </Link>
       )}
@@ -284,12 +304,15 @@ function HeaderContent({
       setIsMobileMenuOpen(false);
 
       if (pathname === "/home") {
-        window.scrollTo({ top: 0, behavior: "auto" });
+        window.dispatchEvent(new Event("aim:scroll-to-top"));
         return;
       }
 
       router.push("/home");
-      requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event("aim:scroll-instant-top"));
+        window.scrollTo({ top: 0, behavior: "auto" });
+      });
     },
     [pathname, router]
   );

@@ -195,56 +195,6 @@ html.lenis body {
   -ms-overflow-style: none;
 }
 
-/* Page Transitions - View Transitions API with CSS fallback */
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-@keyframes page-fade-out {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-}
-
-.page-content {
-  will-change: opacity, transform;
-}
-
-.page-enter {
-  animation: page-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-::view-transition-old(root) {
-  animation: page-fade-out 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-::view-transition-new(root) {
-  animation: page-fade-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-enter {
-    animation: none;
-  }
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-}
 
 /* Gallery Carousel Animation */
 .gallery-carousel {
