@@ -418,9 +418,11 @@ function HeaderContent({
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.3, ease: SMOOTH_EASE }}
-                    className="absolute left-0 flex h-[46px] items-center px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px]"
+                    className={`absolute left-0 flex h-[46px] items-center px-[18px] rounded-lg backdrop-blur-[10px] ${
+                      isDark ? "bg-[rgba(237,237,237,0.2)]" : "bg-[rgba(0,0,0,0.08)]"
+                    }`}
                   >
-                    <MusicToggle isDark={true} />
+                    <MusicToggle isDark={isDark} />
                   </motion.div>
                 )}
               </AnimatePresence>

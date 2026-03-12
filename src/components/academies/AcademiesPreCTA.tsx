@@ -8,7 +8,8 @@ import OpaqueButton from "@/components/ui/OpaqueButton";
 
 /**
  * Academy Pre-CTA section — large green headline with iPad mockup overlay.
- * Same structure as UnlockYourPotential but with academy-specific content.
+ * Mobile: 900px height, 58px headline, iPad bleeds off sides, full-width CTA.
+ * Desktop: Larger headline, contained iPad mockup.
  */
 export default function AcademiesPreCTA() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -28,32 +29,32 @@ export default function AcademiesPreCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[max(100vh,900px)] items-center justify-center overflow-hidden bg-[#010400] px-4 py-12 md:min-h-[max(100vh,1000px)] lg:px-0 lg:py-24"
+      className="relative flex h-[900px] items-center justify-center overflow-hidden bg-[#010400] px-4 py-12 md:min-h-[max(100vh,1000px)] lg:px-0 lg:py-24"
       data-header-theme="dark"
       aria-label="Unlock Your Potential"
     >
       {/* Content container */}
-      <div className="relative mx-auto h-[800px] w-full max-w-[1440px] md:h-[900px]">
+      <div className="relative mx-auto flex h-full w-full max-w-[1440px] flex-col items-center justify-between md:h-[900px]">
         {/* Headline - positioned at top, behind mockup (z-10) */}
         <motion.div
-          className="absolute left-1/2 top-0 z-10 w-full -translate-x-1/2 text-center"
+          className="relative z-10 w-full text-center"
           style={{ opacity: contentOpacity, y: headlineY }}
         >
           <h2
-            className="whitespace-nowrap text-[48px] uppercase leading-[1.1] tracking-tight text-[var(--color-brand)] md:text-[100px] lg:text-[144px]"
+            className="whitespace-nowrap text-[58px] uppercase leading-[1.1] tracking-tight text-[var(--color-brand)] md:text-[100px] lg:text-[144px]"
             style={{ fontFamily: "var(--font-anton), sans-serif" }}
           >
             <span className="block">UNLOCK</span>
-            <span className="block">YOUR POTENTIAL</span>
+            <span className="block">FULL POTENTIAL</span>
           </h2>
         </motion.div>
 
-        {/* iPad Mockup - overlaying headline (z-20) */}
+        {/* iPad Mockup - overlaying headline (z-20), bleeds off sides on mobile */}
         <motion.div
-          className="absolute left-1/2 top-[60px] z-20 -translate-x-1/2 md:top-[40px]"
+          className="absolute left-1/2 top-[calc(50%-43px)] z-20 -translate-x-1/2 -translate-y-1/2 md:top-[40px] md:translate-y-0"
           style={{ y: mockupY, scale: mockupScale }}
         >
-          <div className="relative h-[500px] w-[700px] md:h-[600px] md:w-[900px] lg:h-[700px] lg:w-[1244px]">
+          <div className="relative h-[420px] w-[746px] md:h-[600px] md:w-[900px] lg:h-[700px] lg:w-[1244px]">
             <Image
               src="/academies/ipad-mockup.png"
               alt="AIM Academy dashboard on iPad showing team analytics and player performance"
@@ -66,11 +67,11 @@ export default function AcademiesPreCTA() {
 
         {/* Bottom content: Description + Button (z-30) */}
         <motion.div
-          className="absolute bottom-8 left-1/2 z-30 flex w-full -translate-x-1/2 flex-col items-center gap-6 px-4 md:bottom-0 md:px-0"
+          className="relative z-30 flex w-full flex-col items-center gap-6"
           style={{ opacity: contentOpacity }}
         >
           <p
-            className="w-full text-center text-sm uppercase leading-[1.5] tracking-wide text-[#d9d9d9] md:w-[563px] md:text-lg md:leading-[1.25]"
+            className="w-full text-center text-[14px] uppercase leading-[1.5] tracking-wide text-[#d9d9d9] md:w-[563px] md:text-lg md:leading-[1.25]"
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
             Every stat tells a story. From shot speed to jump height, our AI

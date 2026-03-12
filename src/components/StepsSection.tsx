@@ -3,6 +3,7 @@
 import Image from "next/image";
 import DownloadButton from "@/components/ui/DownloadButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import DynamicImageReveal from "@/components/ui/DynamicImageReveal";
 
 /** Step card data */
 const STEPS = [
@@ -67,7 +68,7 @@ function StepCard({
   return (
     <div className="flex flex-col gap-[18px]">
       {/* Media container - square on mobile/tablet, taller on desktop */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl md:h-[394px] md:aspect-auto lg:h-[646px]">
+      <DynamicImageReveal className="relative aspect-square w-full overflow-hidden rounded-xl md:h-[394px] md:aspect-auto lg:h-[646px]">
         {isVideo ? (
           <video
             src={media}
@@ -104,7 +105,7 @@ function StepCard({
             </span>
           </div>
         </div>
-      </div>
+      </DynamicImageReveal>
 
       {/* Title + description */}
       <div className="flex flex-col gap-4">

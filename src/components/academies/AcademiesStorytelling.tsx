@@ -6,9 +6,8 @@ import Image from "next/image";
 
 /**
  * Academy Storytelling section — light mode with two parallax images.
- * Left image: horizontal parallax (left to center).
- * Right image: vertical parallax (bottom to top).
- * Text elements animate with scroll-linked reveals for immersive reading.
+ * Mobile: Stacked layout with images animating from left on scroll.
+ * Desktop: Left image horizontal parallax, right image vertical parallax.
  * Respects prefers-reduced-motion for accessibility.
  */
 export default function AcademiesStorytelling() {
@@ -20,33 +19,39 @@ export default function AcademiesStorytelling() {
     offset: ["start end", "end start"],
   });
 
-  // Headline: scroll-linked reveal (y + opacity + blur) — disabled if reduced motion
+  // Headline: scroll-linked reveal (y + opacity + blur)
   const headlineY = useTransform(scrollYProgress, [0, 0.25], prefersReducedMotion ? [0, 0] : [40, 0]);
   const headlineOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], prefersReducedMotion ? [1, 1, 1, 1] : [0, 1, 1, 0.6]);
   const headlineBlurValue = useTransform(scrollYProgress, [0, 0.2], prefersReducedMotion ? [0, 0] : [8, 0]);
   const headlineFilter = useTransform(headlineBlurValue, (v) => `blur(${v}px)`);
 
-  // Paragraph: scroll-linked reveal with slight delay — disabled if reduced motion
+  // Paragraph: scroll-linked reveal with slight delay
   const paragraphY = useTransform(scrollYProgress, [0.05, 0.3], prefersReducedMotion ? [0, 0] : [30, 0]);
   const paragraphOpacity = useTransform(scrollYProgress, [0.05, 0.25, 0.8, 1], prefersReducedMotion ? [1, 1, 1, 1] : [0, 1, 1, 0.6]);
   const paragraphBlurValue = useTransform(scrollYProgress, [0.05, 0.25], prefersReducedMotion ? [0, 0] : [6, 0]);
   const paragraphFilter = useTransform(paragraphBlurValue, (v) => `blur(${v}px)`);
 
-  // Left image: horizontal parallax — disabled if reduced motion
+  // Mobile: Images slide in from left
+  const mobileImage1X = useTransform(scrollYProgress, [0.15, 0.35], prefersReducedMotion ? [0, 0] : [-100, 0]);
+  const mobileImage1Opacity = useTransform(scrollYProgress, [0.15, 0.3], prefersReducedMotion ? [1, 1] : [0, 1]);
+  const mobileImage2X = useTransform(scrollYProgress, [0.35, 0.55], prefersReducedMotion ? [0, 0] : [-100, 0]);
+  const mobileImage2Opacity = useTransform(scrollYProgress, [0.35, 0.5], prefersReducedMotion ? [1, 1] : [0, 1]);
+
+  // Desktop: Left image horizontal parallax
   const leftImageX = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [-80, 20]);
   const leftImageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], prefersReducedMotion ? [1, 1, 1, 1] : [0.5, 1, 1, 0.5]);
 
-  // Right image: vertical parallax — disabled if reduced motion
+  // Desktop: Right image vertical parallax
   const rightImageY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [120, -40]);
   const rightImageOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], prefersReducedMotion ? [1, 1, 1, 1] : [0.5, 1, 1, 0.5]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[1000px] w-full overflow-hidden bg-white px-6 py-[120px] lg:min-h-[1252px] lg:px-8"
+      className="relative min-h-[2028px] w-full overflow-hidden bg-white px-4 py-[120px] md:min-h-[1000px] md:px-6 lg:min-h-[1252px] lg:px-8"
       data-header-theme="light"
     >
-      {/* Large headline at top — scroll-linked reveal */}
+      {/* Large headline at top */}
       <motion.div
         className="max-w-[696px]"
         style={{
@@ -64,9 +69,9 @@ export default function AcademiesStorytelling() {
         </h2>
       </motion.div>
 
-      {/* Subtitle / description text — scroll-linked reveal with stagger */}
+      {/* Subtitle / description text */}
       <motion.p
-        className="absolute left-6 top-[300px] max-w-[516px] text-[14px] font-medium uppercase leading-[1.5] text-black md:left-[360px] md:top-[354px] md:text-[16px] lg:left-[360px]"
+        className="mt-[60px] max-w-[343px] text-[16px] font-medium uppercase leading-[1.5] text-black md:absolute md:left-[360px] md:top-[354px] md:mt-0 md:max-w-[516px] md:text-[16px] lg:left-[360px]"
         style={{
           fontFamily: "var(--font-geist-sans), sans-serif",
           y: paragraphY,
@@ -78,9 +83,43 @@ export default function AcademiesStorytelling() {
         You can&apos;t be at every training session. But your coaching can be. AIM gives you eyes on every player&apos;s progress, turning their solo practice into real development you can track, measure, and shape from anywhere. No more blind spots in your squad.
       </motion.p>
 
-      {/* Left Image - horizontal parallax */}
+      {/* Mobile: First Image - slides from left */}
       <motion.div
-        className="absolute bottom-[80px] left-0 h-[380px] w-[280px] overflow-hidden md:bottom-[120px] md:h-[472px] md:w-[336px] lg:left-0"
+        className="mt-[60px] h-[472px] w-[calc(100%-16px)] overflow-hidden md:hidden"
+        style={{ 
+          x: mobileImage1X, 
+          opacity: mobileImage1Opacity,
+          willChange: "transform, opacity",
+        }}
+      >
+        <Image
+          src="/academies/story-left.jpg"
+          alt="Player training with ball"
+          fill
+          className="object-cover"
+        />
+      </motion.div>
+
+      {/* Mobile: Second Image - slides from left */}
+      <motion.div
+        className="mt-[100px] h-[472px] w-[calc(100%-16px)] overflow-hidden md:hidden"
+        style={{ 
+          x: mobileImage2X, 
+          opacity: mobileImage2Opacity,
+          willChange: "transform, opacity",
+        }}
+      >
+        <Image
+          src="/academies/story-right.jpg"
+          alt="Coach analyzing player performance"
+          fill
+          className="object-cover"
+        />
+      </motion.div>
+
+      {/* Desktop: Left Image - horizontal parallax */}
+      <motion.div
+        className="absolute bottom-[120px] left-0 hidden h-[472px] w-[336px] overflow-hidden md:block lg:left-0"
         style={{ x: leftImageX, opacity: leftImageOpacity }}
       >
         <Image
@@ -91,9 +130,9 @@ export default function AcademiesStorytelling() {
         />
       </motion.div>
 
-      {/* Right Image - vertical parallax */}
+      {/* Desktop: Right Image - vertical parallax */}
       <motion.div
-        className="absolute bottom-[40px] right-0 h-[380px] w-[320px] overflow-hidden md:bottom-[120px] md:h-[472px] md:w-[500px] lg:right-0 lg:w-[696px]"
+        className="absolute bottom-[120px] right-0 hidden h-[472px] w-[500px] overflow-hidden md:block lg:right-0 lg:w-[696px]"
         style={{ y: rightImageY, opacity: rightImageOpacity }}
       >
         <Image

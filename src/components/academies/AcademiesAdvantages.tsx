@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import { motion } from "framer-motion";
+import DynamicImageReveal from "@/components/ui/DynamicImageReveal";
 
 /** Feature items with letter indicators and descriptions */
 const FEATURES = [
@@ -41,7 +42,8 @@ const FEATURES = [
 
 /**
  * Academy Advantages section — light mode feature list with letter indicators.
- * Each feature row has image (animating from bottom), title, and description.
+ * Mobile: Stacked layout with letter, title, full-width image, then description.
+ * Desktop: 4-column grid layout.
  */
 export default function AcademiesAdvantages() {
   return (
@@ -50,7 +52,7 @@ export default function AcademiesAdvantages() {
       data-header-theme="light"
     >
       {/* Intro text block */}
-      <div className="px-6 py-[100px] lg:px-8 lg:py-[132px]">
+      <div className="px-4 py-[120px] md:px-6 lg:px-8 lg:py-[132px]">
         <p
           className="max-w-full text-[32px] font-medium capitalize leading-[1.25] text-black md:text-[40px] lg:text-[46px]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
@@ -60,8 +62,8 @@ export default function AcademiesAdvantages() {
       </div>
 
       {/* Features list */}
-      <div className="px-6 pb-8 lg:px-8">
-        <div className="flex flex-col">
+      <div className="px-4 pb-8 md:px-6 lg:px-8">
+        <div className="flex flex-col gap-6 md:gap-0">
           {FEATURES.map((feature, i) => (
             <FeatureRow
               key={feature.letter}
@@ -76,7 +78,11 @@ export default function AcademiesAdvantages() {
   );
 }
 
-/** Individual feature row with letter indicator, image, title, and description */
+/**
+ * Individual feature row with letter indicator, image, title, and description.
+ * Mobile: Vertical stack — letter, title, image (full-width 270px), description.
+ * Desktop: Horizontal 4-column grid.
+ */
 function FeatureRow({
   letter,
   title,
@@ -92,7 +98,7 @@ function FeatureRow({
 }) {
   return (
     <div
-      className={`relative grid gap-6 py-6 md:grid-cols-[auto_216px_1fr_1fr] md:gap-8 lg:gap-12 ${
+      className={`flex flex-col gap-6 pb-6 md:grid md:grid-cols-[auto_216px_1fr_1fr] md:gap-8 md:py-6 lg:gap-12 ${
         !isLast ? "border-b border-[#bababa]" : ""
       }`}
     >
@@ -106,20 +112,8 @@ function FeatureRow({
         </span>
       </div>
 
-      {/* Image - animates from bottom */}
-      <RevealOnScroll direction="up" delay={index * 0.1} dramatic>
-        <div className="relative h-[200px] w-full overflow-hidden md:h-[270px] md:w-[216px]">
-          <Image
-            src="/academies/feature.jpg"
-            alt={title}
-            fill
-            className="object-cover"
-          />
-        </div>
-      </RevealOnScroll>
-
-      {/* Title */}
-      <div className="flex items-start">
+      {/* Title - appears before image on mobile */}
+      <div className="flex items-start md:order-none md:col-start-3">
         <h3
           className="text-[24px] font-medium leading-[1.25] text-[#0d1c28] md:text-[28px] lg:text-[32px]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
@@ -128,12 +122,27 @@ function FeatureRow({
         </h3>
       </div>
 
+      {/* Image - full width on mobile, fixed on desktop */}
+      <DynamicImageReveal
+        delay={index * 0.1}
+        className="md:col-start-2 md:row-start-1"
+      >
+        <div className="relative h-[270px] w-full overflow-hidden md:w-[216px]">
+          <Image
+            src="/academies/feature.jpg"
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      </DynamicImageReveal>
+
       {/* Description paragraphs */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5 md:col-start-4 md:row-start-1">
         {description.map((para, j) => (
           <p
             key={j}
-            className="text-[14px] font-medium uppercase leading-[1.5] text-[#0d1c28]/70 md:text-[16px]"
+            className="text-[14px] font-normal uppercase leading-[1.5] text-[#0d1c28]/70 md:text-[16px]"
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
             {para}

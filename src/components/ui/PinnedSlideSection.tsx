@@ -67,7 +67,7 @@ export default function PinnedSlideSection({
           trigger: sectionRef.current,
           start: "top top",
           end: `+=${scrollEnd}`,
-          scrub,
+          scrub: scrub,
           pin: true,
           pinSpacing: true,
           pinReparent: true,
@@ -75,9 +75,25 @@ export default function PinnedSlideSection({
           fastScrollEnd: true,
           invalidateOnRefresh: true,
           snap: {
-            snapTo: [0, 0.33, 0.66, 1],
-            duration: { min: 0.3, max: 0.6 },
-            ease: "power2.inOut",
+            snapTo: [0.15, 0.48, 0.82, 1],
+            duration: { min: 0.7, max: 1.2 },
+            ease: "sine.inOut",
+          },
+          onRefresh: () => {
+            const el = sectionRef.current;
+            if (el) gsap.set(el, { width: "100vw", height: "100vh", left: 0, top: 0, right: 0, bottom: 0, maxWidth: "none", maxHeight: "none" });
+          },
+          onUpdate: () => {
+            const el = sectionRef.current;
+            if (el) gsap.set(el, { width: "100vw", height: "100vh", left: 0, top: 0, right: 0, bottom: 0, maxWidth: "none", maxHeight: "none" });
+          },
+          onEnter: () => {
+            const el = sectionRef.current;
+            if (el) gsap.set(el, { width: "100vw", height: "100vh", left: 0, top: 0, right: 0, bottom: 0, maxWidth: "none", maxHeight: "none" });
+          },
+          onEnterBack: () => {
+            const el = sectionRef.current;
+            if (el) gsap.set(el, { width: "100vw", height: "100vh", left: 0, top: 0, right: 0, bottom: 0, maxWidth: "none", maxHeight: "none" });
           },
         },
       });
@@ -102,7 +118,7 @@ export default function PinnedSlideSection({
             z: 0,
             rotateX: 0,
             filter: "blur(0px)",
-            duration: 4,
+            duration: 0.8,
             ease: "power3.out",
           },
           "<"
@@ -118,36 +134,34 @@ export default function PinnedSlideSection({
             z: -200,
             rotateX: -8,
             filter: blurOut,
-            duration: 3,
+            duration: 0.8,
             ease: "power3.in",
-          },
-          ">1.5"
+          }
         );
       }
 
-      // Slide 1 - stays sharp for full duration
+      // Slide 1 - initialize text state, hold visible while progress fills, then exit
       master.fromTo(
         `.${classPrefix}-text-1 .${classPrefix}-line`,
         { opacity: 1, yPercent: 0, z: 0, rotateX: 0, filter: "blur(0px)" },
         { opacity: 1, yPercent: 0, z: 0, rotateX: 0, filter: "blur(0px)", duration: 4, ease: "none" }
       );
-      master.to(`.${classPrefix}-text-1`, { opacity: 1, y: 0, duration: 0.3, ease: "none" }, "<");
       master.fromTo(`.${classPrefix}-progress-1`, { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
       master.to(`.${classPrefix}-bg-1`, { opacity: 1, duration: 0.2 }, "<");
       animateTextOut(`.${classPrefix}-text-1`);
-      master.to(`.${classPrefix}-text-1`, { opacity: 0, y: -20, duration: 0.3, ease: "none" });
+      master.to(`.${classPrefix}-text-1`, { opacity: 0, duration: 0.3 });
 
-      // Slide 2
-      master.to(`.${classPrefix}-text-2`, { opacity: 1, y: 0, duration: 0.3, ease: "none" });
+      // Slide 2 - fade in text, progress bar fills, then exit
+      master.to(`.${classPrefix}-text-2`, { opacity: 1, duration: 0.3 });
       master.to(`.${classPrefix}-bg-1`, { opacity: 0, duration: 0.5 }, "<");
       master.to(`.${classPrefix}-bg-2`, { opacity: 1, duration: 0.5 }, "<");
       animateTextIn(`.${classPrefix}-text-2`);
       master.fromTo(`.${classPrefix}-progress-2`, { width: "0%" }, { width: "100%", ease: "none", duration: 4 }, "<");
       animateTextOut(`.${classPrefix}-text-2`);
-      master.to(`.${classPrefix}-text-2`, { opacity: 0, y: -20, duration: 0.3, ease: "none" });
+      master.to(`.${classPrefix}-text-2`, { opacity: 0, duration: 0.3 });
 
-      // Slide 3
-      master.to(`.${classPrefix}-text-3`, { opacity: 1, y: 0, duration: 0.3, ease: "none" });
+      // Slide 3 - fade in text, progress bar fills, stays visible
+      master.to(`.${classPrefix}-text-3`, { opacity: 1, duration: 0.3 });
       master.to(`.${classPrefix}-bg-2`, { opacity: 0, duration: 0.5 }, "<");
       master.to(`.${classPrefix}-bg-3`, { opacity: 1, duration: 0.5 }, "<");
       animateTextIn(`.${classPrefix}-text-3`);
@@ -209,11 +223,11 @@ export default function PinnedSlideSection({
     <section
       ref={sectionRef}
       aria-label={ariaLabel}
-      className={`${classPrefix}-section relative ${sectionClassName}`}
+      className={`${classPrefix}-section relative h-screen w-full overflow-hidden ${sectionClassName}`}
       data-header-theme="dark"
     >
       {/* Pinned content container */}
-      <div className="relative flex h-screen w-full flex-col items-center justify-center px-4 py-[60px] lg:px-6">
+      <div className="absolute inset-0 flex w-full flex-col items-center justify-center px-4 py-[60px] lg:px-6">
         {/* Background videos */}
         <div className="absolute inset-0 overflow-hidden">
           {slides.map((slide, index) => (
@@ -228,11 +242,11 @@ export default function PinnedSlideSection({
         </div>
 
         {/* Text slides */}
-        <div className="relative z-10 w-full max-w-[740px]" style={{ perspective: "1000px" }}>
+        <div className="relative z-10 flex h-[200px] w-full max-w-[740px] items-center justify-center lg:h-[280px]" style={{ perspective: "1000px" }}>
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className={`${classPrefix}-text-${index + 1} absolute inset-0 flex items-center justify-center`}
+              className={`${classPrefix}-text-${index + 1} absolute flex items-center justify-center`}
               style={{ opacity: index === 0 ? 1 : 0 }}
             >
               <p

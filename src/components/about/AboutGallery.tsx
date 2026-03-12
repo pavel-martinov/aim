@@ -43,7 +43,8 @@ export default function AboutGallery() {
         className="relative"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: "-50px" }}
+        exit={{ opacity: 0 }}
+        viewport={{ once: false, margin: "-50px" }}
         transition={{ duration: 0.8, ease: SMOOTH_EASE }}
       >
         <div className="gallery-carousel flex w-max gap-3 md:gap-[12px]">

@@ -6,7 +6,8 @@ import Image from "next/image";
 
 /**
  * Full-screen divider image section — athlete silhouette with AIM logo.
- * No text overlay, subtle parallax zoom effect.
+ * Fixed 900px height on all viewports for full-size display.
+ * Subtle parallax zoom effect on scroll.
  */
 export default function AcademiesDivider() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -22,7 +23,7 @@ export default function AcademiesDivider() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen min-h-[600px] w-full overflow-hidden lg:min-h-[900px]"
+      className="relative h-[900px] w-full overflow-hidden"
       data-header-theme="dark"
     >
       <motion.div

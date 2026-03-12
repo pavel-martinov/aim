@@ -7,7 +7,8 @@ const HEADLINE_LINES = ["Run Your Academy.", "Powered by AI."];
 
 /**
  * Academies hero — light mode with gradient headline and decorative sphere video.
- * 50% viewport height with 600px minimum as per design spec.
+ * Mobile: 80vh with 600px minimum, centered layout at bottom.
+ * Desktop: Left-aligned layout with parallax effects.
  */
 export default function AcademiesHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,15 +26,15 @@ export default function AcademiesHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-0 flex h-[50vh] min-h-[600px] w-full flex-col justify-end overflow-hidden bg-white px-6 pb-10 pt-[120px] lg:px-8"
+      className="relative z-0 flex h-[80vh] min-h-[600px] w-full flex-col items-center justify-end overflow-hidden bg-white px-6 pb-[42px] pt-[120px] md:items-start md:pb-10 lg:px-8"
       data-header-theme="light"
     >
-      {/* Decorative looping sphere video above the headline */}
+      {/* Decorative looping sphere video — centered on mobile, left on desktop */}
       <motion.div
-        className="absolute left-6 top-[120px] z-10 lg:left-8"
+        className="relative z-10 mb-6 md:absolute md:left-6 md:top-[120px] md:mb-0 lg:left-8"
         style={{ y: orbY, rotate: orbRotate, opacity }}
       >
-        <div className="relative size-[180px] md:size-[238px]">
+        <div className="relative size-[204px] md:size-[238px]">
           <video
             src="/academies/sphere.mp4"
             className="pointer-events-none size-full select-none object-contain"
@@ -53,13 +54,13 @@ export default function AcademiesHero() {
         </div>
       </motion.div>
 
-      {/* Headline with gradient text */}
+      {/* Headline with gradient text — centered on mobile, left on desktop */}
       <motion.div
-        className="relative z-10"
+        className="relative z-10 w-full"
         style={{ y: headlineY, opacity }}
       >
         <h1
-          className="max-w-[720px] text-[42px] uppercase leading-[1.1] md:text-[52px] lg:text-[62px]"
+          className="max-w-[720px] text-center text-[42px] uppercase leading-[1.1] md:text-left md:text-[52px] lg:text-[62px]"
           style={{ fontFamily: "var(--font-anton), sans-serif" }}
         >
           {HEADLINE_LINES.map((line, i) => (

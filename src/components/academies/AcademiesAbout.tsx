@@ -6,7 +6,8 @@ import Image from "next/image";
 
 /**
  * About Academy section — full-bleed background image with white text overlay.
- * 90% viewport height with 800px minimum as per design spec.
+ * Mobile: 100vh height, first line has 30px left indent.
+ * Desktop: First line indented 120px from left.
  */
 export default function AcademiesAbout() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -23,7 +24,7 @@ export default function AcademiesAbout() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-10 flex min-h-[max(90vh,800px)] w-full flex-col justify-end overflow-hidden px-6 py-[60px] lg:px-8"
+      className="relative z-10 flex h-screen w-full flex-col justify-end overflow-hidden px-4 py-[60px] md:px-6 lg:px-8"
       data-header-theme="dark"
     >
       {/* Background Image with parallax zoom */}
@@ -47,10 +48,10 @@ export default function AcademiesAbout() {
         className="relative z-10 flex w-full flex-col gap-1"
         style={{ y: textY, opacity: textOpacity }}
       >
-        {/* First line - indented, shorter trailing phrase */}
-        <div className="pl-0 md:pl-[120px]">
+        {/* First line - 30px indent on mobile, 120px on desktop */}
+        <div className="pl-[30px] md:pl-[120px]">
           <p
-            className="text-[32px] font-medium capitalize leading-[1.25] text-white md:text-[42px] lg:text-[52px]"
+            className="text-[36px] font-medium capitalize leading-[1.25] text-white md:text-[42px] lg:text-[52px]"
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
             AIM goes beyond player improvement. It&apos;s about
@@ -59,7 +60,7 @@ export default function AcademiesAbout() {
 
         {/* Second line - full width, continues the thought */}
         <p
-          className="text-[32px] font-medium capitalize leading-[1.25] text-white md:text-[42px] lg:text-[52px]"
+          className="text-[36px] font-medium capitalize leading-[1.25] text-white md:text-[42px] lg:text-[52px]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           building futures for anyone with a ball, a dream, and the hunger to get better every single day.

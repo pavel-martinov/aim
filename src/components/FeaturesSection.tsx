@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DownloadButton from "@/components/ui/DownloadButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
+import DynamicImageReveal from "@/components/ui/DynamicImageReveal";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -75,7 +76,7 @@ function FeatureCard({
 }) {
   return (
     <div ref={setRef} className="flex flex-col gap-5 lg:gap-10">
-      <div className="relative h-[343px] w-full overflow-hidden rounded-xl md:h-[422px] lg:h-[662px]">
+      <DynamicImageReveal className="relative h-[343px] w-full overflow-hidden rounded-xl md:h-[422px] lg:h-[662px]">
         <Image
           src={image}
           alt={title.replace("\n", " ")}
@@ -93,7 +94,7 @@ function FeatureCard({
             </span>
           </div>
         </div>
-      </div>
+      </DynamicImageReveal>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <h3
