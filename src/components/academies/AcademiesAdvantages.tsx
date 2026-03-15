@@ -1,49 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import DynamicImageReveal from "@/components/ui/DynamicImageReveal";
 
 /** Feature items with letter indicators and descriptions */
 const FEATURES = [
   {
     letter: "a",
-    title: "Own the full picture of every player",
-    description: [
-      "See where each player stands across ball control, passing, shooting, and movement. Real scores pulled from real practice sessions give you hard numbers instead of guesswork and gut feelings from the sideline.",
-      "Track who's putting in the hours and who needs a push. Week-over-week progress shows you exactly where to focus your next session and which players are ready to step up to the next challenge.",
-    ],
+    title: "Own the full picture\nof your academy",
+    description: "Track player engagement and development across your entire organization. Hard numbers give you the insights needed to optimize your training programs and retain talent.",
+    image: "/academies/Feature A.png",
   },
   {
     letter: "b",
-    title: "AI that watches what you can't",
-    description: [
-      "Our AI breaks down every drill attempt, analyzing technique, timing, and execution frame by frame. Players receive instant feedback on their phone. You get the full picture without reviewing hours of video.",
-      "Stop drowning in footage. Get straight to what matters: where technique is breaking down, what's actually working, and which players are ready to move up. All the insight, none of the admin.",
-    ],
+    title: "Training that doesn't\nstop at practice.",
+    description: "Keep players engaged 7 days a week. With AI analysis on their phones, players continue developing at home, maximizing the value of your academy's curriculum.",
+    image: "/academies/Feature B.png",
   },
   {
     letter: "c",
-    title: "Catch bad habits before they stick",
-    description: [
-      "Technique problems compound fast. A dropped shoulder, lazy footwork, weak plant foot - small issues become permanent flaws within weeks. AIM flags them early, while they're still easy to correct.",
-      "Get automatic alerts when a player's form starts slipping or their progress stalls out. You'll know exactly when to step in with the right drill or conversation, before small problems turn into big ones.",
-    ],
-  },
-  {
-    letter: "d",
-    title: "Turn practice data into match-day results",
-    description: [
-      "Compare your squad against age and level benchmarks from academies around the world. See which players are tracking ahead of the curve and which ones need targeted work to close the gap.",
-      "Build smarter training plans based on what the data actually shows, not hunches or assumptions. Better information leads to better coaching decisions, and better decisions build better players.",
-    ],
+    title: "Unlock every\nplayer's potential.",
+    description: "No player gets left behind. AIM's automated analysis catches the subtle technique issues that coaches might miss in a crowded 20-player session.",
+    image: "/academies/Feature C.png",
   },
 ];
 
 /**
  * Academy Advantages section — light mode feature list with letter indicators.
  * Mobile: Stacked layout with letter, title, full-width image, then description.
- * Desktop: 4-column grid layout.
+ * Desktop: grid layout with large image and text.
  */
 export default function AcademiesAdvantages() {
   return (
@@ -54,7 +39,7 @@ export default function AcademiesAdvantages() {
       {/* Intro text block */}
       <div className="px-4 py-[120px] md:px-6 lg:px-8 lg:py-[132px]">
         <p
-          className="max-w-full text-[32px] font-medium capitalize leading-[1.25] text-black md:text-[40px] lg:text-[46px]"
+          className="max-w-full text-[32px] font-medium capitalize leading-[1.25] text-[#0d1c28] md:text-[40px] lg:text-[46px]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
         >
           We believe elite coaching should be available to anyone with a ball, a dream, and a desire to be better.
@@ -81,29 +66,31 @@ export default function AcademiesAdvantages() {
 /**
  * Individual feature row with letter indicator, image, title, and description.
  * Mobile: Vertical stack — letter, title, image (full-width 270px), description.
- * Desktop: Horizontal 4-column grid.
+ * Desktop: Left-aligned large image and right-aligned text.
  */
 function FeatureRow({
   letter,
   title,
   description,
+  image,
   isLast,
   index,
 }: {
   letter: string;
   title: string;
-  description: string[];
+  description: string;
+  image: string;
   isLast: boolean;
   index: number;
 }) {
   return (
     <div
-      className={`flex flex-col gap-6 pb-6 md:grid md:grid-cols-[auto_216px_1fr_1fr] md:gap-8 md:py-6 lg:gap-12 ${
+      className={`grid grid-cols-1 gap-6 pb-6 md:grid-cols-[auto_1fr_1fr] md:grid-rows-[1fr_auto] md:gap-x-10 md:gap-y-6 md:py-[60px] xl:grid-cols-[auto_580px_500px] xl:gap-x-[100px] ${
         !isLast ? "border-b border-[#bababa]" : ""
       }`}
     >
       {/* Letter indicator */}
-      <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border border-[#0d1c28]">
+      <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full border border-[#0d1c28] md:col-start-1 md:row-start-1">
         <span
           className="text-[12px] uppercase text-[#0d1c28]"
           style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
@@ -112,43 +99,36 @@ function FeatureRow({
         </span>
       </div>
 
-      {/* Title - appears before image on mobile */}
-      <div className="flex items-start md:order-none md:col-start-3">
-        <h3
-          className="text-[24px] font-medium leading-[1.25] text-[#0d1c28] md:text-[28px] lg:text-[32px]"
-          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-        >
-          {title}
-        </h3>
-      </div>
+      {/* Title */}
+      <h3
+        className="whitespace-pre-wrap text-[24px] font-medium leading-[1.25] text-[#0d1c28] md:col-start-3 md:row-start-1 md:self-end md:text-[28px] lg:text-[32px]"
+        style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+      >
+        {title}
+      </h3>
 
-      {/* Image - full width on mobile, fixed on desktop */}
+      {/* Image - full width on mobile, large left-aligned on desktop */}
       <DynamicImageReveal
         delay={index * 0.1}
-        className="md:col-start-2 md:row-start-1"
+        className="md:col-start-2 md:row-start-1 md:row-span-2"
       >
-        <div className="relative h-[270px] w-full overflow-hidden md:w-[216px]">
+        <div className="relative h-[270px] w-full overflow-hidden md:h-[405px]">
           <Image
-            src="/academies/feature.jpg"
-            alt={title}
+            src={image}
+            alt={title.replace("\n", " ")}
             fill
             className="object-cover"
           />
         </div>
       </DynamicImageReveal>
 
-      {/* Description paragraphs */}
-      <div className="flex flex-col gap-5 md:col-start-4 md:row-start-1">
-        {description.map((para, j) => (
-          <p
-            key={j}
-            className="text-[14px] font-normal uppercase leading-[1.5] text-[#0d1c28]/70 md:text-[16px]"
-            style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-          >
-            {para}
-          </p>
-        ))}
-      </div>
+      {/* Description */}
+      <p
+        className="text-[14px] font-normal uppercase leading-[1.5] text-[#0d1c28]/70 md:col-start-3 md:row-start-2 md:self-start md:text-[16px]"
+        style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+      >
+        {description}
+      </p>
     </div>
   );
 }

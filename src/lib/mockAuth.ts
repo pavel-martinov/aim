@@ -3,30 +3,57 @@
  * Replace with real Supabase Auth when ready.
  */
 
+export type UserRole = "superadmin" | "admin" | "academy_owner" | "coach" | "parent" | "player";
+
 export type AuthResult = {
   success: boolean;
   error?: string;
+  role?: UserRole;
+  redirectUrl?: string;
 };
 
+export interface SessionData {
+  timestamp: number;
+  email: string;
+  role: UserRole;
+  redirectUrl: string;
+}
+
 const SESSION_KEY = "aim-session";
-const SESSION_DURATION_MS = 60 * 60 * 1000; // 1 hour
+
+const EXTERNAL_URLS = {
+  adminUI: "https://dev1-admin-ui.aim-football.com/content-moderation",
+  coachPortal: "https://aim-coach-portal-dev-gmgjjvjmpq-uc.a.run.app/login",
+} as const;
+
+/** Demo credentials for stakeholder presentation. */
+const DEMO_CREDENTIALS: Record<string, { password: string; role: UserRole; redirectUrl: string }> = {
+  "parent@aim.io": { password: "pass123", role: "parent", redirectUrl: "/profile" },
+  "player@aim.io": { password: "pass123", role: "player", redirectUrl: "/profile" },
+  "superadmin@aim.com": { password: "aim@123", role: "superadmin", redirectUrl: EXTERNAL_URLS.adminUI },
+  "admin@aim.com": { password: "aim@123", role: "admin", redirectUrl: EXTERNAL_URLS.adminUI },
+  "john@aim.com": { password: "Aim@2025", role: "coach", redirectUrl: EXTERNAL_URLS.coachPortal },
+  "academy@aim.com": { password: "Aim@2025", role: "academy_owner", redirectUrl: EXTERNAL_URLS.coachPortal },
+};
 
 /** Simulates network delay */
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Saves session timestamp to localStorage. */
-export function saveSession(): void {
+/**
+ * Session persistence is temporarily disabled for stakeholder testing.
+ * Keep these helpers in place so the original localStorage logic can be restored quickly.
+ */
+export function saveSession(_email: string, _role: UserRole, _redirectUrl: string): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SESSION_KEY, Date.now().toString());
+  localStorage.removeItem(SESSION_KEY);
 }
 
-/** Returns true if a valid (non-expired) session exists. */
-export function getSession(): boolean {
-  if (typeof window === "undefined") return false;
-  const timestamp = localStorage.getItem(SESSION_KEY);
-  if (!timestamp) return false;
-  const elapsed = Date.now() - parseInt(timestamp, 10);
-  return elapsed < SESSION_DURATION_MS;
+/** Returns null while saved-session logic is temporarily disabled. */
+export function getSession(): SessionData | null {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(SESSION_KEY);
+  }
+  return null;
 }
 
 /** Clears the session from localStorage. */
@@ -35,17 +62,33 @@ export function clearSession(): void {
   localStorage.removeItem(SESSION_KEY);
 }
 
-/** Shared mock credentials for profile testing. */
+/** Returns human-readable role label for UI display. */
+export function getRoleLabel(role: UserRole): string {
+  const labels: Record<UserRole, string> = {
+    superadmin: "Super Admin",
+    admin: "Admin",
+    academy_owner: "Academy Owner",
+    coach: "Coach",
+    parent: "Parent",
+    player: "Player",
+  };
+  return labels[role];
+}
+
+/** Checks if redirect URL is external. */
+export function isExternalUrl(url: string): boolean {
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
+/** Shared mock credentials for profile testing (legacy). */
 export const MOCK_TEST_CREDENTIALS = {
   login: "test",
   password: "123",
 } as const;
 
 /**
- * Mock login for local testing.
- * Accepts either:
- * - login: "test", password: "123"
- * - any valid email, password: "demo123" (legacy)
+ * Mock login with role-based authentication.
+ * Checks demo credentials first, then falls back to legacy test accounts.
  */
 export async function mockLogin(email: string, password: string): Promise<AuthResult> {
   await delay(800);
@@ -54,14 +97,23 @@ export async function mockLogin(email: string, password: string): Promise<AuthRe
     return { success: false, error: "Email and password are required" };
   }
 
+  const emailLower = email.toLowerCase();
+  const demoAccount = DEMO_CREDENTIALS[emailLower];
+  
+  if (demoAccount && demoAccount.password === password) {
+    return { 
+      success: true, 
+      role: demoAccount.role, 
+      redirectUrl: demoAccount.redirectUrl 
+    };
+  }
+
   if (email === MOCK_TEST_CREDENTIALS.login && password === MOCK_TEST_CREDENTIALS.password) {
-    saveSession();
-    return { success: true };
+    return { success: true, role: "player", redirectUrl: "/profile" };
   }
 
   if (password === "demo123") {
-    saveSession();
-    return { success: true };
+    return { success: true, role: "player", redirectUrl: "/profile" };
   }
 
   return { success: false, error: "Invalid email or password" };
