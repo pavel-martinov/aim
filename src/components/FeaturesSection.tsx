@@ -7,18 +7,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DownloadButton from "@/components/ui/DownloadButton";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import DynamicImageReveal from "@/components/ui/DynamicImageReveal";
+import { isTouchDevice } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
-
-/** Returns true if device is touch-primary (mobile/tablet). */
-function isTouchDevice(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
 
 /** Feature data for the scrolling cards section */
 const FEATURES = [

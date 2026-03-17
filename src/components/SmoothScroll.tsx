@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { isTouchDevice } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,16 +16,6 @@ const LENIS_STOP_EVENT = "aim:lenis-stop";
 const LENIS_START_EVENT = "aim:lenis-start";
 const SCROLL_TO_TOP_EVENT = "aim:scroll-to-top";
 const SCROLL_INSTANT_TOP_EVENT = "aim:scroll-instant-top";
-
-/** Returns true if device is touch-primary (mobile/tablet). */
-function isTouchDevice(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
 
 /** Smooth scrolling wrapper using Lenis, integrated with GSAP ScrollTrigger. Disabled on touch devices for native scroll. */
 export default function SmoothScroll({ children }: SmoothScrollProps) {

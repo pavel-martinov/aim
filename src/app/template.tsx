@@ -25,8 +25,8 @@ export default function Template({ children }: { children: React.ReactNode }) {
       */}
       <motion.div
         className="fixed inset-0 z-[9999] bg-[var(--background)] pointer-events-none origin-bottom"
-        initial={{ scaleY: 1 }}
-        animate={{ scaleY: 0 }}
+        initial={{ scaleY: 1, opacity: 1 }}
+        animate={{ scaleY: 0, opacity: 0 }}
         transition={{ duration: DURATION.hero, ease: DRAMATIC_EASE }}
       />
 

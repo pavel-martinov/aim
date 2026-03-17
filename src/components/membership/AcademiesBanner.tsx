@@ -7,25 +7,8 @@ import Image from "next/image";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import { cn } from "@/lib/utils";
-
-type BillingCycle = "monthly" | "annual";
-
-/** Per-seat pricing tiers (above the base 10 students) */
-const SEAT_TIERS = {
-  monthly: [
-    { min: 11, max: 25, rate: 15 },
-    { min: 26, max: 50, rate: 12 },
-    { min: 51, max: 100, rate: 10 },
-  ],
-  annual: [
-    { min: 11, max: 25, rate: 12 },
-    { min: 26, max: 50, rate: 10 },
-    { min: 51, max: 100, rate: 8 },
-  ],
-};
-
-const ACADEMIES_BASE_MONTHLY = 500;
-const ACADEMIES_BASE_ANNUAL = 400;
+import { calculateAcademiesPrice, type BillingCycle } from "@/lib/constants";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 const ACADEMIES_FEATURES = [
   "Coach CRM & player management",
@@ -34,24 +17,6 @@ const ACADEMIES_FEATURES = [
   "Unlimited challenge creation",
   "Priority support",
 ];
-
-/** Calculates total price for academies plan based on student count */
-function calculateAcademiesPrice(students: number, cycle: BillingCycle): number {
-  const basePrice = cycle === "annual" ? ACADEMIES_BASE_ANNUAL : ACADEMIES_BASE_MONTHLY;
-  if (students <= 10) return basePrice;
-
-  const tiers = SEAT_TIERS[cycle];
-  let total = basePrice;
-
-  for (const tier of tiers) {
-    if (students >= tier.min) {
-      const seatsInTier = Math.min(students, tier.max) - tier.min + 1;
-      total += seatsInTier * tier.rate;
-    }
-  }
-
-  return Math.round(total);
-}
 
 /** Custom slider for selecting student count */
 function StudentSlider({
@@ -95,34 +60,6 @@ function StudentSlider({
           } as React.CSSProperties
         }
       />
-      <style jsx>{`
-        .academies-slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: var(--color-brand);
-          cursor: pointer;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        .academies-slider::-webkit-slider-thumb:hover {
-          transform: scale(1.15);
-        }
-        .academies-slider::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          border: none;
-          border-radius: 50%;
-          background: var(--color-brand);
-          cursor: pointer;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        .academies-slider::-moz-range-thumb:hover {
-          transform: scale(1.15);
-        }
-      `}</style>
     </div>
   );
 }
@@ -137,10 +74,11 @@ interface AcademiesBannerProps {
  */
 export default function AcademiesBanner({ billingCycle }: AcademiesBannerProps) {
   const router = useRouter();
+  const { currency, formatPrice } = useCurrency();
   const [students, setStudents] = useState(10);
 
   const isEnterprise = students > 100;
-  const price = calculateAcademiesPrice(students, billingCycle);
+  const price = calculateAcademiesPrice(students, billingCycle, currency);
   const ctaText = isEnterprise ? "Contact Sales" : "Start Free Trial";
 
   const handleCtaClick = () => {
@@ -250,7 +188,7 @@ export default function AcademiesBanner({ billingCycle }: AcademiesBannerProps) 
                     className="text-[40px] leading-[0.9] tracking-tight text-white sm:text-[56px] lg:text-[64px]"
                     style={{ fontFamily: "var(--font-anton), sans-serif" }}
                   >
-                    {price} AED
+                    {formatPrice(price)}
                   </span>
                   <span
                     className="text-sm font-bold uppercase tracking-wider text-white/40 lg:text-lg"

@@ -8,9 +8,12 @@ import FormInput from "@/components/ui/FormInput";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import {
   mockLogin,
-  MOCK_TEST_CREDENTIALS,
   isExternalUrl,
+  saveUserRole,
+  EXTERNAL_URLS,
+  DEMO_CREDENTIALS,
 } from "@/lib/mockAuth";
+import { isValidEmail } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 
 /**
@@ -24,17 +27,56 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [touched, setTouched] = useState({ email: false, password: false });
+  const [showPortalSelection, setShowPortalSelection] = useState(false);
 
   const validateLogin = (value: string) => {
     if (!value) return "Email is required";
-    if (value === MOCK_TEST_CREDENTIALS.login) return "";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Please enter a valid email";
+    if (DEMO_CREDENTIALS[value.toLowerCase()]) return "";
+    if (!isValidEmail(value)) return "Please enter a valid email";
     return "";
   };
 
   const emailError = touched.email ? validateLogin(email) : "";
   const passwordError = touched.password && !password ? "Password is required" : "";
+
+  const handleDemoLogin = (demoEmail: string, demoPass: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPass);
+    performLogin(demoEmail, demoPass);
+  };
+
+  const performLogin = async (loginEmail: string, loginPass: string) => {
+    setIsLoading(true);
+    setError("");
+
+    const result = await mockLogin(loginEmail, loginPass);
+
+    if (result.success && result.redirectUrl) {
+      if (result.role) {
+        saveUserRole(result.role);
+      }
+      
+      if (result.role === "admin" || result.role === "superadmin") {
+        setShowPortalSelection(true);
+        setIsLoading(false);
+        return;
+      }
+
+      if (isExternalUrl(result.redirectUrl)) {
+        window.location.href = result.redirectUrl;
+      } else {
+        router.push(result.redirectUrl);
+      }
+    } else if (result.success) {
+      if (result.role) {
+        saveUserRole(result.role);
+      }
+      router.push("/profile");
+    } else {
+      setError(result.error || "Login failed");
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,36 +88,45 @@ export default function LoginForm() {
       return;
     }
 
-    setIsLoading(true);
-    setError("");
-
-    const result = await mockLogin(email, password);
-
-    if (result.success && result.redirectUrl) {
-      if (isExternalUrl(result.redirectUrl)) {
-        window.location.href = result.redirectUrl;
-      } else {
-        router.push(result.redirectUrl);
-      }
-    } else if (result.success) {
-      router.push("/profile");
-    } else {
-      setError(result.error || "Login failed");
-      setIsLoading(false);
-    }
+    await performLogin(email, password);
   };
+
+  if (showPortalSelection) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
+        className="flex flex-col gap-4"
+      >
+        <p className="mb-2 text-sm text-white/60">
+          Please select the portal you want to access:
+        </p>
+        <PortalCard
+          href={EXTERNAL_URLS.adminUI}
+          title="AIM Admin UI"
+          description="Content moderation and platform management"
+        />
+        <PortalCard
+          href={EXTERNAL_URLS.coachPortal}
+          title="AIM Coach Portal"
+          description="Team, player, and mission management"
+        />
+      </motion.div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <FormInput
-          label="Email or Test Login"
+          label="Email"
           type="text"
           value={email}
           onChange={setEmail}
           onBlur={() => setTouched((t) => ({ ...t, email: true }))}
           error={emailError}
-          placeholder='your@email.com or "test"'
+          placeholder="your@email.com"
           required
           autoComplete="username"
           disabled={isLoading}
@@ -110,8 +161,7 @@ export default function LoginForm() {
 
         <Link
           href="/log-in/forgot-password"
-          className="w-fit text-sm text-white/50 transition-colors duration-300 hover:text-[var(--color-brand)]"
-          style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          className="w-fit text-sm text-white/50 font-mono transition-colors duration-300 hover:text-[var(--color-brand)]"
         >
           Forgot password?
         </Link>
@@ -127,6 +177,52 @@ export default function LoginForm() {
           </OpaqueButton>
         </div>
       </form>
+
+      {/* Test accounts - only shown in development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="mt-8 flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-white/10" />
+            <span className="text-xs uppercase tracking-wider text-white/40 font-mono">
+              Test Accounts
+            </span>
+            <div className="h-px flex-1 bg-white/10" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.entries(DEMO_CREDENTIALS).map(([demoEmail, data]) => (
+              <button
+                key={demoEmail}
+                type="button"
+                onClick={() => handleDemoLogin(demoEmail, data.password)}
+                disabled={isLoading}
+                className="flex flex-col items-start justify-center rounded-lg border border-white/5 bg-white/[0.02] p-3 text-left transition-colors hover:border-white/20 hover:bg-white/[0.05] disabled:opacity-50"
+              >
+                <span className="text-xs font-medium text-white/80 capitalize font-mono">
+                  {data.role.replace("_", " ")}
+                </span>
+                <span className="text-[10px] text-white/40 truncate w-full">
+                  {demoEmail}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+/** Portal selection card for admin/superadmin users. */
+function PortalCard({ href, title, description }: { href: string; title: string; description: string }) {
+  return (
+    <a
+      href={href}
+      className="group relative flex flex-col gap-2 rounded-xl border border-white/10 bg-white/5 p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
+    >
+      <h3 className="text-xl uppercase tracking-wide text-white transition-colors duration-300 group-hover:text-[var(--color-brand)] font-anton">
+        {title}
+      </h3>
+      <p className="text-sm text-white/50 font-mono">{description}</p>
+    </a>
   );
 }

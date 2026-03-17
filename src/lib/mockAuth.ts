@@ -3,7 +3,11 @@
  * Replace with real Supabase Auth when ready.
  */
 
+import { delay, isValidEmail } from "./utils";
+
 export type UserRole = "superadmin" | "admin" | "academy_owner" | "coach" | "parent" | "player";
+
+const VALID_ROLES: UserRole[] = ["superadmin", "admin", "academy_owner", "coach", "parent", "player"];
 
 export type AuthResult = {
   success: boolean;
@@ -20,24 +24,50 @@ export interface SessionData {
 }
 
 const SESSION_KEY = "aim-session";
+const ROLE_KEY = "aim-role";
 
-const EXTERNAL_URLS = {
+/** Mock delay for simulating network latency */
+const MOCK_DELAY_MS = 800;
+
+/**
+ * External URLs for portal redirects.
+ * TODO: Move to env vars (NEXT_PUBLIC_ADMIN_URL, NEXT_PUBLIC_COACH_PORTAL_URL) for production.
+ */
+export const EXTERNAL_URLS = {
   adminUI: "https://dev1-admin-ui.aim-football.com/content-moderation",
   coachPortal: "https://aim-coach-portal-dev-gmgjjvjmpq-uc.a.run.app/login",
 } as const;
 
 /** Demo credentials for stakeholder presentation. */
-const DEMO_CREDENTIALS: Record<string, { password: string; role: UserRole; redirectUrl: string }> = {
+export const DEMO_CREDENTIALS: Record<string, { password: string; role: UserRole; redirectUrl: string }> = {
   "parent@aim.io": { password: "pass123", role: "parent", redirectUrl: "/profile" },
   "player@aim.io": { password: "pass123", role: "player", redirectUrl: "/profile" },
   "superadmin@aim.com": { password: "aim@123", role: "superadmin", redirectUrl: EXTERNAL_URLS.adminUI },
   "admin@aim.com": { password: "aim@123", role: "admin", redirectUrl: EXTERNAL_URLS.adminUI },
   "john@aim.com": { password: "Aim@2025", role: "coach", redirectUrl: EXTERNAL_URLS.coachPortal },
   "academy@aim.com": { password: "Aim@2025", role: "academy_owner", redirectUrl: EXTERNAL_URLS.coachPortal },
+  "test": { password: "123", role: "player", redirectUrl: "/profile" },
 };
 
-/** Simulates network delay */
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * Saves the user role to localStorage for role-based UI rendering.
+ */
+export function saveUserRole(role: UserRole): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(ROLE_KEY, role);
+}
+
+/**
+ * Retrieves the saved user role from localStorage.
+ */
+export function getUserRole(): UserRole | null {
+  if (typeof window === "undefined") return null;
+  const role = localStorage.getItem(ROLE_KEY);
+  if (role && VALID_ROLES.includes(role as UserRole)) {
+    return role as UserRole;
+  }
+  return null;
+}
 
 /**
  * Session persistence is temporarily disabled for stakeholder testing.
@@ -56,10 +86,11 @@ export function getSession(): SessionData | null {
   return null;
 }
 
-/** Clears the session from localStorage. */
+/** Clears the session and role from localStorage. */
 export function clearSession(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(ROLE_KEY);
 }
 
 /** Returns human-readable role label for UI display. */
@@ -80,25 +111,19 @@ export function isExternalUrl(url: string): boolean {
   return url.startsWith("http://") || url.startsWith("https://");
 }
 
-/** Shared mock credentials for profile testing (legacy). */
-export const MOCK_TEST_CREDENTIALS = {
-  login: "test",
-  password: "123",
-} as const;
-
 /**
  * Mock login with role-based authentication.
- * Checks demo credentials first, then falls back to legacy test accounts.
+ * Checks demo credentials for matching email and password.
  */
 export async function mockLogin(email: string, password: string): Promise<AuthResult> {
-  await delay(800);
+  await delay(MOCK_DELAY_MS);
 
   if (!email || !password) {
     return { success: false, error: "Email and password are required" };
   }
 
-  const emailLower = email.toLowerCase();
-  const demoAccount = DEMO_CREDENTIALS[emailLower];
+  const lookupKey = email.toLowerCase();
+  const demoAccount = DEMO_CREDENTIALS[lookupKey];
   
   if (demoAccount && demoAccount.password === password) {
     return { 
@@ -108,14 +133,6 @@ export async function mockLogin(email: string, password: string): Promise<AuthRe
     };
   }
 
-  if (email === MOCK_TEST_CREDENTIALS.login && password === MOCK_TEST_CREDENTIALS.password) {
-    return { success: true, role: "player", redirectUrl: "/profile" };
-  }
-
-  if (password === "demo123") {
-    return { success: true, role: "player", redirectUrl: "/profile" };
-  }
-
   return { success: false, error: "Invalid email or password" };
 }
 
@@ -123,14 +140,13 @@ export async function mockLogin(email: string, password: string): Promise<AuthRe
  * Mock send reset email - always succeeds for valid email format
  */
 export async function mockSendResetEmail(email: string): Promise<AuthResult> {
-  await delay(1000);
+  await delay(MOCK_DELAY_MS);
 
   if (!email) {
     return { success: false, error: "Email is required" };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
+  if (!isValidEmail(email)) {
     return { success: false, error: "Please enter a valid email address" };
   }
 
@@ -145,7 +161,7 @@ export async function mockResetPassword(
   password: string,
   confirmPassword: string
 ): Promise<AuthResult> {
-  await delay(800);
+  await delay(MOCK_DELAY_MS);
 
   if (!token || token.length < 10) {
     return { success: false, error: "Invalid or expired reset link" };

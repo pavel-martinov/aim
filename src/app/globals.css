@@ -195,6 +195,37 @@ html.lenis body {
   -ms-overflow-style: none;
 }
 
+/* Academies slider thumb styles kept global to avoid styled-jsx hydration mismatches. */
+.academies-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.academies-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.academies-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-brand);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.academies-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
 
 /* Gallery Carousel Animation */
 .gallery-carousel {

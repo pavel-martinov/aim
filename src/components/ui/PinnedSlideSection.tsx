@@ -4,18 +4,9 @@ import { useRef, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import BackgroundVideo from "@/components/ui/BackgroundVideo";
+import { isTouchDevice } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
-
-/** Returns true if device is touch-primary (mobile/tablet). */
-function isTouchDevice(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
 
 type Slide = {
   id: number;
@@ -53,7 +44,7 @@ export default function PinnedSlideSection({
   disablePinOnTouch = true,
 }: PinnedSlideSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isMobile] = useState(isTouchDevice);
+  const [isMobile] = useState(() => isTouchDevice());
 
   useLayoutEffect(() => {
     // Skip ScrollTrigger pinning on touch devices when disablePinOnTouch is true
@@ -242,11 +233,11 @@ export default function PinnedSlideSection({
         </div>
 
         {/* Text slides */}
-        <div className="relative z-10 flex h-[200px] w-full max-w-[740px] items-center justify-center lg:h-[280px]" style={{ perspective: "1000px" }}>
+        <div className="relative z-10 flex h-[200px] w-full max-w-[740px] items-center justify-center lg:max-w-[1200px] lg:h-[280px]" style={{ perspective: "1000px" }}>
           {slides.map((slide, index) => (
             <div
               key={slide.id}
-              className={`${classPrefix}-text-${index + 1} absolute flex items-center justify-center`}
+              className={`${classPrefix}-text-${index + 1} absolute flex w-full items-center justify-center`}
               style={{ opacity: index === 0 ? 1 : 0 }}
             >
               <p

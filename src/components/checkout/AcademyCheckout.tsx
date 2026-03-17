@@ -11,6 +11,7 @@ import PaymentSummary from "./PaymentSummary";
 import { cn } from "@/lib/utils";
 import { CheckoutFormData, ContactDetails } from "./types";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
+import { EXTERNAL_URLS } from "@/lib/mockAuth";
 
 const STEPS = [{ label: "Details" }, { label: "Pay" }];
 
@@ -53,7 +54,6 @@ export default function AcademyCheckout({
   const [formData, setFormData] = useState<CheckoutFormData>(EMPTY_FORM);
   const [stepValid, setStepValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const scrollRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -84,10 +84,9 @@ export default function AcademyCheckout({
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate submission
     await new Promise((resolve) => setTimeout(resolve, 1800));
     setIsSubmitting(false);
-    setIsSubmitted(true);
+    window.location.href = EXTERNAL_URLS.coachPortal;
   };
 
   const isLastStep = currentStep === STEPS.length - 1;
@@ -103,10 +102,6 @@ export default function AcademyCheckout({
       opacity: 0,
     }),
   };
-
-  if (isSubmitted) {
-    return <SuccessScreen name={formData.contact.fullName} email={formData.contact.email} />;
-  }
 
   return (
     <div className="flex h-[100dvh] flex-col bg-black overflow-hidden">
@@ -165,7 +160,7 @@ export default function AcademyCheckout({
       <main
         ref={scrollRef}
         data-lenis-prevent
-        className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 pb-32 pt-10 lg:px-8"
+        className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 pb-6 pt-10 lg:px-8"
       >
         <div className="mx-auto w-full max-w-xl">
           {/* Step heading */}
@@ -229,57 +224,60 @@ export default function AcademyCheckout({
               )}
             </motion.div>
           </AnimatePresence>
-
-          {/* Inline Action Button */}
-          <motion.div
-            className="mt-12 md:mt-16"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: DURATION.standard, ease: DRAMATIC_EASE }}
-          >
-            {isLastStep ? (
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className={cn(
-                  "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
-                  "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                  isSubmitting
-                    ? "cursor-not-allowed bg-white/[0.12] text-white/40"
-                    : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
-                )}
-                style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <LoadingSpinner />
-                    Submitting...
-                  </span>
-                ) : (
-                  "Submit Request"
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={goNext}
-                disabled={!stepValid}
-                className={cn(
-                  "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
-                  "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
-                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                  !stepValid
-                    ? "cursor-not-allowed bg-white/[0.12] text-white/40"
-                    : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
-                )}
-                style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-              >
-                Continue →
-              </button>
-            )}
-          </motion.div>
         </div>
       </main>
+
+      {/* Sticky action footer */}
+      <motion.div
+        className="shrink-0 z-20 border-t border-white/10 bg-gradient-to-t from-black via-black to-black/80 px-4 pt-4 lg:px-8"
+        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
+      >
+        <div className="mx-auto w-full max-w-xl">
+          {isLastStep ? (
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={cn(
+                "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
+                "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+                isSubmitting
+                  ? "cursor-not-allowed bg-white/[0.12] text-white/40"
+                  : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
+              )}
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <LoadingSpinner />
+                  Submitting...
+                </span>
+              ) : (
+                "Submit Request"
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={goNext}
+              disabled={!stepValid}
+              className={cn(
+                "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
+                "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+                !stepValid
+                  ? "cursor-not-allowed bg-white/[0.12] text-white/40"
+                  : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
+              )}
+              style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+            >
+              Continue →
+            </button>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -290,60 +288,5 @@ function LoadingSpinner() {
       <circle cx="12" cy="12" r="10" className="opacity-25" />
       <path d="M4 12a8 8 0 018-8" className="opacity-75" strokeLinecap="round" />
     </svg>
-  );
-}
-
-function SuccessScreen({ name, email }: { name: string; email: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
-      className="flex min-h-[100dvh] flex-col items-center justify-center gap-6 bg-black px-4 py-20 text-center"
-    >
-      {/* Checkmark */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--color-brand)]"
-      >
-        <svg width="32" height="28" viewBox="0 0 32 28" fill="none">
-          <path
-            d="M3 14L12 23L29 3"
-            stroke="black"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </motion.div>
-
-      <div className="max-w-sm">
-        <h1
-          className="text-[48px] uppercase leading-[0.95] tracking-tight text-white"
-          style={{ fontFamily: "var(--font-anton), sans-serif" }}
-        >
-          You&apos;re In!
-        </h1>
-        <p
-          className="mt-4 text-sm leading-relaxed text-white/60"
-          style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-        >
-          Thanks{name ? `, ${name}` : ""}! Your Academy request has been
-          submitted. The AIM team will contact you at{" "}
-          <span className="text-white">{email}</span> within 1–2 business days
-          to finalize your setup.
-        </p>
-      </div>
-
-      <Link
-        href="/membership"
-        className="mt-4 text-xs uppercase tracking-widest text-white/40 underline underline-offset-4 transition-colors hover:text-white"
-        style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-      >
-        Back to Plans
-      </Link>
-    </motion.div>
   );
 }

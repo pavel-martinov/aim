@@ -2,78 +2,16 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import AcademiesBanner from "./AcademiesBanner";
 import gsap from "gsap";
 import { DRAMATIC_EASE, DURATION, GSAP_EASE } from "@/lib/animations";
 import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import OpaqueButton from "@/components/ui/OpaqueButton";
-import { openDownloadStore } from "@/lib/download";
+import CurrencySelector from "@/components/ui/CurrencySelector";
 import { cn } from "@/lib/utils";
-
-type BillingCycle = "monthly" | "annual";
-
-/** Plan configuration */
-type Plan = {
-  id: string;
-  name: string;
-  tagline: string;
-  monthlyPrice: number | null;
-  annualPrice: number | null;
-  annualSavings?: string;
-  features: string[];
-  highlighted?: boolean;
-  badge?: string;
-  ctaText: string;
-};
-
-/** B2C Pricing plans - Starter, Pro (Core), Pathway (Elite) */
-const PLANS: Plan[] = [
-  {
-    id: "starter",
-    name: "Starter",
-    tagline: "Free",
-    monthlyPrice: null,
-    annualPrice: null,
-    features: [
-      "Lvl 1 Drills Only",
-      "3 Uploads / Week",
-      "Basic AI Scoring",
-      "Community XP",
-    ],
-    ctaText: "Get Started Free",
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    tagline: "Premium",
-    monthlyPrice: 100,
-    annualPrice: 80,
-    annualSavings: "Save 240 AED/year",
-    features: [
-      "Unlimited Uploads",
-      "Full AI Analysis",
-      "Scorecard History",
-      "Skill Progression",
-      "Scout Visibility",
-    ],
-    ctaText: "Start Free Trial",
-  },
-  {
-    id: "pathway",
-    name: "Pathway",
-    tagline: "Elite",
-    monthlyPrice: 200,
-    annualPrice: 160,
-    annualSavings: "Save 480 AED/year",
-    features: [
-      "Career Roadmap",
-      "Position Modules",
-      "Biomechanics Reports",
-      "Showcase Invites",
-    ],
-    ctaText: "Start Free Trial",
-  },
-];
+import { PLANS, type BillingCycle, type PlanConfig, getPlanPrice, formatAnnualSavings } from "@/lib/constants";
+import { useCurrency } from "@/lib/context/CurrencyContext";
 
 /** Billing toggle switch - Redesigned to be larger and more tactile */
 function BillingToggle({
@@ -130,15 +68,19 @@ function BillingToggle({
 function PricingCard({
   plan,
   billingCycle,
+  onCtaClick,
 }: {
-  plan: Plan;
+  plan: PlanConfig;
   billingCycle: BillingCycle;
+  onCtaClick: (planId: string) => void;
 }) {
-  const price = billingCycle === "annual" ? plan.annualPrice : plan.monthlyPrice;
+  const { currency, formatPrice } = useCurrency();
+  const price = getPlanPrice(plan.id, billingCycle, currency);
+  const annualSavings = formatAnnualSavings(plan.id, currency);
   const isFree = price === null;
 
   const handleCtaClick = () => {
-    openDownloadStore();
+    onCtaClick(plan.id);
   };
 
   return (
@@ -215,7 +157,7 @@ function PricingCard({
                   className="text-[32px] sm:text-[40px] lg:text-[56px] leading-[0.9] tracking-tight"
                   style={{ fontFamily: "var(--font-anton), sans-serif" }}
                 >
-                  {price} AED
+                  {formatPrice(price)}
                 </span>
                 <span
                   className={cn(
@@ -232,7 +174,7 @@ function PricingCard({
         </AnimatePresence>
 
         {/* Annual savings */}
-        {!isFree && billingCycle === "annual" && plan.annualSavings && (
+        {!isFree && billingCycle === "annual" && annualSavings && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -242,7 +184,7 @@ function PricingCard({
             )}
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
-            {plan.annualSavings}
+            {annualSavings}
           </motion.p>
         )}
       </div>
@@ -290,8 +232,13 @@ function PricingCard({
  * Designed to show pricing immediately above the fold.
  */
 export default function PricingPlans() {
+  const router = useRouter();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("annual");
   const headlineRef = useRef<HTMLHeadingElement>(null);
+
+  const handlePlanCtaClick = (planId: string) => {
+    router.push(`/membership/checkout?plan=${planId}&cycle=${billingCycle}`);
+  };
 
   useEffect(() => {
     const headline = headlineRef.current;
@@ -348,9 +295,12 @@ export default function PricingPlans() {
           </p>
         </RevealOnScroll>
 
-        {/* Billing toggle */}
+        {/* Billing toggle and currency selector */}
         <RevealOnScroll delay={0.15}>
-          <BillingToggle value={billingCycle} onChange={setBillingCycle} />
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <BillingToggle value={billingCycle} onChange={setBillingCycle} />
+            <CurrencySelector />
+          </div>
         </RevealOnScroll>
       </div>
 
@@ -359,7 +309,7 @@ export default function PricingPlans() {
         <div className="mx-auto grid max-w-[1280px] h-full items-stretch gap-4 sm:gap-6 md:grid-cols-3 lg:mt-6 lg:gap-8 overflow-visible px-1 py-1">
           {PLANS.map((plan) => (
             <div key={plan.id} className="min-h-full">
-              <PricingCard plan={plan} billingCycle={billingCycle} />
+              <PricingCard plan={plan} billingCycle={billingCycle} onCtaClick={handlePlanCtaClick} />
             </div>
           ))}
         </div>

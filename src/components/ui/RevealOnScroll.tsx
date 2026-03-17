@@ -4,18 +4,9 @@ import { useRef, useEffect, ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DURATION, GSAP_EASE } from "@/lib/animations";
+import { isTouchDevice } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
-
-/** Returns true if device is touch-primary (mobile/tablet). */
-function isTouchDevice(): boolean {
-  if (typeof window === "undefined") return false;
-  return (
-    "ontouchstart" in window ||
-    navigator.maxTouchPoints > 0 ||
-    window.matchMedia("(pointer: coarse)").matches
-  );
-}
 
 type Direction = "up" | "down" | "left" | "right";
 

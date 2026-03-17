@@ -1,5 +1,4 @@
-import AuthLayout from "@/components/auth/AuthLayout";
-import LoginForm from "@/components/auth/LoginForm";
+import LoginContent from "./LoginContent";
 
 export const metadata = {
   title: "Log In | AIM",
@@ -8,12 +7,5 @@ export const metadata = {
 
 /** Login page with email/password form. */
 export default function LoginPage() {
-  return (
-    <AuthLayout
-      headline="Welcome Back"
-      subheadline="Log in to access your AIM account"
-    >
-      <LoginForm />
-    </AuthLayout>
-  );
+  return <LoginContent />;
 }
