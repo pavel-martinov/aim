@@ -304,7 +304,7 @@ export default function PricingPlans() {
         </RevealOnScroll>
       </div>
 
-      {/* Pricing cards grid */}
+      {/* Pricing cards grid and Academies Banner */}
       <RevealOnScroll delay={0.2} className="flex-1 w-full">
         <div className="mx-auto grid max-w-[1280px] h-full items-stretch gap-4 sm:gap-6 md:grid-cols-3 lg:mt-6 lg:gap-8 overflow-visible px-1 py-1">
           {PLANS.map((plan) => (
@@ -313,11 +313,9 @@ export default function PricingPlans() {
             </div>
           ))}
         </div>
-      </RevealOnScroll>
 
-      {/* Academies Banner */}
-      <RevealOnScroll delay={0.3} className="w-full">
-        <div className="mx-auto max-w-[1280px] mt-8 lg:mt-12 px-1">
+        {/* Academies Banner */}
+        <div className="mx-auto max-w-[1280px] mt-4 sm:mt-6 lg:mt-8 px-1">
           <AcademiesBanner billingCycle={billingCycle} />
         </div>
       </RevealOnScroll>

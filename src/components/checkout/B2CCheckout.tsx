@@ -298,8 +298,8 @@ export default function B2CCheckout({ plan, cycle }: B2CCheckoutProps) {
 
       {/* Sticky action footer */}
       <motion.div
-        className="shrink-0 z-20 border-t border-white/10 bg-gradient-to-t from-black via-black to-black/80 px-4 pt-4 lg:px-8"
-        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+        className="shrink-0 z-20 border-t border-white/10 bg-gradient-to-t from-black via-black to-black/80 px-4 py-3 lg:px-8"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
@@ -309,7 +309,7 @@ export default function B2CCheckout({ plan, cycle }: B2CCheckoutProps) {
             onClick={handleSubmit}
             disabled={isSubmitting}
             className={cn(
-              "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
+              "w-full rounded-xl py-3.5 text-sm uppercase tracking-widest font-bold",
               "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
               "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
               isSubmitting

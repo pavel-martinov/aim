@@ -5,19 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import StepperProgress from "@/components/ui/StepperProgress";
 import ContactDetailsStep from "./ContactDetailsStep";
-import PaymentSummary from "./PaymentSummary";
 import { cn } from "@/lib/utils";
 import { CheckoutFormData, ContactDetails } from "./types";
 import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
-import { EXTERNAL_URLS } from "@/lib/mockAuth";
-
-const STEPS = [{ label: "Details" }, { label: "Pay" }];
-
-const STEP_TITLES = ["Contact Details", "Review & Pay"];
-
-const STEP_SUBTITLES = ["Tell us about yourself", "Almost there!"];
 
 const EMPTY_FORM: CheckoutFormData = {
   contact: {
@@ -32,83 +23,43 @@ const EMPTY_FORM: CheckoutFormData = {
   },
 };
 
-interface AcademyCheckoutProps {
-  price: number;
-  cycle: "monthly" | "annual";
-  students: number;
-}
-
 /**
- * Multi-step Academy checkout wizard orchestrator.
- * Manages step navigation, form state, and animated step transitions.
+ * Academy interest registration — single-step full-screen form with success confirmation.
+ * Collects contact details, then displays a success message instead of billing.
  */
-export default function AcademyCheckout({
-  price,
-  cycle,
-  students,
-}: AcademyCheckoutProps) {
+export default function AcademyCheckout() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [furthestStep, setFurthestStep] = useState(0);
-  const [direction, setDirection] = useState<1 | -1>(1);
   const [formData, setFormData] = useState<CheckoutFormData>(EMPTY_FORM);
-  const [stepValid, setStepValid] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const scrollRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [currentStep]);
-
-  const goNext = () => {
-    if (currentStep < STEPS.length - 1) {
-      setDirection(1);
-      setStepValid(false);
-      setCurrentStep((s) => {
-        const next = s + 1;
-        setFurthestStep((prev) => Math.max(prev, next));
-        return next;
-      });
-    }
-  };
-
-  const jumpTo = (index: number) => {
-    if (index <= furthestStep && index !== currentStep) {
-      setDirection(index < currentStep ? -1 : 1);
-      setStepValid(true);
-      setCurrentStep(index);
-    }
-  };
+  }, [isSubmitted]);
 
   const handleSubmit = async () => {
+    if (!isFormValid) return;
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1800));
+    await new Promise((resolve) => setTimeout(resolve, 1200));
     setIsSubmitting(false);
-    window.location.href = EXTERNAL_URLS.coachPortal;
+    setIsSubmitted(true);
   };
 
-  const isLastStep = currentStep === STEPS.length - 1;
-
   const variants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 60 : -60,
-      opacity: 0,
-    }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({
-      x: dir > 0 ? -60 : 60,
-      opacity: 0,
-    }),
+    enter: { opacity: 0, y: 20 },
+    center: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
   };
 
   return (
     <div className="flex h-[100dvh] flex-col bg-black overflow-hidden">
-      {/* Top header */}
-      <header className="shrink-0 z-30 border-b border-white/10 bg-black/80 px-4 py-4 md:pt-6 md:pb-12 backdrop-blur-md lg:px-8">
+      {/* Header */}
+      <header className="shrink-0 z-30 border-b border-white/10 bg-black/80 px-4 py-4 md:py-6 backdrop-blur-md lg:px-8">
         <div className="relative mx-auto flex max-w-5xl items-center justify-between min-h-[40px]">
-          {/* AIM logo - far left */}
           <Link
             href="/home"
             className="shrink-0 transition-opacity hover:opacity-80 flex items-center z-10"
@@ -123,19 +74,6 @@ export default function AcademyCheckout({
             />
           </Link>
 
-          {/* Wider stepper - absolutely centered */}
-          <div className="absolute left-1/2 top-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 pointer-events-none px-14 md:px-0 hidden md:block">
-            <div className="pointer-events-auto">
-              <StepperProgress
-                steps={STEPS}
-                currentStep={currentStep}
-                furthestStep={furthestStep}
-                onStepClick={jumpTo}
-              />
-            </div>
-          </div>
-
-          {/* Close Button - far right */}
           <div className="shrink-0 z-10 flex justify-end">
             <button
               onClick={() => router.push("/membership")}
@@ -156,95 +94,120 @@ export default function AcademyCheckout({
         </div>
       </header>
 
-      {/* Main content - data-lenis-prevent allows native scroll inside Lenis */}
+      {/* Main content */}
       <main
         ref={scrollRef}
         data-lenis-prevent
         className="flex flex-1 flex-col overflow-y-auto overflow-x-hidden px-4 pb-6 pt-10 lg:px-8"
       >
         <div className="mx-auto w-full max-w-xl">
-          {/* Step heading */}
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={`heading-${currentStep}`}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
-              className="mb-8"
-            >
-              <p
-                className="mb-1 text-xs uppercase tracking-widest text-[var(--color-brand)]"
-                style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+          <AnimatePresence mode="wait">
+            {!isSubmitted ? (
+              <motion.div
+                key="form"
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
               >
-                Step {currentStep + 1} of {STEPS.length}
-              </p>
-              <h1
-                className="text-[36px] uppercase leading-[0.95] tracking-tight text-white md:text-[48px]"
-                style={{ fontFamily: "var(--font-anton), sans-serif" }}
-              >
-                {STEP_TITLES[currentStep]}
-              </h1>
-              <p
-                className="mt-2 text-sm text-white/40"
-                style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
-              >
-                {STEP_SUBTITLES[currentStep]}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+                {/* Heading */}
+                <div className="mb-8">
+                  <p
+                    className="mb-1 text-xs uppercase tracking-widest text-[var(--color-brand)]"
+                    style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+                  >
+                    Academies
+                  </p>
+                  <h1
+                    className="text-[36px] uppercase leading-[0.95] tracking-tight text-white md:text-[48px]"
+                    style={{ fontFamily: "var(--font-anton), sans-serif" }}
+                  >
+                    Register Interest
+                  </h1>
+                  <p
+                    className="mt-2 text-sm text-white/40"
+                    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                  >
+                    Tell us about yourself and your academy
+                  </p>
+                </div>
 
-          {/* Step content */}
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={`step-${currentStep}`}
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
-            >
-              {currentStep === 0 && (
+                {/* Form */}
                 <ContactDetailsStep
                   data={formData.contact}
                   onChange={(contact: ContactDetails) =>
                     setFormData((f) => ({ ...f, contact }))
                   }
-                  onValidChange={setStepValid}
+                  onValidChange={setIsFormValid}
                 />
-              )}
-              {currentStep === 1 && (
-                <PaymentSummary
-                  data={formData}
-                  plan={{ name: "Academies", price, cycle, students }}
-                />
-              )}
-            </motion.div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="success"
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
+                className="flex flex-col items-center py-16 text-center"
+              >
+                {/* Success icon */}
+                <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-[var(--color-brand)]/15">
+                  <svg
+                    width="40"
+                    height="40"
+                    viewBox="0 0 40 40"
+                    fill="none"
+                    className="text-[var(--color-brand)]"
+                  >
+                    <path
+                      d="M10 20l8 8 12-14"
+                      stroke="currentColor"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+
+                <h1
+                  className="mb-3 text-[36px] uppercase leading-[0.95] tracking-tight text-white md:text-[48px]"
+                  style={{ fontFamily: "var(--font-anton), sans-serif" }}
+                >
+                  Interest Received!
+                </h1>
+                <p
+                  className="mb-8 max-w-md text-base leading-relaxed text-white/60"
+                  style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                >
+                  We have successfully received your interest. Our team will be in touch with you soon at{" "}
+                  <span className="text-white">{formData.contact.email}</span>.
+                </p>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </main>
 
-      {/* Sticky action footer */}
+      {/* Sticky footer */}
       <motion.div
-        className="shrink-0 z-20 border-t border-white/10 bg-gradient-to-t from-black via-black to-black/80 px-4 pt-4 lg:px-8"
-        style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
+        className="shrink-0 z-20 border-t border-white/10 bg-gradient-to-t from-black via-black to-black/80 px-4 py-3 lg:px-8"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.standard, ease: DRAMATIC_EASE }}
       >
         <div className="mx-auto w-full max-w-xl">
-          {isLastStep ? (
+          {!isSubmitted ? (
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={!isFormValid || isSubmitting}
               className={cn(
-                "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
+                "w-full rounded-xl py-3.5 text-sm uppercase tracking-widest font-bold",
                 "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                isSubmitting
+                !isFormValid || isSubmitting
                   ? "cursor-not-allowed bg-white/[0.12] text-white/40"
                   : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
               )}
@@ -256,24 +219,21 @@ export default function AcademyCheckout({
                   Submitting...
                 </span>
               ) : (
-                "Submit Request"
+                "Submit Interest"
               )}
             </button>
           ) : (
             <button
-              onClick={goNext}
-              disabled={!stepValid}
+              onClick={() => router.push("/")}
               className={cn(
-                "w-full rounded-xl py-4 text-sm uppercase tracking-widest font-bold",
+                "w-full rounded-xl py-3.5 text-sm uppercase tracking-widest font-bold",
                 "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-black",
-                !stepValid
-                  ? "cursor-not-allowed bg-white/[0.12] text-white/40"
-                  : "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
+                "bg-[var(--color-brand)] text-black hover:brightness-110 hover:shadow-[0_8px_30px_rgba(36,255,0,0.25)] active:scale-[0.98]"
               )}
               style={{ fontFamily: "var(--font-geist-mono), monospace" }}
             >
-              Continue →
+              Back to Home
             </button>
           )}
         </div>

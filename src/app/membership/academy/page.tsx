@@ -3,11 +3,11 @@ import { Metadata } from "next";
 import AcademyCheckoutClient from "./AcademyCheckoutClient";
 
 export const metadata: Metadata = {
-  title: "Academy Setup — AIM",
-  description: "Complete your AIM Academies subscription",
+  title: "Register Interest — AIM Academies",
+  description: "Register your interest in AIM Academies for your team or organization",
 };
 
-/** Academy checkout page - reads plan params from searchParams */
+/** Academy interest registration page */
 export default function AcademyCheckoutPage() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-black" />}>

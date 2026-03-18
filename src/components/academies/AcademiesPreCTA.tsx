@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { DRAMATIC_EASE } from "@/lib/animations";
 import OpaqueButton from "@/components/ui/OpaqueButton";
@@ -13,6 +13,7 @@ import OpaqueButton from "@/components/ui/OpaqueButton";
  */
 export default function AcademiesPreCTA() {
   const sectionRef = useRef<HTMLElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -86,8 +87,8 @@ export default function AcademiesPreCTA() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.65, ease: DRAMATIC_EASE, delay: 0.3 }}
           >
-            <OpaqueButton href="/membership" variant="brand">
-              Explore Plans
+            <OpaqueButton variant="brand" href="/membership/academy">
+              Submit Interest
             </OpaqueButton>
           </motion.div>
         </motion.div>

@@ -79,12 +79,9 @@ export default function AcademiesBanner({ billingCycle }: AcademiesBannerProps) 
 
   const isEnterprise = students > 100;
   const price = calculateAcademiesPrice(students, billingCycle, currency);
-  const ctaText = isEnterprise ? "Contact Sales" : "Start Free Trial";
 
   const handleCtaClick = () => {
-    if (!isEnterprise) {
-      router.push(`/membership/academy?cycle=${billingCycle}&students=${students}`);
-    }
+    router.push(`/membership/academy?cycle=${billingCycle}&students=${students}`);
   };
 
   return (
@@ -155,7 +152,7 @@ export default function AcademiesBanner({ billingCycle }: AcademiesBannerProps) 
               showIcon={false}
               className="!w-full justify-center !py-2.5 text-xs sm:!w-auto sm:!py-3 sm:text-sm"
             >
-              {ctaText}
+              Submit Interest
             </OpaqueButton>
           </div>
         </div>
