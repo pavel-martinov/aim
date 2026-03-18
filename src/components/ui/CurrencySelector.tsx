@@ -34,12 +34,12 @@ export default function CurrencySelector() {
   };
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative z-50">
       <button
         onClick={() => setIsOpen(!isOpen)}
         disabled={isDetecting}
         className={cn(
-          "flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5",
+          "flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5",
           "text-xs font-medium uppercase tracking-wider text-white/70",
           "transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
           "hover:border-white/20 hover:bg-white/10 hover:text-white",
@@ -79,7 +79,7 @@ export default function CurrencySelector() {
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
             className={cn(
-              "absolute right-0 top-full z-50 mt-2 min-w-[140px]",
+              "absolute right-0 top-full mt-2 min-w-[140px]",
               "rounded-xl border border-white/10 bg-[#0a0a0a] p-1.5",
               "shadow-xl shadow-black/50"
             )}

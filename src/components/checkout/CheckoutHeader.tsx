@@ -30,8 +30,8 @@ export default function CheckoutHeader({
   };
 
   return (
-    <header className="shrink-0 z-30 border-b border-white/10 bg-black/80 px-4 py-4 md:pt-6 md:pb-8 backdrop-blur-md lg:px-8">
-      <div className="relative mx-auto flex max-w-5xl items-center justify-between min-h-[40px]">
+    <header className="shrink-0 z-30 border-b border-white/10 bg-black/80 px-4 py-4 md:px-5 md:pt-6 md:pb-8 backdrop-blur-md">
+      <div className="relative mx-auto flex w-full items-center justify-between min-h-[40px]">
         {/* AIM logo */}
         <Link
           href="/home"

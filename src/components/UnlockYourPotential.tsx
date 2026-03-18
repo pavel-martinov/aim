@@ -2,7 +2,6 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import Image from "next/image";
 import { DRAMATIC_EASE } from "@/lib/animations";
 import DownloadButton from "@/components/ui/DownloadButton";
 
@@ -54,12 +53,10 @@ export default function UnlockYourPotential() {
           style={{ y: phoneY, scale: phoneScale }}
         >
           <div className="relative h-[680px] w-[678px] md:h-[816px] md:w-[812px] lg:h-[852px] lg:w-[848px]">
-            <Image
-              src="/UnlockYourPotential/Mockup.png"
-              alt="AIM app showing soccer training drills, levels, and performance tracking"
-              fill
-              className="object-contain drop-shadow-[0_4px_41px_rgba(0,0,0,0.72)]"
-              priority
+            <img
+              src="/UnlockYourPotential/Mobile Mockup.png"
+              alt="AIM.IO Mobile App Mockup"
+              className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_4px_41px_rgba(0,0,0,0.72)]"
             />
           </div>
         </motion.div>

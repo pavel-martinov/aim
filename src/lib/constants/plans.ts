@@ -3,7 +3,7 @@
  * Single source of truth for all plan-related data across checkout and membership pages.
  */
 
-export const PLAN_IDS = ["starter", "pro", "pathway"] as const;
+export const PLAN_IDS = ["starter", "pro", "pathway", "academy"] as const;
 export type PlanId = (typeof PLAN_IDS)[number];
 
 export type BillingCycle = "monthly" | "annual";
@@ -78,6 +78,12 @@ export const PLAN_PRICES: Record<PlanId, Record<Currency, PriceTier>> = {
     EUR: { monthly: 50, annual: 40 },
     GBP: { monthly: 43, annual: 34 },
   },
+  academy: {
+    AED: { monthly: null, annual: null },
+    USD: { monthly: null, annual: null },
+    EUR: { monthly: null, annual: null },
+    GBP: { monthly: null, annual: null },
+  },
 };
 
 /** Academies base pricing per currency */
@@ -151,6 +157,7 @@ export interface PlanInfo {
 
 export interface PlanConfig extends PlanInfo {
   id: PlanId;
+  featuresHeader?: string;
   features: string[];
   ctaText: string;
   highlighted?: boolean;
@@ -159,9 +166,10 @@ export interface PlanConfig extends PlanInfo {
 
 /** Basic plan info for checkout pages */
 export const PLAN_INFO: Record<PlanId, PlanInfo> = {
-  starter: { name: "Starter", tagline: "Free" },
-  pro: { name: "Pro", tagline: "Premium" },
-  pathway: { name: "Pathway", tagline: "Elite" },
+  starter: { name: "Starter", tagline: "" },
+  pro: { name: "Pro", tagline: "" },
+  pathway: { name: "Pathway", tagline: "" },
+  academy: { name: "Academy", tagline: "" },
 };
 
 /** Full plan configuration for pricing pages */
@@ -181,8 +189,22 @@ export const PLANS: PlanConfig[] = [
   {
     id: "pathway",
     ...PLAN_INFO.pathway,
+    featuresHeader: "Everything in Pro, plus:",
     features: ["Career Roadmap", "Position Modules", "Biomechanics Reports", "Showcase Invites"],
     ctaText: "Start Free Trial",
+  },
+  {
+    id: "academy",
+    ...PLAN_INFO.academy,
+    featuresHeader: "Everything in Pathway, plus:",
+    features: [
+      "Coach CRM & player management",
+      "Assign drills & homework",
+      "Team analytics dashboard",
+      "Unlimited challenge creation",
+      "Priority support",
+    ],
+    ctaText: "Get Started",
   },
 ];
 

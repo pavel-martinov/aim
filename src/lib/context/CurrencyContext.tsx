@@ -3,14 +3,11 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import {
   type Currency,
-  CURRENCIES,
   DEFAULT_CURRENCY,
   CURRENCY_CONFIG,
   COUNTRY_TO_CURRENCY,
   formatPrice as formatPriceUtil,
 } from "@/lib/constants/plans";
-
-const STORAGE_KEY = "aim-currency";
 
 interface CurrencyContextValue {
   currency: Currency;
@@ -74,36 +71,12 @@ async function detectCurrency(): Promise<Currency> {
   return DEFAULT_CURRENCY;
 }
 
-/** Gets stored currency preference from localStorage */
-function getStoredCurrency(): Currency | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored && CURRENCIES.includes(stored as Currency)) {
-      return stored as Currency;
-    }
-  } catch {
-    // localStorage not available
-  }
-  return null;
-}
-
-/** Stores currency preference to localStorage */
-function storeCurrency(currency: Currency): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, currency);
-  } catch {
-    // localStorage not available
-  }
-}
-
 interface CurrencyProviderProps {
   children: ReactNode;
 }
 
 /**
- * Provides currency state with auto-detection and persistence.
+ * Provides currency state with auto-detection.
  * Wrap pricing pages with this provider.
  */
 export function CurrencyProvider({ children }: CurrencyProviderProps) {
@@ -111,23 +84,10 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
   const [isDetecting, setIsDetecting] = useState(true);
 
   useEffect(() => {
-    const stored = getStoredCurrency();
-    if (stored) {
-      setCurrencyState(stored);
-      setIsDetecting(false);
-      return;
-    }
-
     detectCurrency().then((detected) => {
       setCurrencyState(detected);
-      storeCurrency(detected);
       setIsDetecting(false);
     });
-  }, []);
-
-  const setCurrency = useCallback((newCurrency: Currency) => {
-    setCurrencyState(newCurrency);
-    storeCurrency(newCurrency);
   }, []);
 
   const formatPrice = useCallback(
@@ -138,7 +98,7 @@ export function CurrencyProvider({ children }: CurrencyProviderProps) {
   const currencySymbol = CURRENCY_CONFIG[currency].symbol;
 
   return (
-    <CurrencyContext.Provider value={{ currency, setCurrency, formatPrice, currencySymbol, isDetecting }}>
+    <CurrencyContext.Provider value={{ currency, setCurrency: setCurrencyState, formatPrice, currencySymbol, isDetecting }}>
       {children}
     </CurrencyContext.Provider>
   );
