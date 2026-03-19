@@ -109,7 +109,7 @@ export default function ContactDetailsStep({
         onChange={(v) => handleChange("organizationName", v)}
         onBlur={() => handleBlur("organizationName")}
         isValid={isFieldValid("organizationName")}
-        hint="Optional — leave blank if you're an individual coach"
+        hint="Optional: leave blank if you're an individual coach"
         autoComplete="organization"
       />
 
@@ -166,7 +166,7 @@ export default function ContactDetailsStep({
         value={data.comment}
         onChange={(v) => handleChange("comment", v)}
         rows={4}
-        hint="Optional — we read every message"
+        hint="Optional: we read every message"
       />
 
       <div className="border-t border-white/10 pt-4">

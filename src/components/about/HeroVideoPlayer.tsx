@@ -344,7 +344,7 @@ export default function HeroVideoPlayer() {
               >
                 {/* Backdrop */}
                 <motion.div
-                  className="absolute inset-0 bg-black/90 backdrop-blur-md"
+                  className="absolute inset-0 bg-black/90 backdrop-blur-md cursor-pointer"
                   onClick={closeCinema}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

@@ -28,7 +28,7 @@ const VOLUME = 0.15;
  */
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const interactionListenerRef = useRef<(() => void) | null>(null);
 
@@ -86,10 +86,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
 
-    // Attempt autoplay; fall back to next user interaction if blocked.
-    audio.play().catch(() => {
-      setupInteractionListener();
-    });
+    // audio.play().catch(() => {
+    //   setupInteractionListener();
+    // });
 
     return () => {
       audio.removeEventListener("play", handlePlay);

@@ -8,7 +8,7 @@ const HERO_VIDEO_LOCAL = "/images/HeroSection/hero-section-video.mp4";
 const HERO_VIDEO_FALLBACK =
   "https://assets.mixkit.co/videos/preview/mixkit-man-playing-soccer-502-large.mp4";
 
-const HEADLINE_LINES = ["IT'S TIME. TO RISE.", "From Streets To Stadiums."];
+const HEADLINE_LINES = ["CREATING TOMORROW'S", "CHAMPIONS"];
 
 /** Full-viewport hero with video background, animated stats, and gradient headline. */
 export default function Hero() {
@@ -55,7 +55,7 @@ export default function Hero() {
 
           {/* CTA Button - Full width on mobile, fixed 240px on tablet+ */}
           <div className="hero-animate hero-animate-delay-4 w-full md:w-auto">
-            <DownloadButton className="shrink-0" />
+            <DownloadButton className="shrink-0">DOWNLOAD APP</DownloadButton>
           </div>
         </div>
       </div>

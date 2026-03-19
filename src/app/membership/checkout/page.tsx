@@ -4,7 +4,7 @@ import B2CCheckoutClient from "./B2CCheckoutClient";
 import { CurrencyProvider } from "@/lib/context/CurrencyContext";
 
 export const metadata: Metadata = {
-  title: "Checkout — AIM",
+  title: "Checkout - AIM",
   description: "Complete your AIM subscription",
 };
 

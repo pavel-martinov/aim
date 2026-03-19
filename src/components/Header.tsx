@@ -21,8 +21,8 @@ type NavLink = {
 /** Navigation links - Logo serves as home button */
 const NAV_LINKS: readonly NavLink[] = [
   { href: "/about", label: "About" },
-  { href: "/membership", label: "Pricing" },
   { href: "/academies", label: "Academies" },
+  { href: "/membership", label: "Pricing" },
   { href: "#", label: "Download", action: "download" },
 ];
 
@@ -336,7 +336,7 @@ function HeaderContent({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
-            className="pointer-events-auto fixed inset-0 z-0 bg-black/50 md:hidden"
+            className="pointer-events-auto fixed inset-0 z-0 bg-black/50 md:hidden cursor-pointer"
             onClick={handleLinkClick}
             aria-hidden="true"
           />

@@ -28,7 +28,7 @@ const FEATURES = [
     navLabel: "Level Up",
     title: "Level Up.\nEarn Real Rewards.",
     description:
-      "Complete drills to unlock new ranks and prizes. The better you perform, the more you unlock — and the more the world sees your rise.",
+      "Complete drills to unlock new ranks and prizes. The better you perform, the more you unlock, and the more the world sees your rise.",
     image: "/images/steps/record.jpg",
   },
   {
@@ -37,7 +37,7 @@ const FEATURES = [
     navLabel: "Master Every Move",
     title: "Master Every Move\nwith AI Analysis.",
     description:
-      "AIM watches your every move to spot what works and what needs work — helping you improve faster, one rep at a time.",
+      "AIM watches your every move to spot what works and what needs work, helping you improve faster, one rep at a time.",
     image: "/images/steps/analyse.jpg",
   },
   {
@@ -46,7 +46,7 @@ const FEATURES = [
     navLabel: "Train With AI Coach",
     title: "Train with an AI Coach\nThat Never Sleeps.",
     description:
-      "Your personal coach is always on. Get instant feedback after every drill, voice or chat — built around your game.",
+      "Your personal coach is always on. Get instant feedback after every drill, voice or chat, built around your game.",
     image: "/images/steps/learn.jpg",
   },
 ];

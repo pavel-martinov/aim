@@ -142,23 +142,21 @@ function PricingCard({
             transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
             className="flex flex-col"
           >
-            {/* Crossed-out original price + discount badge */}
-            {showDiscount && (
-              <div className="flex items-center gap-2 mb-3">
-                <span
-                  className={cn(
-                    "text-sm sm:text-base line-through",
-                    plan.highlighted ? "text-black/40" : "text-white/40"
-                  )}
-                  style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-                >
-                  {formatPrice(monthlyPrice)}
-                </span>
-                <span className="rounded-sm bg-[var(--color-brand)] px-1.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase text-black">
-                  -20%
-                </span>
-              </div>
-            )}
+            {/* Crossed-out original price + discount badge (or invisible placeholder) */}
+            <div className={cn("flex items-center gap-2 mb-3 transition-opacity duration-300", showDiscount ? "opacity-100" : "opacity-0 select-none pointer-events-none")} aria-hidden={!showDiscount}>
+              <span
+                className={cn(
+                  "text-sm sm:text-base line-through",
+                  plan.highlighted ? "text-black/40" : "text-white/40"
+                )}
+                style={{ fontFamily: "var(--font-geist-mono), monospace" }}
+              >
+                {monthlyPrice !== null ? formatPrice(monthlyPrice) : "0"}
+              </span>
+              <span className="rounded-sm bg-[var(--color-brand)] px-1.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase text-black">
+                -20%
+              </span>
+            </div>
             
             <div className="flex items-baseline gap-1 sm:gap-2">
               {isFree ? (

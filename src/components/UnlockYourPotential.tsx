@@ -71,7 +71,7 @@ export default function UnlockYourPotential() {
             style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
           >
             Every stat tells a story. From shot speed to jump height, our AI
-            captures and breaks down your every move—giving you clear, measurable
+            captures and breaks down your every move, giving you clear, measurable
             data that drives real progress.
           </p>
 

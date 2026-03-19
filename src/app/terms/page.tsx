@@ -1,7 +1,7 @@
 import LegalPageLayout from "@/components/LegalPageLayout";
 
 export const metadata = {
-  title: "Terms & Conditions — AIM",
+  title: "Terms & Conditions - AIM",
   description: "AIM Terms and Conditions - Rules and guidelines for using the AIM app.",
 };
 

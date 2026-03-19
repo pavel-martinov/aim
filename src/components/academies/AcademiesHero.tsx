@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import OpaqueButton from "@/components/ui/OpaqueButton";
 
 const HEADLINE_LINES = ["Run Your Academy.", "Powered by AI."];
 
@@ -54,9 +55,9 @@ export default function AcademiesHero() {
         </div>
       </motion.div>
 
-      {/* Headline with gradient text — centered on mobile, left on desktop */}
+      {/* Bottom Content - Headline + CTA */}
       <motion.div
-        className="relative z-10 w-full"
+        className="relative z-10 flex w-full flex-col gap-6 md:flex-row md:items-end md:justify-between"
         style={{ y: headlineY, opacity }}
       >
         <h1
@@ -73,6 +74,13 @@ export default function AcademiesHero() {
             </span>
           ))}
         </h1>
+
+        {/* CTA Button - Full width on mobile, fixed 240px on tablet+ */}
+        <div className="hero-animate hero-animate-delay-4 w-full shrink-0 md:w-auto">
+          <OpaqueButton variant="brand" href="/membership/academy" className="md:w-[240px]">
+            REGISTER INTEREST
+          </OpaqueButton>
+        </div>
       </motion.div>
     </section>
   );

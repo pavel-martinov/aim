@@ -1,14 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
-import { DIVISION_CONFIG, PLAN_PRICING } from "@/lib/mockUser";
+import { PLAN_PRICING } from "@/lib/mockUser";
 import type { User, ProfileSection } from "@/types/user";
 import AvatarUpload from "./AvatarUpload";
 import SectionHeader from "./SectionHeader";
 import GhostButton from "@/components/ui/GhostButton";
+import PlayerStatsCard from "./PlayerStatsCard";
+import ReportCard from "./ReportCard";
+import RecentActivity from "./RecentActivity";
+import AchievementsList from "./AchievementsList";
+import TeamRankings from "./TeamRankings";
 
 interface ProfileOverviewProps {
   user: User;
@@ -16,8 +20,6 @@ interface ProfileOverviewProps {
   onEditProfile: () => void;
   onSectionChange: (section: ProfileSection) => void;
 }
-
-const ACADEMY_TEMPLATE_LOGO = "/academies/template-logo.svg";
 
 /**
  * Profile overview section showing avatar, name, email and player details.
@@ -33,11 +35,10 @@ export default function ProfileOverview({
     year: "numeric",
   });
   const planName = PLAN_PRICING[user.subscription.tier].name;
-  const divisionConfig = DIVISION_CONFIG[user.division];
 
   return (
     <div className="flex flex-col gap-8">
-      <SectionHeader title="Profile" subtitle="Manage your account settings and preferences" />
+      <SectionHeader title="Overview" subtitle="Manage your account settings and preferences" />
 
       {/* Profile card */}
       <motion.div
@@ -76,20 +77,28 @@ export default function ProfileOverview({
         />
       </div>
 
-      {/* Player Info */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: DURATION.standard, ease: SMOOTH_EASE, delay: 0.1 }}
-        className="rounded-2xl border border-white/10 bg-white/[0.02] p-6"
-      >
-        <h3 className="mb-4 text-xs uppercase tracking-widest text-white/40 font-mono">Player Info</h3>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <InfoItem label="Level" value={`LVL ${user.level}`} />
-          <InfoItem label="Division" value={divisionConfig.label} valueColor={divisionConfig.color} />
-          <AcademyInfoItem academy={user.academy} />
-        </div>
-      </motion.div>
+      {/* Player Stats */}
+      <PlayerStatsCard player={user} showIdentity={false} />
+
+      {/* Report Card */}
+      {user.reportCard && <ReportCard reportCard={user.reportCard} />}
+
+      {/* Recent Activity */}
+      {user.recentDrills && user.recentMissions && user.recentChallenges && (
+        <RecentActivity
+          drills={user.recentDrills}
+          missions={user.recentMissions}
+          challenges={user.recentChallenges}
+        />
+      )}
+
+      {/* Achievements */}
+      {user.achievements && <AchievementsList achievements={user.achievements} />}
+
+      {/* Team Rankings */}
+      {user.teamRankings && user.teamRankings.length > 0 && (
+        <TeamRankings rankings={user.teamRankings} teamName={user.teamName} />
+      )}
     </div>
   );
 }
@@ -138,48 +147,5 @@ function StatCard({
         )}
       </Component>
     </motion.div>
-  );
-}
-
-/** Displays a single text-based player information field. */
-function InfoItem({
-  label,
-  value,
-  valueColor,
-}: {
-  label: string;
-  value: string;
-  valueColor?: string;
-}) {
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-widest text-white/40 font-mono">{label}</p>
-      <p className="mt-1 text-white font-sans" style={valueColor ? { color: valueColor } : undefined}>
-        {value}
-      </p>
-    </div>
-  );
-}
-
-/** Displays academy information with a template logo fallback. */
-function AcademyInfoItem({ academy }: { academy?: User["academy"] }) {
-  const academyName = academy?.name ?? "Not Assigned";
-
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-widest text-white/40 font-mono">Academy</p>
-      <div className="mt-2 flex items-center gap-3">
-        <div className="relative h-8 w-8 overflow-hidden rounded-md border border-white/10 bg-white/5">
-          <Image
-            src={academy?.logoUrl || ACADEMY_TEMPLATE_LOGO}
-            alt={academyName}
-            fill
-            className="object-contain p-1"
-            sizes="32px"
-          />
-        </div>
-        <p className="text-white font-sans">{academyName}</p>
-      </div>
-    </div>
   );
 }

@@ -6,8 +6,7 @@ import { DRAMATIC_EASE, DURATION } from "@/lib/animations";
 import OpaqueButton from "@/components/ui/OpaqueButton";
 import CheckIcon from "@/components/ui/CheckIcon";
 import { cn } from "@/lib/utils";
-import { calculateAcademiesPrice, type BillingCycle, type PlanConfig } from "@/lib/constants";
-import { useCurrency } from "@/lib/context/CurrencyContext";
+import { type BillingCycle, type PlanConfig } from "@/lib/constants";
 
 /** Custom slider for selecting student count */
 function StudentSlider({
@@ -64,14 +63,8 @@ export default function AcademyPricingCard({
   billingCycle: BillingCycle;
   onCtaClick: (planId: string, students: number) => void;
 }) {
-  const { currency, formatPrice } = useCurrency();
   const [students, setStudents] = useState(10);
   
-  const isEnterprise = students > 100;
-  const price = calculateAcademiesPrice(students, billingCycle, currency);
-  const monthlyPrice = calculateAcademiesPrice(students, "monthly", currency);
-  const showDiscount = billingCycle === "annual" && !isEnterprise;
-
   const handleCtaClick = () => {
     onCtaClick(plan.id, students);
   };
@@ -116,58 +109,26 @@ export default function AcademyPricingCard({
       <div className="relative z-10 mb-3 sm:mb-4 lg:mb-5 min-h-[70px] sm:min-h-[80px] lg:min-h-[90px]">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`academies-${billingCycle}-${students}`}
+            key={`academies-${billingCycle}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: DURATION.fast, ease: DRAMATIC_EASE }}
             className="flex flex-col"
           >
-            {/* Crossed-out original price + discount badge */}
-            {showDiscount && (
-              <div className="flex items-center gap-2 mb-3">
-                <span
-                  className={cn(
-                    "text-sm sm:text-base line-through",
-                    plan.highlighted ? "text-black/40" : "text-white/40"
-                  )}
-                  style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-                >
-                  {formatPrice(monthlyPrice)}
-                </span>
-                <span className="rounded-sm bg-[var(--color-brand)] px-1.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase text-black">
-                  -20%
-                </span>
-              </div>
-            )}
+            {/* Invisible placeholder to align with other cards */}
+            <div className="flex items-center gap-2 mb-3 invisible select-none pointer-events-none" aria-hidden="true">
+              <span className="text-sm sm:text-base line-through" style={{ fontFamily: "var(--font-geist-mono), monospace" }}>0</span>
+              <span className="rounded-sm px-1.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase">0</span>
+            </div>
             
             <div className="flex items-baseline gap-1 sm:gap-2">
-              {isEnterprise ? (
-                <span
-                  className="text-[32px] sm:text-[40px] lg:text-[56px] uppercase leading-[0.9] tracking-tight"
-                  style={{ fontFamily: "var(--font-anton), sans-serif" }}
-                >
-                  Custom
-                </span>
-              ) : (
-                <>
-                  <span
-                    className="text-[32px] sm:text-[40px] lg:text-[56px] leading-[0.9] tracking-tight"
-                    style={{ fontFamily: "var(--font-anton), sans-serif" }}
-                  >
-                    {formatPrice(price)}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-xs sm:text-sm lg:text-base font-bold uppercase tracking-wider",
-                      plan.highlighted ? "text-black/50" : "text-white/40"
-                    )}
-                    style={{ fontFamily: "var(--font-geist-mono), monospace" }}
-                  >
-                    /mo
-                  </span>
-                </>
-              )}
+              <span
+                className="text-[32px] sm:text-[40px] lg:text-[56px] uppercase leading-[0.9] tracking-tight"
+                style={{ fontFamily: "var(--font-anton), sans-serif" }}
+              >
+                Get In Touch
+              </span>
             </div>
           </motion.div>
         </AnimatePresence>

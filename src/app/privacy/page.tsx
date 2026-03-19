@@ -1,7 +1,7 @@
 import LegalPageLayout from "@/components/LegalPageLayout";
 
 export const metadata = {
-  title: "Privacy Policy — AIM",
+  title: "Privacy Policy - AIM",
   description: "AIM Privacy Policy - How we collect, use, and protect your information.",
 };
 

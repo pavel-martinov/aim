@@ -11,7 +11,7 @@ type DownloadButtonProps = {
 /** Primary CTA button that opens the app download store. */
 export default function DownloadButton({
   className,
-  children = "DOWNLOAD NOW",
+  children = "DOWNLOAD APP",
 }: DownloadButtonProps) {
   return (
     <OpaqueButton onClick={openDownloadStore} className={className}>

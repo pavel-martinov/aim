@@ -76,7 +76,7 @@ export default function AcademyCheckout() {
 
           <div className="shrink-0 z-10 flex justify-end">
             <button
-              onClick={() => router.push("/membership")}
+              onClick={() => router.back()}
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-all duration-300 hover:border-white/50 hover:text-white"
               aria-label="Close"
             >

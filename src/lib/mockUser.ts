@@ -37,6 +37,15 @@ const MOCK_DELAY = {
   long: 800,
 } as const;
 
+/** Mock achievement icons used by top-level mock data builders. */
+const ACHIEVEMENT_ICONS = [
+  "/achievements/climbing-ladder.svg",
+  "/achievements/personal-record.svg",
+  "/achievements/coach-approved.svg",
+  "/achievements/team-player.svg",
+  "/achievements/consistency.svg",
+];
+
 /** Plan pricing information for subscription tiers */
 export const PLAN_PRICING: Record<SubscriptionTier, { name: string; price: number; features: string[] }> = {
   free: {
@@ -83,6 +92,34 @@ const mockUser: User = {
     id: "acad_001",
     name: "Elite Football Academy",
     logoUrl: "/academies/template-logo.svg",
+  },
+  totalScore: 78,
+  stats: { pace: 65, passing: 72, dribbling: 80, control: 68 },
+  teamName: "Elite U18",
+  recentDrills: createMockDrills(),
+  recentMissions: createMockMissions(),
+  recentChallenges: createMockChallenges(),
+  achievements: createMockAchievements(),
+  teamRankings: createMockTeamRankings("usr_mock_123"),
+  reportCard: {
+    summary: {
+      summaryText: "Alex has completed 8 drills with an overall strong performance (78% average). Their performance trend is steady, with a consistency score of 85%. Focus areas have been identified across technical skills, with particular attention needed in pace.",
+      overallRating: 8,
+      overallScore: 78,
+      totalDrills: 8,
+      averageScore: 78,
+      bestScore: 92,
+      keyStrengths: ["Dribbling", "Passing", "Control"],
+    },
+    assessment: {
+      attitude: 9,
+      respect: 8,
+      effort: 9,
+      teamPlay: 8,
+      ambition: 9,
+      humility: 8,
+      comments: "Alex shows excellent technical skills and great dedication. Needs to work on explosive pace.",
+    },
   },
 };
 
@@ -393,15 +430,6 @@ const MISSION_BACKGROUNDS = [
   "/missions/coach-mission.jpg",
 ];
 
-/** Mock achievement icons */
-const ACHIEVEMENT_ICONS = [
-  "/achievements/climbing-ladder.svg",
-  "/achievements/personal-record.svg",
-  "/achievements/coach-approved.svg",
-  "/achievements/team-player.svg",
-  "/achievements/consistency.svg",
-];
-
 /** Creates mock drill progress data. */
 function createMockDrills(): DrillProgress[] {
   return [
@@ -463,7 +491,7 @@ function createMockTeamRankings(childId: string): TeamRanking[] {
   return [
     { rank: 1, playerId: "player_1", playerName: "Jaxon Rivers", level: 4, division: "gold", score: 80.7, avatarUrl: PRESET_AVATARS[0] },
     { rank: 2, playerId: "player_2", playerName: "Maya Thompson", level: 3, division: "diamond", score: 92.2, avatarUrl: PRESET_AVATARS[1] },
-    { rank: 3, playerId: childId, playerName: "Muhammad Alegro", level: 1, division: "bronze", score: 90.3, isCurrentChild: true, avatarUrl: PRESET_AVATARS[2] },
+    { rank: 3, playerId: childId, playerName: childId === "child_001" ? "Muhammad Alegro" : (childId === "usr_mock_123" ? "Alex Johnson" : "Aisha Alegro"), level: 1, division: "bronze", score: 90.3, isCurrentChild: true, avatarUrl: PRESET_AVATARS[2] },
     { rank: 4, playerId: "player_4", playerName: "Sofia Bennett", level: 2, division: "gold", score: 95.5, avatarUrl: PRESET_AVATARS[3] },
     { rank: 5, playerId: "player_5", playerName: "Ethan Hayes", level: 1, division: "platinum", score: 98, avatarUrl: PRESET_AVATARS[4] },
   ];

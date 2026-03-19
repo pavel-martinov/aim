@@ -89,7 +89,7 @@ const PROFILE_SECTIONS: { id: ProfileSection; label: string; icon: React.ReactNo
 function SignOutLink() {
   const handleSignOut = () => {
     clearSession();
-    window.location.href = "/";
+    window.location.href = "/log-in";
   };
 
   return (
@@ -229,7 +229,7 @@ export default function ProfileLayout({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: DURATION.fast }}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden cursor-pointer"
               onClick={() => setIsMobileMenuOpen(false)}
             />
           )}

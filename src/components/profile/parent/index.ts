@@ -3,8 +3,4 @@ export { default as ParentAccountSection } from "./ParentAccountSection";
 export { default as ParentSecuritySection } from "./ParentSecuritySection";
 export { default as ParentBillingSection } from "./ParentBillingSection";
 export { default as ChildSelector } from "./ChildSelector";
-export { default as ChildStatsCard } from "./ChildStatsCard";
-export { default as RecentActivity } from "./RecentActivity";
-export { default as AchievementsList } from "./AchievementsList";
-export { default as TeamRankings } from "./TeamRankings";
 export { default as ParentalControlsPanel } from "./ParentalControlsPanel";

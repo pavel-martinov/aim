@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import AcademyCheckoutClient from "./AcademyCheckoutClient";
 
 export const metadata: Metadata = {
-  title: "Register Interest — AIM Academies",
+  title: "Register Interest - AIM Academies",
   description: "Register your interest in AIM Academies for your team or organization",
 };
 

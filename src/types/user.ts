@@ -60,6 +60,18 @@ export interface User {
   level: PlayerLevel;
   division: Division;
   academy?: Academy;
+  totalScore?: number;
+  stats?: PlayerStats;
+  teamName?: string;
+  recentDrills?: DrillProgress[];
+  recentMissions?: MissionProgress[];
+  recentChallenges?: ChallengeProgress[];
+  achievements?: Achievement[];
+  teamRankings?: TeamRanking[];
+  reportCard?: {
+    summary: ReportSummary;
+    assessment: CoachAssessment;
+  };
 }
 
 export interface Invoice {

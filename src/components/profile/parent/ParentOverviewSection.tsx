@@ -5,11 +5,11 @@ import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 import type { ParentUser } from "@/types/user";
 import SectionHeader from "../SectionHeader";
 import ChildSelector from "./ChildSelector";
-import ChildStatsCard from "./ChildStatsCard";
-import ReportCard from "./ReportCard";
-import RecentActivity from "./RecentActivity";
-import AchievementsList from "./AchievementsList";
-import TeamRankings from "./TeamRankings";
+import PlayerStatsCard from "../PlayerStatsCard";
+import ReportCard from "../ReportCard";
+import RecentActivity from "../RecentActivity";
+import AchievementsList from "../AchievementsList";
+import TeamRankings from "../TeamRankings";
 
 interface ParentOverviewSectionProps {
   parent: ParentUser;
@@ -57,8 +57,8 @@ export default function ParentOverviewSection({
           transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
           className="flex flex-col gap-8"
         >
-          <ChildStatsCard child={selectedChild} />
-          <ReportCard child={selectedChild} />
+          <PlayerStatsCard player={selectedChild} />
+          <ReportCard reportCard={selectedChild.reportCard} />
           <RecentActivity
             drills={selectedChild.recentDrills}
             missions={selectedChild.recentMissions}

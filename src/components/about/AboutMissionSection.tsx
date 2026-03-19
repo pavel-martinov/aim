@@ -6,7 +6,7 @@ import PinnedSlideSection from "@/components/ui/PinnedSlideSection";
 const SLIDES = [
   {
     id: 1,
-    text: "Every year, millions of talented players never get seen. Not because they lack skill — but because they lack access.",
+    text: "Every year, millions of talented players never get seen. Not because they lack skill, but because they lack access.",
     video: "/images/vision/Vision-1.mp4",
   },
   {

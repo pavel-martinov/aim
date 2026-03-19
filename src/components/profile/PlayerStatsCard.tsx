@@ -4,17 +4,18 @@ import { motion } from "framer-motion";
 import AvatarFallback from "@/components/ui/AvatarFallback";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 import { DIVISION_CONFIG } from "@/lib/constants";
-import type { ChildProfile } from "@/types/user";
+import type { ChildProfile, User } from "@/types/user";
 
-interface ChildStatsCardProps {
-  child: ChildProfile;
+interface PlayerStatsCardProps {
+  player: Pick<User | ChildProfile, "name" | "avatarUrl" | "level" | "division" | "totalScore" | "stats" | "academy">;
+  showIdentity?: boolean;
 }
 
 /**
  * Player card style component showing level, division, score and stats.
  */
-export default function ChildStatsCard({ child }: ChildStatsCardProps) {
-  const divisionConfig = DIVISION_CONFIG[child.division];
+export default function PlayerStatsCard({ player, showIdentity = true }: PlayerStatsCardProps) {
+  const divisionConfig = DIVISION_CONFIG[player.division];
 
   return (
     <motion.div
@@ -24,32 +25,31 @@ export default function ChildStatsCard({ child }: ChildStatsCardProps) {
       className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-6"
     >
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-        {/* Left: Avatar and Basic Info */}
-        <div className="flex flex-col items-center gap-4 sm:items-start">
-          {/* Avatar */}
-          <AvatarFallback
-            src={child.avatarUrl}
-            name={child.name}
-            size="xl"
-            className="rounded-xl shadow-lg"
-            borderClassName="border-2 border-white/20"
-          />
+        {showIdentity && (
+          <div className="flex flex-col items-center gap-4 sm:items-start">
+            <AvatarFallback
+              src={player.avatarUrl}
+              name={player.name}
+              size="xl"
+              className="rounded-xl shadow-lg"
+              borderClassName="border-2 border-white/20"
+            />
 
-          {/* Name and Academy */}
-          <div className="text-center sm:text-left">
-            <h3 className="text-lg font-medium text-white font-sans">{child.name}</h3>
-            {child.academy && (
-              <p className="mt-1 text-xs text-white/50 font-sans">{child.academy.name}</p>
-            )}
+            <div className="text-center sm:text-left">
+              <h3 className="text-lg font-medium text-white font-sans">{player.name}</h3>
+              {player.academy && (
+                <p className="mt-1 text-xs text-white/50 font-sans">{player.academy.name}</p>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Right: Stats Grid */}
         <div className="flex flex-1 flex-col gap-4">
           {/* Top Stats Row */}
           <div className="grid grid-cols-3 gap-4">
-            <StatBox label="Level" value={child.level.toString()} prefix="LVL" />
-            <StatBox label="Score" value={child.totalScore.toString()} />
+            <StatBox label="Level" value={(player.level || 0).toString()} prefix="LVL" />
+            <StatBox label="Score" value={(player.totalScore || 0).toString()} />
             <StatBox
               label="Division"
               value={divisionConfig.label}
@@ -63,10 +63,10 @@ export default function ChildStatsCard({ child }: ChildStatsCardProps) {
               Performance Stats
             </p>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <PerformanceStat label="PAC" value={child.stats.pace} />
-              <PerformanceStat label="PAS" value={child.stats.passing} />
-              <PerformanceStat label="DRI" value={child.stats.dribbling} />
-              <PerformanceStat label="CTR" value={child.stats.control} />
+              <PerformanceStat label="PAC" value={player.stats?.pace || 0} />
+              <PerformanceStat label="PAS" value={player.stats?.passing || 0} />
+              <PerformanceStat label="DRI" value={player.stats?.dribbling || 0} />
+              <PerformanceStat label="CTR" value={player.stats?.control || 0} />
             </div>
           </div>
         </div>

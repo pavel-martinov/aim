@@ -204,7 +204,7 @@ export const PLANS: PlanConfig[] = [
       "Unlimited challenge creation",
       "Priority support",
     ],
-    ctaText: "Get Started",
+    ctaText: "Register Interest",
   },
 ];
 

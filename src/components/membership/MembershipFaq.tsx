@@ -9,7 +9,7 @@ const MEMBERSHIP_FAQ = [
   {
     question: "What's included in the 14-day free trial?",
     answer:
-      "You get full access to all features of the plan you're trying—First Touch or Academies. No limitations, no credit card required to start. At the end of the trial, add payment to continue or your account simply reverts to our free Kickoff plan.",
+      "You get full access to all features of the plan you're trying: First Touch or Academies. No limitations, no credit card required to start. At the end of the trial, add payment to continue or your account simply reverts to our free Kickoff plan.",
   },
   {
     question: "Can I switch plans anytime?",
@@ -24,7 +24,7 @@ const MEMBERSHIP_FAQ = [
   {
     question: "What happens when my trial ends?",
     answer:
-      "If you've added a payment method, your subscription continues automatically with no interruption. If you haven't added payment, your account reverts to the free Kickoff plan—you keep your data and progress, just with limited features.",
+      "If you've added a payment method, your subscription continues automatically with no interruption. If you haven't added payment, your account reverts to the free Kickoff plan. You keep your data and progress, just with limited features.",
   },
   {
     question: "Is there a discount for teams or academies?",

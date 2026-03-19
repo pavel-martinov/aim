@@ -2,19 +2,19 @@
 
 import { motion } from "framer-motion";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
-import type { ChildProfile } from "@/types/user";
+import type { ChildProfile, User } from "@/types/user";
 
 interface ReportCardProps {
-  child: ChildProfile;
+  reportCard?: ChildProfile["reportCard"] | User["reportCard"];
 }
 
 /**
- * Report card component displaying executive summary, metrics, and coach assessment.
+ * Report card component displaying summary, metrics, and coach assessment.
  */
-export default function ReportCard({ child }: ReportCardProps) {
-  if (!child.reportCard) return null;
+export default function ReportCard({ reportCard }: ReportCardProps) {
+  if (!reportCard) return null;
 
-  const { summary, assessment } = child.reportCard;
+  const { summary, assessment } = reportCard;
 
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +25,7 @@ export default function ReportCard({ child }: ReportCardProps) {
         className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-6"
       >
         <div className="border-b border-white/10 pb-4">
-          <h3 className="text-sm font-medium text-white font-sans">Executive Summary</h3>
+          <h3 className="text-sm font-medium text-white font-sans">Summary</h3>
           <p className="mt-2 text-sm text-white/70 font-sans leading-relaxed">
             {summary.summaryText}
           </p>

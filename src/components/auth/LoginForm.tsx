@@ -39,12 +39,6 @@ export default function LoginForm() {
   const emailError = touched.email ? validateLogin(email) : "";
   const passwordError = touched.password && !password ? "Password is required" : "";
 
-  const handleDemoLogin = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    performLogin(demoEmail, demoPass);
-  };
-
   const performLogin = async (loginEmail: string, loginPass: string) => {
     setIsLoading(true);
     setError("");
@@ -177,37 +171,6 @@ export default function LoginForm() {
           </OpaqueButton>
         </div>
       </form>
-
-      {/* Test accounts - only shown in development */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="mt-8 flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-white/10" />
-            <span className="text-xs uppercase tracking-wider text-white/40 font-mono">
-              Test Accounts
-            </span>
-            <div className="h-px flex-1 bg-white/10" />
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {Object.entries(DEMO_CREDENTIALS).map(([demoEmail, data]) => (
-              <button
-                key={demoEmail}
-                type="button"
-                onClick={() => handleDemoLogin(demoEmail, data.password)}
-                disabled={isLoading}
-                className="flex flex-col items-start justify-center rounded-lg border border-white/5 bg-white/[0.02] p-3 text-left transition-colors hover:border-white/20 hover:bg-white/[0.05] disabled:opacity-50"
-              >
-                <span className="text-xs font-medium text-white/80 capitalize font-mono">
-                  {data.role.replace("_", " ")}
-                </span>
-                <span className="text-[10px] text-white/40 truncate w-full">
-                  {demoEmail}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

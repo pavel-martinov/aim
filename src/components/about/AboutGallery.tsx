@@ -34,7 +34,7 @@ export default function AboutGallery() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: DRAMATIC_EASE }}
         >
-          Behind every great player is relentless preparation. We&apos;re building the tools to make that preparation world-class — for everyone.
+          Behind every great player is relentless preparation. We&apos;re building the tools to make that preparation world-class for everyone.
         </motion.p>
       </div>
 

@@ -22,7 +22,7 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: "AIM — Sports Training App",
+  title: "AIM - Sports Training App",
   description:
     "Track your progress, analyse performance, and achieve your athletic goals.",
 };
