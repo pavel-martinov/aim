@@ -1,23 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import LoginForm from "@/components/auth/LoginForm";
 
+/** Login page content for the V1 player/coach chooser. */
 export default function LoginContent() {
-  const [headline, setHeadline] = useState("");
-
-  useEffect(() => {
-    const hasRole = localStorage.getItem("aim-role");
-    setHeadline(hasRole ? "Welcome Back" : "Log In");
-  }, []);
-
-  if (!headline) {
-    return <div className="min-h-screen w-full" />; // Prevent layout animation until we know the text
-  }
-
   return (
-    <AuthLayout headline={headline}>
+    <AuthLayout
+      headline="Log In"
+      subheadline="Choose whether you are continuing as a player or a coach."
+    >
       <LoginForm />
     </AuthLayout>
   );

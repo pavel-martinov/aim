@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import AuthLayout from "@/components/auth/AuthLayout";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 
@@ -6,8 +7,13 @@ export const metadata = {
   description: "Reset your AIM account password",
 };
 
-/** Forgot password page - enter email to receive reset link. */
+/** V1 hides forgot-password and returns users to the login chooser. */
 export default function ForgotPasswordPage() {
+  redirect("/log-in");
+}
+
+/** Legacy forgot-password page preserved for post-V1 reuse. */
+function LegacyForgotPasswordPage() {
   return (
     <AuthLayout
       headline="Forgot Password?"

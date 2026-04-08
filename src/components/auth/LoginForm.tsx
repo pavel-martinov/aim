@@ -14,13 +14,70 @@ import {
   DEMO_CREDENTIALS,
 } from "@/lib/mockAuth";
 import { isValidEmail } from "@/lib/utils";
+import { redirectToDownloadStore } from "@/lib/download";
 import { SMOOTH_EASE, DURATION } from "@/lib/animations";
 
+const COACH_PORTAL_URL = "https://coach-portal-ui.aim-football.com/login";
+
 /**
- * Login form with email/password fields and forgot password link.
- * Redirects users to their role-specific portal after successful login.
+ * V1 login chooser that sends users to the correct destination without in-site auth.
  */
 export default function LoginForm() {
+  const [isRedirecting, setIsRedirecting] = useState<"player" | "coach" | null>(null);
+
+  const handlePlayerSelect = () => {
+    setIsRedirecting("player");
+    redirectToDownloadStore();
+  };
+
+  const handleCoachSelect = () => {
+    setIsRedirecting("coach");
+    window.location.assign(COACH_PORTAL_URL);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
+      className="flex flex-col gap-5"
+    >
+      <OpaqueButton
+        type="button"
+        variant="dark"
+        className={`lg:!w-full ${
+          isRedirecting === "player"
+            ? "bg-[var(--color-brand)] text-black hover:bg-[var(--color-brand)] hover:text-black hover:brightness-110"
+            : "bg-white/[0.12] text-white hover:bg-white/[0.18] hover:text-white"
+        }`}
+        disabled={isRedirecting !== null}
+        onClick={handlePlayerSelect}
+      >
+        {isRedirecting === "player" ? "Redirecting Player..." : "I'm a Player"}
+      </OpaqueButton>
+
+      <OpaqueButton
+        type="button"
+        variant="dark"
+        className={`lg:!w-full ${
+          isRedirecting === "coach"
+            ? "bg-[var(--color-brand)] text-black hover:bg-[var(--color-brand)] hover:text-black hover:brightness-110"
+            : "bg-white/[0.12] text-white hover:bg-white/[0.18] hover:text-white"
+        }`}
+        disabled={isRedirecting !== null}
+        onClick={handleCoachSelect}
+      >
+        {isRedirecting === "coach" ? "Redirecting Coach..." : "I'm a Coach"}
+      </OpaqueButton>
+    </motion.div>
+  );
+}
+
+/**
+ * Legacy persona-based login flow preserved for post-V1 reuse.
+ * Hidden from the current UI, but kept in code for later handoff.
+ */
+function LegacyLoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +106,7 @@ export default function LoginForm() {
       if (result.role) {
         saveUserRole(result.role);
       }
-      
+
       if (result.role === "admin" || result.role === "superadmin") {
         setShowPortalSelection(true);
         setIsLoading(false);
@@ -87,7 +144,7 @@ export default function LoginForm() {
 
   if (showPortalSelection) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.standard, ease: SMOOTH_EASE }}
@@ -96,12 +153,12 @@ export default function LoginForm() {
         <p className="mb-2 text-sm text-white/60">
           Please select the portal you want to access:
         </p>
-        <PortalCard
+        <LegacyPortalCard
           href={EXTERNAL_URLS.adminUI}
           title="AIM Admin UI"
           description="Content moderation and platform management"
         />
-        <PortalCard
+        <LegacyPortalCard
           href={EXTERNAL_URLS.coachPortal}
           title="AIM Coach Portal"
           description="Team, player, and mission management"
@@ -175,17 +232,25 @@ export default function LoginForm() {
   );
 }
 
-/** Portal selection card for admin/superadmin users. */
-function PortalCard({ href, title, description }: { href: string; title: string; description: string }) {
+/** Legacy portal card kept with the hidden persona auth flow. */
+function LegacyPortalCard({
+  href,
+  title,
+  description,
+}: {
+  href: string;
+  title: string;
+  description: string;
+}) {
   return (
     <a
       href={href}
       className="group relative flex flex-col gap-2 rounded-xl border border-white/10 bg-white/5 p-6 transition-all duration-300 hover:border-white/20 hover:bg-white/10"
     >
-      <h3 className="text-xl uppercase tracking-wide text-white transition-colors duration-300 group-hover:text-[var(--color-brand)] font-anton">
+      <h3 className="font-anton text-xl uppercase tracking-wide text-white transition-colors duration-300 group-hover:text-[var(--color-brand)]">
         {title}
       </h3>
-      <p className="text-sm text-white/50 font-mono">{description}</p>
+      <p className="font-mono text-sm text-white/50">{description}</p>
     </a>
   );
 }

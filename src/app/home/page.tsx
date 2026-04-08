@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import MissionSection from "@/components/MissionSection";
 import UnlockYourPotential from "@/components/UnlockYourPotential";
+import WomensFootballSection from "@/components/WomensFootballSection";
 import StepsSection from "@/components/StepsSection";
 import VisionSection from "@/components/VisionSection";
 import CTASection from "@/components/CTASection";
@@ -21,6 +22,7 @@ export default function HomePage() {
           <UnlockYourPotential />
           <VisionSection />
           <StepsSection />
+          <WomensFootballSection />
           <CTASection />
           <Footer />
         </div>

@@ -9,7 +9,7 @@ type Easing = [number, number, number, number];
 const EASE_DRAMATIC = [...DRAMATIC_EASE] as Easing;
 const EASE_SMOOTH = [...SMOOTH_EASE] as Easing;
 
-const VIDEO_SRC = "/images/aboutus/aboutus-video.mp4";
+const VIDEO_SRC = "/images/aboutus/PromotionVideo.mp4";
 
 function formatTime(sec: number): string {
   const m = Math.floor(sec / 60);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ProfileLayout from "@/components/profile/ProfileLayout";
 import ProfileOverview from "@/components/profile/ProfileOverview";
 import AccountSettings from "@/components/profile/AccountSettings";
@@ -53,10 +54,23 @@ import type {
 } from "@/types/user";
 
 /**
- * B2C Profile settings page with Netflix-style navigation.
- * Renders different views based on user role (player vs parent).
+ * V1 hides the in-site profile and returns users to the login chooser.
  */
 export default function ProfilePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/log-in");
+  }, [router]);
+
+  return <div className="min-h-screen bg-black" />;
+}
+
+/**
+ * Legacy B2C profile preserved for post-V1 reuse.
+ * Renders different views based on user role (player vs parent).
+ */
+function LegacyProfilePage() {
   const [activeSection, setActiveSection] = useState<ProfileSection>("overview");
   const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [user, setUser] = useState<User | null>(null);

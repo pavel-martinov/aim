@@ -20,6 +20,7 @@ type NavLink = {
 
 /** Navigation links - Logo serves as home button */
 const NAV_LINKS: readonly NavLink[] = [
+  { href: "/home", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/academies", label: "Academies" },
   { href: "/membership", label: "Pricing" },
@@ -116,33 +117,47 @@ function NavPill({
   onClick?: () => void;
   isDark: boolean;
 }) {
-  const baseClasses = `flex flex-1 items-center justify-center h-[38px] px-[18px] py-[13px] rounded-lg backdrop-blur-[10px] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
-    isDark
-      ? "bg-[rgba(237,237,237,0.2)] text-[#eee] hover:bg-[rgba(237,237,237,0.35)] hover:text-white"
-      : "bg-[rgba(0,0,0,0.08)] text-zinc-900 hover:bg-[rgba(0,0,0,0.15)] hover:text-black"
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  const baseClasses = `relative overflow-hidden flex flex-1 items-center justify-center h-[38px] px-[18px] py-[13px] rounded-lg backdrop-blur-[10px] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+    isActive
+      ? isDark 
+        ? "bg-[rgba(237,237,237,0.2)] text-[var(--color-brand)]"
+        : "bg-[rgba(0,0,0,0.08)] text-[var(--color-brand)]"
+      : isDark
+      ? "bg-[rgba(237,237,237,0.2)] text-[#eee] hover:bg-[rgba(237,237,237,0.4)] hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+      : "bg-[rgba(0,0,0,0.08)] text-zinc-900 hover:bg-[rgba(0,0,0,0.15)] hover:text-black hover:drop-shadow-[0_0_8px_rgba(0,0,0,0.3)]"
   }`;
 
-  const pathname = usePathname();
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === href) {
+    if (isActive) {
       e.preventDefault();
       window.dispatchEvent(new Event("aim:scroll-to-top"));
     }
     onClick?.();
   };
 
+  const content = (
+    <>
+      <span className="relative z-10">{label}</span>
+      {isActive && (
+        <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] bg-white blur-[6px]" />
+      )}
+    </>
+  );
+
   if (action === "download") {
     return (
       <button onClick={openDownloadStore} className={baseClasses}>
-        {label}
+        {content}
       </button>
     );
   }
 
   return (
     <Link href={href} onClick={handleClick} className={baseClasses}>
-      {label}
+      {content}
     </Link>
   );
 }
@@ -165,22 +180,36 @@ function MobileMenuItem({
   onClick?: () => void;
   delay: number;
 }) {
-  const glassClasses =
-    "flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px] text-[#eee] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[rgba(237,237,237,0.35)]";
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  const glassClasses = `relative overflow-hidden flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[rgba(237,237,237,0.2)] backdrop-blur-[10px] text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] ${
+    isActive 
+      ? "text-[var(--color-brand)]"
+      : "text-[#eee] hover:bg-[rgba(237,237,237,0.4)] hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]"
+  }`;
+  
   const brandClasses =
-    "flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[var(--color-brand)] text-black text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:brightness-110";
+    "relative overflow-hidden flex w-full items-center h-[46px] px-[18px] rounded-lg bg-[var(--color-brand)] text-black text-base font-medium uppercase transition-all duration-[650ms] ease-[cubic-bezier(0.4,0,0.2,1)] hover:brightness-110 hover:drop-shadow-[0_0_8px_rgba(36,255,0,0.4)]";
 
   const classes = variant === "brand" ? brandClasses : glassClasses;
 
-  const pathname = usePathname();
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === href) {
+    if (isActive) {
       e.preventDefault();
       window.dispatchEvent(new Event("aim:scroll-to-top"));
     }
     onClick?.();
   };
+
+  const content = (
+    <>
+      <span className="relative z-10">{label}</span>
+      {isActive && variant === "glass" && (
+        <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] bg-white blur-[6px]" />
+      )}
+    </>
+  );
 
   return (
     <motion.div
@@ -196,11 +225,11 @@ function MobileMenuItem({
     >
       {action === "download" ? (
         <button onClick={() => { openDownloadStore(); onClick?.(); }} className={classes}>
-          {label}
+          {content}
         </button>
       ) : (
         <Link href={href} onClick={handleClick} className={classes}>
-          {label}
+          {content}
         </Link>
       )}
     </motion.div>

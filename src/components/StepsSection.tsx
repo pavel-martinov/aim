@@ -13,8 +13,8 @@ const STEPS = [
     title: "Begin",
     description:
       "Begin Your Training Journey, Master Skills That Change Your Game. Every stat tells a story, and our AI analyzes your moves, offering the data needed for real progress. This is more than tracking performance; it's about personal growth, driven by valuable feedback.",
-    media: "/images/steps/Begin.mp4",
-    isVideo: true,
+    media: "/images/steps/Begin.png",
+    isVideo: false,
     hasOverlay: false,
   },
   {
